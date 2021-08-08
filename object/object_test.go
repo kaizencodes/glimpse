@@ -92,3 +92,42 @@ func TestAdd(t *testing.T) {
             expectedMessage, err.Error())
     }
 }
+
+func TestSubtract(t *testing.T) {
+    var tests = []struct {
+        left  *Touple
+        right *Touple
+        want  *Touple
+    }{
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{0.0, 1.5, -1.0, 0.0},
+            want:  &Touple{1.0, -0.5, 2.0, 1.0},
+        },
+        {
+            left:  &Touple{-1.0, 1.0, 1.0, 0.0},
+            right: &Touple{-2.0, 1.5, 0.0001, 0.0},
+            want:  &Touple{1.0, -0.5, 0.9999, 0.0},
+        },
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{0.0, 1.5, -1.0, 1.0},
+            want:  &Touple{1.0, -0.5, 2.0, 0.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got, _ := test.left.Subtract(test.right); !got.Equal(test.want) {
+            t.Errorf("input: %s - %s \ngot: %s. \nexpected: %s", test.left, test.right, got, test.want)
+        }
+    }
+
+    vector := &Touple{1.0, 1.0, 1.0, 0.0}
+    point := &Touple{1.0, 1.0, 1.0, 1.0}
+    expectedMessage := "can't subtract a point from a vector."
+
+    if _, err := vector.Subtract(point); err.Error() != expectedMessage {
+        t.Errorf("wrong error message. expected=%q, got=%q",
+            expectedMessage, err.Error())
+    }
+}

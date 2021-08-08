@@ -30,6 +30,13 @@ func (t *Touple) Add(other *Touple) (*Touple, error) {
 	return &Touple{t.x + other.x, t.y + other.y, t.z + other.z, t.w + other.w}, nil
 }
 
+func (t *Touple) Subtract(other *Touple) (*Touple, error) {
+	if t.IsVector() && other.IsPoint() {
+		return nil, fmt.Errorf("can't subtract a point from a vector.")
+	}
+	return &Touple{t.x - other.x, t.y - other.y, t.z - other.z, t.w - other.w}, nil
+}
+
 func (t *Touple) String() string {
 	x := strconv.FormatFloat(t.x, 'f', -1, 64)
 	y := strconv.FormatFloat(t.y, 'f', -1, 64)
