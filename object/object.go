@@ -1,6 +1,7 @@
 package object
 
 import (
+	"math"
 	"ray_tracer/calc"
 	"strconv"
 )
@@ -22,6 +23,10 @@ func (t *Touple) Equal(other *Touple) bool {
 		calc.FloatEquals(t.z, other.z) && calc.FloatEquals(t.w, other.w)
 }
 
+func (t *Touple) Magnitude() float64 {
+	return math.Sqrt(math.Pow(t.x, 2) + math.Pow(t.y, 2) + math.Pow(t.z, 2))
+}
+
 func (t *Touple) String() string {
 	x := strconv.FormatFloat(t.x, 'f', -1, 64)
 	y := strconv.FormatFloat(t.y, 'f', -1, 64)
@@ -41,6 +46,10 @@ func Subtract(a, b *Touple) *Touple {
 
 func Negate(t *Touple) *Touple {
 	return &Touple{-t.x, -t.y, -t.z, -t.w}
+}
+
+func Multiply(t *Touple, s float64) *Touple {
+	return &Touple{t.x * s, t.y * s, t.z * s, t.w * s}
 }
 
 func NewVector(x, y, z float64) *Touple {

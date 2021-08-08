@@ -1,6 +1,10 @@
 package object
 
-import "testing"
+import (
+    "math"
+    "ray_tracer/calc"
+    "testing"
+)
 
 func TestTouple(t *testing.T) {
     var tests = []struct {
@@ -158,6 +162,62 @@ func TestNegate(t *testing.T) {
     for _, test := range tests {
         if got := Negate(test.input); !got.Equal(test.want) {
             t.Errorf("Negating: %s\n got: %s. \nexpected: %s", test.input, got, test.want)
+        }
+    }
+}
+
+func TestMultiply(t *testing.T) {
+    var tests = []struct {
+        touple *Touple
+        scalar float64
+        want   *Touple
+    }{
+        {
+            touple: &Touple{1.0, 1.0, 1.0, 1.0},
+            scalar: 1,
+            want:   &Touple{1.0, 1.0, 1.0, 1.0},
+        },
+        {
+            touple: &Touple{-2.0, 1.5, 0.5, 0.0},
+            scalar: 0.5,
+            want:   &Touple{-1.0, 0.75, 0.25, 0.0},
+        },
+        {
+            touple: &Touple{-2.0, 1.5, 0.5, 0.0},
+            scalar: 2,
+            want:   &Touple{-4.0, 3, 1.0, 0.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got := Multiply(test.touple, test.scalar); !got.Equal(test.want) {
+            t.Errorf("input: %s + %f \ngot: %s. \nexpected: %s", test.touple, test.scalar, got, test.want)
+        }
+    }
+}
+
+func TestMagnitude(t *testing.T) {
+    var tests = []struct {
+        input *Touple
+        want  float64
+    }{
+        {
+            input: &Touple{0.0, 1.0, 0.0, 0.0},
+            want:  1.0,
+        },
+        {
+            input: &Touple{0.0, 0.0, 1.0, 0.0},
+            want:  1.0,
+        },
+        {
+            input: &Touple{1.0, 2.0, 3.0, 0.0},
+            want:  math.Sqrt(14.0),
+        },
+    }
+
+    for _, test := range tests {
+        if got := test.input.Magnitude(); !calc.FloatEquals(got, test.want) {
+            t.Errorf("Magnitude of %s \ngot: %f. \nexpected: %f", test.input, got, test.want)
         }
     }
 }
