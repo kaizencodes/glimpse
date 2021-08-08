@@ -57,8 +57,17 @@ func Multiply(t *Touple, s float64) *Touple {
 	return &Touple{t.x * s, t.y * s, t.z * s, t.w * s}
 }
 
-func Dot(t *Touple, other *Touple) float64 {
-	return t.x*other.x + t.y*other.y + t.z*other.z + t.w*other.w
+func Dot(a *Touple, b *Touple) float64 {
+	return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
+}
+
+func Cross(a *Touple, b *Touple) *Touple {
+	return &Touple{
+		a.y*b.z - a.z*b.y,
+		a.z*b.x - a.x*b.z,
+		a.x*b.y - a.y*b.x,
+		0.0,
+	}
 }
 
 func NewVector(x, y, z float64) *Touple {

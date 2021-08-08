@@ -263,3 +263,28 @@ func TestDot(t *testing.T) {
         }
     }
 }
+
+func TestCross(t *testing.T) {
+    var tests = []struct {
+        left  *Touple
+        right *Touple
+        want  *Touple
+    }{
+        {
+            left:  &Touple{1.0, 2.0, 3.0, 0.0},
+            right: &Touple{2.0, 3.0, 4.0, 0.0},
+            want:  &Touple{-1.0, 2.0, -1.0, 0.0},
+        },
+        {
+            left:  &Touple{2.0, 3.0, 4.0, 0.0},
+            right: &Touple{1.0, 2.0, 3.0, 0.0},
+            want:  &Touple{1.0, -2.0, 1.0, 0.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got := Cross(test.left, test.right); !got.Equal(test.want) {
+            t.Errorf("Cross product of %s and %s\ngot: %f. \nexpected: %f", test.left, test.right, got, test.want)
+        }
+    }
+}
