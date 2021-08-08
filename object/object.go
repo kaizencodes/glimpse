@@ -46,6 +46,13 @@ func Subtract(a, b *Touple) (*Touple, error) {
 	return &Touple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}, nil
 }
 
+func Negate(t *Touple) (*Touple, error) {
+	if t.IsPoint() {
+		return nil, fmt.Errorf("can't negate a point.")
+	}
+	return &Touple{-t.x, -t.y, -t.z, -t.w}, nil
+}
+
 func NewVector(x, y, z float64) *Touple {
 	return &Touple{x, y, z, 0.0}
 }

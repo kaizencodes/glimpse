@@ -7,8 +7,14 @@ func TestTouple(t *testing.T) {
         input *Touple
         want  bool
     }{
-        {&Touple{4.3, -4.2, 3.1, 1.0}, true},
-        {&Touple{-3.3, 3.2, 3.1, 0.0}, false},
+        {
+            input: &Touple{4.3, -4.2, 3.1, 1.0},
+            want:  true,
+        },
+        {
+            input: &Touple{-3.3, 3.2, 3.1, 0.0},
+            want:  false,
+        },
     }
 
     for _, test := range tests {
@@ -40,11 +46,31 @@ func TestEqual(t *testing.T) {
         right *Touple
         want  bool
     }{
-        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 1.0, 1.0, 1.0}, true},
-        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{0.0, 1.0, 1.0, 1.0}, false},
-        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 0.0, 1.0, 1.0}, false},
-        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 1.0, 0.0, 1.0}, false},
-        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 1.0, 1.0, 0.0}, false},
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{1.0, 1.0, 1.0, 1.0},
+            want:  true,
+        },
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{0.0, 1.0, 1.0, 1.0},
+            want:  false,
+        },
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{1.0, 0.0, 1.0, 1.0},
+            want:  false,
+        },
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{1.0, 1.0, 0.0, 1.0},
+            want:  false,
+        },
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{1.0, 1.0, 1.0, 0.0},
+            want:  false,
+        },
     }
 
     for _, test := range tests {
@@ -127,6 +153,32 @@ func TestSubtract(t *testing.T) {
     expectedMessage := "can't subtract a point from a vector."
 
     if _, err := Subtract(vector, point); err.Error() != expectedMessage {
+        t.Errorf("wrong error message. expected=%q, got=%q",
+            expectedMessage, err.Error())
+    }
+}
+
+func TestNegate(t *testing.T) {
+    var tests = []struct {
+        input *Touple
+        want  *Touple
+    }{
+        {
+            input: &Touple{-1.0, 1.0, 1.0, 0.0},
+            want:  &Touple{1.0, -1.0, -1.0, 0.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got, _ := Negate(test.input); !got.Equal(test.want) {
+            t.Errorf("Negating: %s\n got: %s. \nexpected: %s", test.input, got, test.want)
+        }
+    }
+
+    point := &Touple{1.0, 1.0, 1.0, 1.0}
+    expectedMessage := "can't negate a point."
+
+    if _, err := Negate(point); err.Error() != expectedMessage {
         t.Errorf("wrong error message. expected=%q, got=%q",
             expectedMessage, err.Error())
     }
