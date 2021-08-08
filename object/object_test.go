@@ -78,7 +78,7 @@ func TestAdd(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got, _ := test.left.Add(test.right); !got.Equal(test.want) {
+        if got, _ := Add(test.left, test.right); !got.Equal(test.want) {
             t.Errorf("input: %s + %s \ngot: %s. \nexpected: %s", test.left, test.right, got, test.want)
         }
     }
@@ -87,7 +87,7 @@ func TestAdd(t *testing.T) {
     point2 := &Touple{1.0, 1.0, 1.0, 1.0}
     expectedMessage := "addition of 2 points is not supported."
 
-    if _, err := point1.Add(point2); err.Error() != expectedMessage {
+    if _, err := Add(point1, point2); err.Error() != expectedMessage {
         t.Errorf("wrong error message. expected=%q, got=%q",
             expectedMessage, err.Error())
     }
@@ -117,7 +117,7 @@ func TestSubtract(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got, _ := test.left.Subtract(test.right); !got.Equal(test.want) {
+        if got, _ := Subtract(test.left, test.right); !got.Equal(test.want) {
             t.Errorf("input: %s - %s \ngot: %s. \nexpected: %s", test.left, test.right, got, test.want)
         }
     }
@@ -126,7 +126,7 @@ func TestSubtract(t *testing.T) {
     point := &Touple{1.0, 1.0, 1.0, 1.0}
     expectedMessage := "can't subtract a point from a vector."
 
-    if _, err := vector.Subtract(point); err.Error() != expectedMessage {
+    if _, err := Subtract(vector, point); err.Error() != expectedMessage {
         t.Errorf("wrong error message. expected=%q, got=%q",
             expectedMessage, err.Error())
     }
