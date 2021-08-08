@@ -27,6 +27,11 @@ func (t *Touple) Magnitude() float64 {
 	return math.Sqrt(math.Pow(t.x, 2) + math.Pow(t.y, 2) + math.Pow(t.z, 2))
 }
 
+func (t *Touple) Normalize() *Touple {
+	mag := t.Magnitude()
+	return &Touple{t.x / mag, t.y / mag, t.z / mag, t.w / mag}
+}
+
 func (t *Touple) String() string {
 	x := strconv.FormatFloat(t.x, 'f', -1, 64)
 	y := strconv.FormatFloat(t.y, 'f', -1, 64)

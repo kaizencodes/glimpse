@@ -221,3 +221,25 @@ func TestMagnitude(t *testing.T) {
         }
     }
 }
+
+func TestNormalize(t *testing.T) {
+    var tests = []struct {
+        input *Touple
+        want  *Touple
+    }{
+        {
+            input: &Touple{4.0, 0.0, 0.0, 0.0},
+            want:  &Touple{1.0, 0.0, 0.0, 0.0},
+        },
+        {
+            input: &Touple{1.0, 2.0, 3.0, 0.0},
+            want:  &Touple{0.2672612419124244, 0.5345224838248488, 0.8017837257372732, 0.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got := test.input.Normalize(); !got.Equal(test.want) {
+            t.Errorf("Normalizing %s \ngot: %s. \nexpected: %s", test.input, got, test.want)
+        }
+    }
+}
