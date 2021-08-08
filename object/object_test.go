@@ -48,8 +48,47 @@ func TestEqual(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := test.left.equal(test.right); got != test.want {
+        if got := test.left.Equal(test.right); got != test.want {
             t.Errorf("expected touples to be equal, but they were not.")
         }
+    }
+}
+
+func TestAdd(t *testing.T) {
+    var tests = []struct {
+        left  *Touple
+        right *Touple
+        want  *Touple
+    }{
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 1.0},
+            right: &Touple{0.0, 1.5, -1.0, 0.0},
+            want:  &Touple{1.0, 2.5, 0.0, 1.0},
+        },
+        {
+            left:  &Touple{-1.0, 1.0, 1.0, 0.0},
+            right: &Touple{-2.0, 1.5, 0.0001, 0.0},
+            want:  &Touple{-3.0, 2.5, 1.0001, 0.0},
+        },
+        {
+            left:  &Touple{1.0, 1.0, 1.0, 0.0},
+            right: &Touple{0.0, 1.5, -1.0, 1.0},
+            want:  &Touple{1.0, 2.5, 0.0, 1.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got, _ := test.left.Add(test.right); !got.Equal(test.want) {
+            t.Errorf("input: %s + %s \ngot: %s. \nexpected: %s", test.left, test.right, got, test.want)
+        }
+    }
+
+    point1 := &Touple{1.0, 1.0, 1.0, 1.0}
+    point2 := &Touple{1.0, 1.0, 1.0, 1.0}
+    expectedMessage := "addition of 2 points is not supported."
+
+    if _, err := point1.Add(point2); err.Error() != expectedMessage {
+        t.Errorf("wrong error message. expected=%q, got=%q",
+            expectedMessage, err.Error())
     }
 }
