@@ -6,63 +6,63 @@ import (
 	"strconv"
 )
 
-type Touple struct {
+type Tuple struct {
 	x, y, z, w float64
 }
 
-func (t *Touple) IsPoint() bool {
+func (t *Tuple) IsPoint() bool {
 	return t.w == 1.0
 }
 
-func (t *Touple) IsVector() bool {
+func (t *Tuple) IsVector() bool {
 	return t.w == 0.0
 }
 
-func (t *Touple) Equal(other *Touple) bool {
+func (t *Tuple) Equal(other *Tuple) bool {
 	return calc.FloatEquals(t.x, other.x) && calc.FloatEquals(t.y, other.y) &&
 		calc.FloatEquals(t.z, other.z) && calc.FloatEquals(t.w, other.w)
 }
 
-func (t *Touple) Magnitude() float64 {
+func (t *Tuple) Magnitude() float64 {
 	return math.Sqrt(math.Pow(t.x, 2) + math.Pow(t.y, 2) + math.Pow(t.z, 2))
 }
 
-func (t *Touple) Normalize() *Touple {
+func (t *Tuple) Normalize() *Tuple {
 	mag := t.Magnitude()
-	return &Touple{t.x / mag, t.y / mag, t.z / mag, t.w / mag}
+	return &Tuple{t.x / mag, t.y / mag, t.z / mag, t.w / mag}
 }
 
-func (t *Touple) String() string {
+func (t *Tuple) String() string {
 	x := strconv.FormatFloat(t.x, 'f', -1, 64)
 	y := strconv.FormatFloat(t.y, 'f', -1, 64)
 	z := strconv.FormatFloat(t.z, 'f', -1, 64)
 	w := strconv.FormatFloat(t.w, 'f', -1, 64)
 
-	return "Touple(x: " + x + ", y: " + y + ", z: " + z + ", w: " + w + ")"
+	return "Tuple(x: " + x + ", y: " + y + ", z: " + z + ", w: " + w + ")"
 }
 
-func Add(a, b *Touple) *Touple {
-	return &Touple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
+func Add(a, b *Tuple) *Tuple {
+	return &Tuple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
 }
 
-func Subtract(a, b *Touple) *Touple {
-	return &Touple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}
+func Subtract(a, b *Tuple) *Tuple {
+	return &Tuple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}
 }
 
-func Negate(t *Touple) *Touple {
-	return &Touple{-t.x, -t.y, -t.z, -t.w}
+func Negate(t *Tuple) *Tuple {
+	return &Tuple{-t.x, -t.y, -t.z, -t.w}
 }
 
-func Multiply(t *Touple, s float64) *Touple {
-	return &Touple{t.x * s, t.y * s, t.z * s, t.w * s}
+func Multiply(t *Tuple, s float64) *Tuple {
+	return &Tuple{t.x * s, t.y * s, t.z * s, t.w * s}
 }
 
-func Dot(a *Touple, b *Touple) float64 {
+func Dot(a *Tuple, b *Tuple) float64 {
 	return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
 }
 
-func Cross(a *Touple, b *Touple) *Touple {
-	return &Touple{
+func Cross(a *Tuple, b *Tuple) *Tuple {
+	return &Tuple{
 		a.y*b.z - a.z*b.y,
 		a.z*b.x - a.x*b.z,
 		a.x*b.y - a.y*b.x,
@@ -70,10 +70,10 @@ func Cross(a *Touple, b *Touple) *Touple {
 	}
 }
 
-func NewVector(x, y, z float64) *Touple {
-	return &Touple{x, y, z, 0.0}
+func NewVector(x, y, z float64) *Tuple {
+	return &Tuple{x, y, z, 0.0}
 }
 
-func NewPoint(x, y, z float64) *Touple {
-	return &Touple{x, y, z, 1.0}
+func NewPoint(x, y, z float64) *Tuple {
+	return &Tuple{x, y, z, 1.0}
 }

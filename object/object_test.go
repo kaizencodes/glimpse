@@ -6,17 +6,17 @@ import (
     "testing"
 )
 
-func TestTouple(t *testing.T) {
+func TestTuple(t *testing.T) {
     var tests = []struct {
-        input *Touple
+        input *Tuple
         want  bool
     }{
         {
-            input: &Touple{4.3, -4.2, 3.1, 1.0},
+            input: &Tuple{4.3, -4.2, 3.1, 1.0},
             want:  true,
         },
         {
-            input: &Touple{-3.3, 3.2, 3.1, 0.0},
+            input: &Tuple{-3.3, 3.2, 3.1, 0.0},
             want:  false,
         },
     }
@@ -46,64 +46,64 @@ func TestNewPoint(t *testing.T) {
 
 func TestEqual(t *testing.T) {
     var tests = []struct {
-        left  *Touple
-        right *Touple
+        left  *Tuple
+        right *Tuple
         want  bool
     }{
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{1.0, 1.0, 1.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{1.0, 1.0, 1.0, 1.0},
             want:  true,
         },
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{0.0, 1.0, 1.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{0.0, 1.0, 1.0, 1.0},
             want:  false,
         },
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{1.0, 0.0, 1.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{1.0, 0.0, 1.0, 1.0},
             want:  false,
         },
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{1.0, 1.0, 0.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{1.0, 1.0, 0.0, 1.0},
             want:  false,
         },
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{1.0, 1.0, 1.0, 0.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{1.0, 1.0, 1.0, 0.0},
             want:  false,
         },
     }
 
     for _, test := range tests {
         if got := test.left.Equal(test.right); got != test.want {
-            t.Errorf("expected touples to be equal, but they were not.")
+            t.Errorf("expected tuples to be equal, but they were not.")
         }
     }
 }
 
 func TestAdd(t *testing.T) {
     var tests = []struct {
-        left  *Touple
-        right *Touple
-        want  *Touple
+        left  *Tuple
+        right *Tuple
+        want  *Tuple
     }{
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{0.0, 1.5, -1.0, 0.0},
-            want:  &Touple{1.0, 2.5, 0.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{0.0, 1.5, -1.0, 0.0},
+            want:  &Tuple{1.0, 2.5, 0.0, 1.0},
         },
         {
-            left:  &Touple{-1.0, 1.0, 1.0, 0.0},
-            right: &Touple{-2.0, 1.5, 0.0001, 0.0},
-            want:  &Touple{-3.0, 2.5, 1.0001, 0.0},
+            left:  &Tuple{-1.0, 1.0, 1.0, 0.0},
+            right: &Tuple{-2.0, 1.5, 0.0001, 0.0},
+            want:  &Tuple{-3.0, 2.5, 1.0001, 0.0},
         },
         {
-            left:  &Touple{1.0, 1.0, 1.0, 0.0},
-            right: &Touple{0.0, 1.5, -1.0, 1.0},
-            want:  &Touple{1.0, 2.5, 0.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 0.0},
+            right: &Tuple{0.0, 1.5, -1.0, 1.0},
+            want:  &Tuple{1.0, 2.5, 0.0, 1.0},
         },
     }
 
@@ -116,24 +116,24 @@ func TestAdd(t *testing.T) {
 
 func TestSubtract(t *testing.T) {
     var tests = []struct {
-        left  *Touple
-        right *Touple
-        want  *Touple
+        left  *Tuple
+        right *Tuple
+        want  *Tuple
     }{
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{0.0, 1.5, -1.0, 0.0},
-            want:  &Touple{1.0, -0.5, 2.0, 1.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{0.0, 1.5, -1.0, 0.0},
+            want:  &Tuple{1.0, -0.5, 2.0, 1.0},
         },
         {
-            left:  &Touple{-1.0, 1.0, 1.0, 0.0},
-            right: &Touple{-2.0, 1.5, 0.0001, 0.0},
-            want:  &Touple{1.0, -0.5, 0.9999, 0.0},
+            left:  &Tuple{-1.0, 1.0, 1.0, 0.0},
+            right: &Tuple{-2.0, 1.5, 0.0001, 0.0},
+            want:  &Tuple{1.0, -0.5, 0.9999, 0.0},
         },
         {
-            left:  &Touple{1.0, 1.0, 1.0, 1.0},
-            right: &Touple{0.0, 1.5, -1.0, 1.0},
-            want:  &Touple{1.0, -0.5, 2.0, 0.0},
+            left:  &Tuple{1.0, 1.0, 1.0, 1.0},
+            right: &Tuple{0.0, 1.5, -1.0, 1.0},
+            want:  &Tuple{1.0, -0.5, 2.0, 0.0},
         },
     }
 
@@ -146,16 +146,16 @@ func TestSubtract(t *testing.T) {
 
 func TestNegate(t *testing.T) {
     var tests = []struct {
-        input *Touple
-        want  *Touple
+        input *Tuple
+        want  *Tuple
     }{
         {
-            input: &Touple{-1.0, 1.0, 1.0, 0.0},
-            want:  &Touple{1.0, -1.0, -1.0, 0.0},
+            input: &Tuple{-1.0, 1.0, 1.0, 0.0},
+            want:  &Tuple{1.0, -1.0, -1.0, 0.0},
         },
         {
-            input: &Touple{-1.345, 3.45, -31.45, 1.0},
-            want:  &Touple{1.345, -3.45, 31.45, -1.0},
+            input: &Tuple{-1.345, 3.45, -31.45, 1.0},
+            want:  &Tuple{1.345, -3.45, 31.45, -1.0},
         },
     }
 
@@ -168,49 +168,49 @@ func TestNegate(t *testing.T) {
 
 func TestMultiply(t *testing.T) {
     var tests = []struct {
-        touple *Touple
+        tuple  *Tuple
         scalar float64
-        want   *Touple
+        want   *Tuple
     }{
         {
-            touple: &Touple{1.0, 1.0, 1.0, 1.0},
+            tuple:  &Tuple{1.0, 1.0, 1.0, 1.0},
             scalar: 1,
-            want:   &Touple{1.0, 1.0, 1.0, 1.0},
+            want:   &Tuple{1.0, 1.0, 1.0, 1.0},
         },
         {
-            touple: &Touple{-2.0, 1.5, 0.5, 0.0},
+            tuple:  &Tuple{-2.0, 1.5, 0.5, 0.0},
             scalar: 0.5,
-            want:   &Touple{-1.0, 0.75, 0.25, 0.0},
+            want:   &Tuple{-1.0, 0.75, 0.25, 0.0},
         },
         {
-            touple: &Touple{-2.0, 1.5, 0.5, 0.0},
+            tuple:  &Tuple{-2.0, 1.5, 0.5, 0.0},
             scalar: 2,
-            want:   &Touple{-4.0, 3, 1.0, 0.0},
+            want:   &Tuple{-4.0, 3, 1.0, 0.0},
         },
     }
 
     for _, test := range tests {
-        if got := Multiply(test.touple, test.scalar); !got.Equal(test.want) {
-            t.Errorf("input: %s + %f \ngot: %s. \nexpected: %s", test.touple, test.scalar, got, test.want)
+        if got := Multiply(test.tuple, test.scalar); !got.Equal(test.want) {
+            t.Errorf("input: %s + %f \ngot: %s. \nexpected: %s", test.tuple, test.scalar, got, test.want)
         }
     }
 }
 
 func TestMagnitude(t *testing.T) {
     var tests = []struct {
-        input *Touple
+        input *Tuple
         want  float64
     }{
         {
-            input: &Touple{0.0, 1.0, 0.0, 0.0},
+            input: &Tuple{0.0, 1.0, 0.0, 0.0},
             want:  1.0,
         },
         {
-            input: &Touple{0.0, 0.0, 1.0, 0.0},
+            input: &Tuple{0.0, 0.0, 1.0, 0.0},
             want:  1.0,
         },
         {
-            input: &Touple{1.0, 2.0, 3.0, 0.0},
+            input: &Tuple{1.0, 2.0, 3.0, 0.0},
             want:  math.Sqrt(14.0),
         },
     }
@@ -224,16 +224,16 @@ func TestMagnitude(t *testing.T) {
 
 func TestNormalize(t *testing.T) {
     var tests = []struct {
-        input *Touple
-        want  *Touple
+        input *Tuple
+        want  *Tuple
     }{
         {
-            input: &Touple{4.0, 0.0, 0.0, 0.0},
-            want:  &Touple{1.0, 0.0, 0.0, 0.0},
+            input: &Tuple{4.0, 0.0, 0.0, 0.0},
+            want:  &Tuple{1.0, 0.0, 0.0, 0.0},
         },
         {
-            input: &Touple{1.0, 2.0, 3.0, 0.0},
-            want:  &Touple{0.2672612419124244, 0.5345224838248488, 0.8017837257372732, 0.0},
+            input: &Tuple{1.0, 2.0, 3.0, 0.0},
+            want:  &Tuple{0.2672612419124244, 0.5345224838248488, 0.8017837257372732, 0.0},
         },
     }
 
@@ -246,13 +246,13 @@ func TestNormalize(t *testing.T) {
 
 func TestDot(t *testing.T) {
     var tests = []struct {
-        left  *Touple
-        right *Touple
+        left  *Tuple
+        right *Tuple
         want  float64
     }{
         {
-            left:  &Touple{1.0, 2.0, 3.0, 0.0},
-            right: &Touple{2.0, 3.0, 4.0, 0.0},
+            left:  &Tuple{1.0, 2.0, 3.0, 0.0},
+            right: &Tuple{2.0, 3.0, 4.0, 0.0},
             want:  20.0,
         },
     }
@@ -266,19 +266,19 @@ func TestDot(t *testing.T) {
 
 func TestCross(t *testing.T) {
     var tests = []struct {
-        left  *Touple
-        right *Touple
-        want  *Touple
+        left  *Tuple
+        right *Tuple
+        want  *Tuple
     }{
         {
-            left:  &Touple{1.0, 2.0, 3.0, 0.0},
-            right: &Touple{2.0, 3.0, 4.0, 0.0},
-            want:  &Touple{-1.0, 2.0, -1.0, 0.0},
+            left:  &Tuple{1.0, 2.0, 3.0, 0.0},
+            right: &Tuple{2.0, 3.0, 4.0, 0.0},
+            want:  &Tuple{-1.0, 2.0, -1.0, 0.0},
         },
         {
-            left:  &Touple{2.0, 3.0, 4.0, 0.0},
-            right: &Touple{1.0, 2.0, 3.0, 0.0},
-            want:  &Touple{1.0, -2.0, 1.0, 0.0},
+            left:  &Tuple{2.0, 3.0, 4.0, 0.0},
+            right: &Tuple{1.0, 2.0, 3.0, 0.0},
+            want:  &Tuple{1.0, -2.0, 1.0, 0.0},
         },
     }
 
