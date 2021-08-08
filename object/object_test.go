@@ -243,3 +243,23 @@ func TestNormalize(t *testing.T) {
         }
     }
 }
+
+func TestDot(t *testing.T) {
+    var tests = []struct {
+        left  *Touple
+        right *Touple
+        want  float64
+    }{
+        {
+            left:  &Touple{1.0, 2.0, 3.0, 0.0},
+            right: &Touple{2.0, 3.0, 4.0, 0.0},
+            want:  20.0,
+        },
+    }
+
+    for _, test := range tests {
+        if got := Dot(test.left, test.right); !calc.FloatEquals(got, test.want) {
+            t.Errorf("Dot product of %s and %s\ngot: %f. \nexpected: %f", test.left, test.right, got, test.want)
+        }
+    }
+}
