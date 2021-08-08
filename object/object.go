@@ -1,7 +1,6 @@
 package object
 
 import (
-	"fmt"
 	"ray_tracer/calc"
 	"strconv"
 )
@@ -32,25 +31,16 @@ func (t *Touple) String() string {
 	return "Touple(x: " + x + ", y: " + y + ", z: " + z + ", w: " + w + ")"
 }
 
-func Add(a, b *Touple) (*Touple, error) {
-	if a.IsPoint() && b.IsPoint() {
-		return nil, fmt.Errorf("addition of 2 points is not supported.")
-	}
-	return &Touple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}, nil
+func Add(a, b *Touple) *Touple {
+	return &Touple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
 }
 
-func Subtract(a, b *Touple) (*Touple, error) {
-	if a.IsVector() && b.IsPoint() {
-		return nil, fmt.Errorf("can't subtract a point from a vector.")
-	}
-	return &Touple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}, nil
+func Subtract(a, b *Touple) *Touple {
+	return &Touple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}
 }
 
-func Negate(t *Touple) (*Touple, error) {
-	if t.IsPoint() {
-		return nil, fmt.Errorf("can't negate a point.")
-	}
-	return &Touple{-t.x, -t.y, -t.z, -t.w}, nil
+func Negate(t *Touple) *Touple {
+	return &Touple{-t.x, -t.y, -t.z, -t.w}
 }
 
 func NewVector(x, y, z float64) *Touple {

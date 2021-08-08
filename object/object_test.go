@@ -104,18 +104,9 @@ func TestAdd(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got, _ := Add(test.left, test.right); !got.Equal(test.want) {
+        if got := Add(test.left, test.right); !got.Equal(test.want) {
             t.Errorf("input: %s + %s \ngot: %s. \nexpected: %s", test.left, test.right, got, test.want)
         }
-    }
-
-    point1 := &Touple{1.0, 1.0, 1.0, 1.0}
-    point2 := &Touple{1.0, 1.0, 1.0, 1.0}
-    expectedMessage := "addition of 2 points is not supported."
-
-    if _, err := Add(point1, point2); err.Error() != expectedMessage {
-        t.Errorf("wrong error message. expected=%q, got=%q",
-            expectedMessage, err.Error())
     }
 }
 
@@ -143,18 +134,9 @@ func TestSubtract(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got, _ := Subtract(test.left, test.right); !got.Equal(test.want) {
+        if got := Subtract(test.left, test.right); !got.Equal(test.want) {
             t.Errorf("input: %s - %s \ngot: %s. \nexpected: %s", test.left, test.right, got, test.want)
         }
-    }
-
-    vector := &Touple{1.0, 1.0, 1.0, 0.0}
-    point := &Touple{1.0, 1.0, 1.0, 1.0}
-    expectedMessage := "can't subtract a point from a vector."
-
-    if _, err := Subtract(vector, point); err.Error() != expectedMessage {
-        t.Errorf("wrong error message. expected=%q, got=%q",
-            expectedMessage, err.Error())
     }
 }
 
@@ -167,19 +149,15 @@ func TestNegate(t *testing.T) {
             input: &Touple{-1.0, 1.0, 1.0, 0.0},
             want:  &Touple{1.0, -1.0, -1.0, 0.0},
         },
+        {
+            input: &Touple{-1.345, 3.45, -31.45, 1.0},
+            want:  &Touple{1.345, -3.45, 31.45, -1.0},
+        },
     }
 
     for _, test := range tests {
-        if got, _ := Negate(test.input); !got.Equal(test.want) {
+        if got := Negate(test.input); !got.Equal(test.want) {
             t.Errorf("Negating: %s\n got: %s. \nexpected: %s", test.input, got, test.want)
         }
-    }
-
-    point := &Touple{1.0, 1.0, 1.0, 1.0}
-    expectedMessage := "can't negate a point."
-
-    if _, err := Negate(point); err.Error() != expectedMessage {
-        t.Errorf("wrong error message. expected=%q, got=%q",
-            expectedMessage, err.Error())
     }
 }
