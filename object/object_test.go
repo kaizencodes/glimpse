@@ -33,3 +33,23 @@ func TestNewPoint(t *testing.T) {
         t.Errorf("expected to get point, got vector")
     }
 }
+
+func TestEqual(t *testing.T) {
+    var tests = []struct {
+        left  *Touple
+        right *Touple
+        want  bool
+    }{
+        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 1.0, 1.0, 1.0}, true},
+        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{0.0, 1.0, 1.0, 1.0}, false},
+        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 0.0, 1.0, 1.0}, false},
+        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 1.0, 0.0, 1.0}, false},
+        {&Touple{1.0, 1.0, 1.0, 1.0}, &Touple{1.0, 1.0, 1.0, 0.0}, false},
+    }
+
+    for _, test := range tests {
+        if got := test.left.equal(test.right); got != test.want {
+            t.Errorf("expected touples to be equal, but they were not.")
+        }
+    }
+}

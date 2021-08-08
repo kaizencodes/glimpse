@@ -1,5 +1,9 @@
 package object
 
+import (
+	"ray_tracer/calc"
+)
+
 type Touple struct {
 	x, y, z, w float64
 }
@@ -10,6 +14,11 @@ func (t *Touple) IsPoint() bool {
 
 func (t *Touple) IsVector() bool {
 	return t.w == 0.0
+}
+
+func (t *Touple) equal(other *Touple) bool {
+	return calc.FloatEquals(t.x, other.x) && calc.FloatEquals(t.y, other.y) &&
+		calc.FloatEquals(t.z, other.z) && calc.FloatEquals(t.w, other.w)
 }
 
 func NewVector(x, y, z float64) *Touple {
