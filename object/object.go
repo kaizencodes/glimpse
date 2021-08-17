@@ -1,6 +1,7 @@
 package object
 
 import (
+	"fmt"
 	"math"
 	"ray_tracer/calc"
 	"strconv"
@@ -16,6 +17,18 @@ func (t *Tuple) IsPoint() bool {
 
 func (t *Tuple) IsVector() bool {
 	return t.w == 0.0
+}
+
+func (t *Tuple) GetX() float64 {
+	return t.x
+}
+
+func (t *Tuple) GetY() float64 {
+	return t.y
+}
+
+func (t *Tuple) GetZ() float64 {
+	return t.z
 }
 
 func (t *Tuple) Equal(other *Tuple) bool {
@@ -38,7 +51,7 @@ func (t *Tuple) String() string {
 	z := strconv.FormatFloat(t.z, 'f', -1, 64)
 	w := strconv.FormatFloat(t.w, 'f', -1, 64)
 
-	return "Tuple(x: " + x + ", y: " + y + ", z: " + z + ", w: " + w + ")"
+	return fmt.Sprintf("Tuple(x: %s, y: %s, z: %s, w: %s)", x, y, z, w)
 }
 
 func Add(a, b *Tuple) *Tuple {
