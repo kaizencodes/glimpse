@@ -2,8 +2,8 @@ package object
 
 import (
 	"fmt"
+	"glimpse/calc"
 	"math"
-	"ray_tracer/calc"
 	"strconv"
 )
 
@@ -62,12 +62,12 @@ func Subtract(a, b *Tuple) *Tuple {
 	return &Tuple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}
 }
 
-func Negate(t *Tuple) *Tuple {
-	return &Tuple{-t.x, -t.y, -t.z, -t.w}
-}
-
 func Multiply(t *Tuple, s float64) *Tuple {
 	return &Tuple{t.x * s, t.y * s, t.z * s, t.w * s}
+}
+
+func Negate(t *Tuple) *Tuple {
+	return &Tuple{-t.x, -t.y, -t.z, -t.w}
 }
 
 func Dot(a *Tuple, b *Tuple) float64 {

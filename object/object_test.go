@@ -1,8 +1,8 @@
 package object
 
 import (
+    "glimpse/calc"
     "math"
-    "ray_tracer/calc"
     "testing"
 )
 
@@ -144,28 +144,6 @@ func TestSubtract(t *testing.T) {
     }
 }
 
-func TestNegate(t *testing.T) {
-    var tests = []struct {
-        input *Tuple
-        want  *Tuple
-    }{
-        {
-            input: &Tuple{-1.0, 1.0, 1.0, 0.0},
-            want:  &Tuple{1.0, -1.0, -1.0, 0.0},
-        },
-        {
-            input: &Tuple{-1.345, 3.45, -31.45, 1.0},
-            want:  &Tuple{1.345, -3.45, 31.45, -1.0},
-        },
-    }
-
-    for _, test := range tests {
-        if got := Negate(test.input); !got.Equal(test.want) {
-            t.Errorf("Negating: %s\n got: %s. \nexpected: %s", test.input, got, test.want)
-        }
-    }
-}
-
 func TestMultiply(t *testing.T) {
     var tests = []struct {
         tuple  *Tuple
@@ -192,6 +170,28 @@ func TestMultiply(t *testing.T) {
     for _, test := range tests {
         if got := Multiply(test.tuple, test.scalar); !got.Equal(test.want) {
             t.Errorf("input: %s + %f \ngot: %s. \nexpected: %s", test.tuple, test.scalar, got, test.want)
+        }
+    }
+}
+
+func TestNegate(t *testing.T) {
+    var tests = []struct {
+        input *Tuple
+        want  *Tuple
+    }{
+        {
+            input: &Tuple{-1.0, 1.0, 1.0, 0.0},
+            want:  &Tuple{1.0, -1.0, -1.0, 0.0},
+        },
+        {
+            input: &Tuple{-1.345, 3.45, -31.45, 1.0},
+            want:  &Tuple{1.345, -3.45, 31.45, -1.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got := Negate(test.input); !got.Equal(test.want) {
+            t.Errorf("Negating: %s\n got: %s. \nexpected: %s", test.input, got, test.want)
         }
     }
 }

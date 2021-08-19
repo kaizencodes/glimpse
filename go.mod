@@ -1,4 +1,4 @@
-module ray_tracer
+module glimpse
 
 go 1.16
 
