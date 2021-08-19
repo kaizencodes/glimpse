@@ -1,4 +1,4 @@
-module github.com/kaizencodes/ray_tracer
+module glimpse
 
 go 1.16
 
