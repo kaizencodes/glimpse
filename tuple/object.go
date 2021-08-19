@@ -1,4 +1,4 @@
-package object
+package tuple
 
 import (
 	"fmt"
