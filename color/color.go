@@ -3,7 +3,6 @@ package color
 import (
 	"fmt"
 	"glimpse/calc"
-	"math"
 	"strconv"
 )
 
@@ -38,13 +37,4 @@ func (c *Color) String() string {
 	b := strconv.FormatFloat(c.B, 'f', -1, 64)
 
 	return fmt.Sprintf("(%s, %s, %s)", r, g, b)
-}
-
-func (c *Color) ConvertToPpm() string {
-	PpmMax := 255.0
-	r := int(math.Min(math.Max(0, c.R*PpmMax), PpmMax))
-	g := int(math.Min(math.Max(0, c.G*PpmMax), PpmMax))
-	b := int(math.Min(math.Max(0, c.B*PpmMax), PpmMax))
-
-	return fmt.Sprintf("%d %d %d ", r, g, b)
 }
