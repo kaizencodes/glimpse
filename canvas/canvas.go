@@ -5,31 +5,24 @@ import (
 	"glimpse/color"
 )
 
-type Canvas struct {
-	pane [][]color.Color
-}
+type Canvas [][]color.Color
 
 const (
 	PpmFormat = "P3"
 	PpmMax    = 255
 )
 
-func NewCanvas(w, h int) *Canvas {
-	c := &Canvas{}
-	c.pane = make([][]color.Color, h)
+func New(w, h int) Canvas {
+	c := make(Canvas, h)
 	for i := 0; i < int(h); i++ {
-		c.pane[i] = make([]color.Color, w)
+		c[i] = make([]color.Color, w)
 	}
 	return c
 }
 
-func (c *Canvas) WritePixel(w, h int, pixel color.Color) {
-	c.pane[h][w] = pixel
-}
-
-func (c *Canvas) ExportToPpm() string {
-	result := fmt.Sprintf("%s\n%d %d\n%d\n", PpmFormat, len(c.pane), len(c.pane[0]), PpmMax)
-	for _, row := range c.pane {
+func (c Canvas) ExportToPpm() string {
+	result := fmt.Sprintf("%s\n%d %d\n%d\n", PpmFormat, len(c), len((c)[0]), PpmMax)
+	for _, row := range c {
 		for _, val := range row {
 			result += val.ConvertToPpm()
 		}
@@ -39,9 +32,10 @@ func (c *Canvas) ExportToPpm() string {
 	return result
 }
 
-func (c *Canvas) String() string {
-	result := ""
-	for _, row := range c.pane {
+func (c Canvas) String() string {
+	var result string
+
+	for _, row := range c {
 		for _, val := range row {
 			result += val.String()
 		}
