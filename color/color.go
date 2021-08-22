@@ -2,39 +2,49 @@ package color
 
 import (
 	"fmt"
-	"ray_tracer/calc"
+	"glimpse/calc"
+	"math"
 	"strconv"
 )
 
 type Color struct {
-	red, green, blue float64
+	R, G, B float64
 }
 
 func Add(a, b *Color) *Color {
-	return &Color{a.red + b.red, a.green + b.green, a.blue + b.blue}
+	return &Color{a.R + b.R, a.G + b.G, a.B + b.B}
 }
 
 func Subtract(a, b *Color) *Color {
-	return &Color{a.red - b.red, a.green - b.green, a.blue - b.blue}
+	return &Color{a.R - b.R, a.G - b.G, a.B - b.B}
 }
 
 func Multiply(c *Color, s float64) *Color {
-	return &Color{c.red * s, c.green * s, c.blue * s}
+	return &Color{c.R * s, c.G * s, c.B * s}
 }
 
 func HadamardProduct(a, b *Color) *Color {
-	return &Color{a.red * b.red, a.green * b.green, a.blue * b.blue}
+	return &Color{a.R * b.R, a.G * b.G, a.B * b.B}
 }
 
 func (c *Color) Equal(other *Color) bool {
-	return calc.FloatEquals(c.red, other.red) && calc.FloatEquals(c.green, other.green) &&
-		calc.FloatEquals(c.blue, other.blue)
+	return calc.FloatEquals(c.R, other.R) && calc.FloatEquals(c.G, other.G) &&
+		calc.FloatEquals(c.B, other.B)
 }
 
 func (c *Color) String() string {
-	r := strconv.FormatFloat(c.red, 'f', -1, 64)
-	g := strconv.FormatFloat(c.green, 'f', -1, 64)
-	b := strconv.FormatFloat(c.blue, 'f', -1, 64)
+	r := strconv.FormatFloat(c.R, 'f', -1, 64)
+	g := strconv.FormatFloat(c.G, 'f', -1, 64)
+	b := strconv.FormatFloat(c.B, 'f', -1, 64)
 
-	return fmt.Sprintf("Color(x: %s, y: %s, z: %s)", r, g, b)
+	return fmt.Sprintf("(%s, %s, %s)", r, g, b)
+}
+
+func (c *Color) ConvertToPpm() string {
+	PpmMax := 255.0
+	r := int(math.Min(math.Max(0, c.R*PpmMax), PpmMax))
+	g := int(math.Min(math.Max(0, c.G*PpmMax), PpmMax))
+	b := int(math.Min(math.Max(0, c.B*PpmMax), PpmMax))
+
+	return fmt.Sprintf("%d %d %d ", r, g, b)
 }
