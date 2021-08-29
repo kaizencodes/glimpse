@@ -6,11 +6,6 @@ import (
 
 type Canvas [][]color.Color
 
-const (
-	PpmFormat = "P3"
-	PpmMax    = 255
-)
-
 func New(w, h int) Canvas {
 	c := make(Canvas, h)
 	for i := 0; i < int(h); i++ {

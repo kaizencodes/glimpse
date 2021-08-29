@@ -4,19 +4,19 @@ import "testing"
 
 func TestAdd(t *testing.T) {
     var tests = []struct {
-        left  *Color
-        right *Color
-        want  *Color
+        left  Color
+        right Color
+        want  Color
     }{
         {
-            left:  &Color{1.0, 1.0, 1.0},
-            right: &Color{0.0, 1.5, -1.0},
-            want:  &Color{1.0, 2.5, 0.0},
+            left:  Color{1.0, 1.0, 1.0},
+            right: Color{0.0, 1.5, -1.0},
+            want:  Color{1.0, 2.5, 0.0},
         },
         {
-            left:  &Color{-1.0, 1.0, 1.0},
-            right: &Color{-2.0, 1.5, 0.0001},
-            want:  &Color{-3.0, 2.5, 1.0001},
+            left:  Color{-1.0, 1.0, 1.0},
+            right: Color{-2.0, 1.5, 0.0001},
+            want:  Color{-3.0, 2.5, 1.0001},
         },
     }
 
@@ -29,19 +29,19 @@ func TestAdd(t *testing.T) {
 
 func TestSubtract(t *testing.T) {
     var tests = []struct {
-        left  *Color
-        right *Color
-        want  *Color
+        left  Color
+        right Color
+        want  Color
     }{
         {
-            left:  &Color{1.0, 1.0, 1.0},
-            right: &Color{0.0, 1.5, -1.0},
-            want:  &Color{1.0, -0.5, 2.0},
+            left:  Color{1.0, 1.0, 1.0},
+            right: Color{0.0, 1.5, -1.0},
+            want:  Color{1.0, -0.5, 2.0},
         },
         {
-            left:  &Color{-1.0, 1.0, 1.0},
-            right: &Color{-2.0, 1.5, 0.0001},
-            want:  &Color{1.0, -0.5, 0.9999},
+            left:  Color{-1.0, 1.0, 1.0},
+            right: Color{-2.0, 1.5, 0.0001},
+            want:  Color{1.0, -0.5, 0.9999},
         },
     }
 
@@ -54,24 +54,24 @@ func TestSubtract(t *testing.T) {
 
 func TestMultiply(t *testing.T) {
     var tests = []struct {
-        tuple  *Color
+        tuple  Color
         scalar float64
-        want   *Color
+        want   Color
     }{
         {
-            tuple:  &Color{1.0, 1.0, 1.0},
+            tuple:  Color{1.0, 1.0, 1.0},
             scalar: 1,
-            want:   &Color{1.0, 1.0, 1.0},
+            want:   Color{1.0, 1.0, 1.0},
         },
         {
-            tuple:  &Color{-2.0, 1.5, 0.5},
+            tuple:  Color{-2.0, 1.5, 0.5},
             scalar: 0.5,
-            want:   &Color{-1.0, 0.75, 0.25},
+            want:   Color{-1.0, 0.75, 0.25},
         },
         {
-            tuple:  &Color{-2.0, 1.5, 0.5},
+            tuple:  Color{-2.0, 1.5, 0.5},
             scalar: 2,
-            want:   &Color{-4.0, 3, 1.0},
+            want:   Color{-4.0, 3, 1.0},
         },
     }
 
@@ -84,14 +84,14 @@ func TestMultiply(t *testing.T) {
 
 func TestHadamardProduct(t *testing.T) {
     var tests = []struct {
-        left  *Color
-        right *Color
-        want  *Color
+        left  Color
+        right Color
+        want  Color
     }{
         {
-            left:  &Color{1.0, 0.9, 0.5},
-            right: &Color{0.0, 0.5, 0.5},
-            want:  &Color{0.0, 0.45, 0.25},
+            left:  Color{1.0, 0.9, 0.5},
+            right: Color{0.0, 0.5, 0.5},
+            want:  Color{0.0, 0.45, 0.25},
         },
     }
 
