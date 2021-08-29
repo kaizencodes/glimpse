@@ -63,7 +63,7 @@ func dot(a, b Matrix, row, col int) Element {
 	return sum
 }
 
-func Transpose(a Matrix) Matrix {
+func (a Matrix) Transpose() Matrix {
 	new_mat := New(len(a))
 	for n := 0; n < len(a)-1/2; n++ {
 		for m := 0; m < len(a[n])-1/2; m++ {
@@ -73,19 +73,19 @@ func Transpose(a Matrix) Matrix {
 	return new_mat
 }
 
-func Determinant(a Matrix) Element {
+func (a Matrix) Determinant() Element {
 	if len(a) == 2 {
 		return Element(a[0][0]*a[1][1] - a[0][1]*a[1][0])
 	} else {
 		var deter Element
 		for n, elem := range a[0] {
-			deter += elem * Cofactor(a, 0, n)
+			deter += elem * a.Cofactor(0, n)
 		}
 		return deter
 	}
 }
 
-func Submatrix(a Matrix, col, row int) Matrix {
+func (a Matrix) Submatrix(col, row int) Matrix {
 	new_mat := New(len(a))
 	for n, col := range a {
 		copy(new_mat[n], col)
@@ -99,12 +99,12 @@ func Submatrix(a Matrix, col, row int) Matrix {
 	return new_mat
 }
 
-func Minor(a Matrix, col, row int) Element {
-	return Determinant(Submatrix(a, col, row))
+func (a Matrix) Minor(col, row int) Element {
+	return a.Submatrix(col, row).Determinant()
 }
 
-func Cofactor(a Matrix, col, row int) Element {
-	deter := Minor(a, col, row)
+func (a Matrix) Cofactor(col, row int) Element {
+	deter := a.Minor(col, row)
 	if (col+row)%2 != 0 {
 		deter *= -1
 	}
@@ -112,8 +112,8 @@ func Cofactor(a Matrix, col, row int) Element {
 	return deter
 }
 
-func Inverse(a Matrix) (Matrix, error) {
-	det := Determinant(a)
+func (a Matrix) Inverse() (Matrix, error) {
+	det := a.Determinant()
 	if det == 0 {
 		return nil, fmt.Errorf("noninvertible matrix, determinant is zero")
 	}
@@ -121,7 +121,7 @@ func Inverse(a Matrix) (Matrix, error) {
 	inverse := New(len(a))
 	for n, col := range inverse {
 		for m, _ := range col {
-			inverse[m][n] = Cofactor(a, n, m) / det
+			inverse[m][n] = a.Cofactor(n, m) / det
 		}
 	}
 	return inverse, nil

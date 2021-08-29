@@ -141,7 +141,7 @@ func TestTranspose(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Transpose(test.a); got.String() != test.want.String() {
+        if got := test.a.Transpose(); got.String() != test.want.String() {
             t.Errorf("matrix transposition,\na:\n%s\ngot:\n%s\nexpected: \n%s", test.a, got, test.want)
         }
     }
@@ -179,7 +179,7 @@ func TestDeterminant(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Determinant(test.a); got != test.want {
+        if got := test.a.Determinant(); got != test.want {
             t.Errorf("matrix determinant,\na:\n%s\ngot: %f\nexpected: %f", test.a, got, test.want)
         }
     }
@@ -223,7 +223,7 @@ func TestSubmatrix(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Submatrix(test.a, test.col, test.row); got.String() != test.want.String() {
+        if got := test.a.Submatrix(test.col, test.row); got.String() != test.want.String() {
             t.Errorf("submatrix,\na:\n%s\n col: %d\n row: %d\ngot:\n%s\nexpected: \n%s", test.a, test.col, test.row, got, test.want)
         }
     }
@@ -259,7 +259,7 @@ func TestMinor(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Minor(test.a, test.col, test.row); got != test.want {
+        if got := test.a.Minor(test.col, test.row); got != test.want {
             t.Errorf("Minor,\na:\n%s\n col: %d\n row: %d\ngot: %f\nexpected: %f", test.a, test.col, test.row, got, test.want)
         }
     }
@@ -295,7 +295,7 @@ func TestCofactor(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Cofactor(test.a, test.col, test.row); got != test.want {
+        if got := test.a.Cofactor(test.col, test.row); got != test.want {
             t.Errorf("Cofactor,\na:\n%s\n col: %d\n row: %d\ngot: %f\nexpected: %f", test.a, test.col, test.row, got, test.want)
         }
     }
@@ -351,7 +351,7 @@ func TestInverse(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got, _ := Inverse(test.a); got.String() != test.want.String() {
+        if got, _ := test.a.Inverse(); got.String() != test.want.String() {
             t.Errorf("matrix inverse,\na:\n%s\ngot:\n%s\nexpected: \n%s", test.a, got, test.want)
         }
     }
@@ -363,7 +363,7 @@ func TestInverse(t *testing.T) {
         []Element{0, 0, 0, 0},
     }
 
-    if _, error := Inverse(non_invertible); error == nil {
+    if _, error := non_invertible.Inverse(); error == nil {
         t.Errorf("Should return non invertible matrix error")
     }
 }
