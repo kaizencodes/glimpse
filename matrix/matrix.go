@@ -5,14 +5,19 @@ import (
 	"strconv"
 )
 
-type Matrix [][]float64
+type Element float64
+type Matrix [][]Element
 
 func New(size int) Matrix {
 	m := make(Matrix, size)
 	for i := 0; i < int(size); i++ {
-		m[i] = make([]float64, size)
+		m[i] = make([]Element, size)
 	}
 	return m
+}
+
+func (e Element) String() string {
+	return strconv.FormatFloat(float64(e), 'f', -1, 64)
 }
 
 func (m Matrix) String() string {
@@ -20,7 +25,7 @@ func (m Matrix) String() string {
 
 	for _, row := range m {
 		for _, val := range row {
-			result += fmt.Sprintf("%s, ", strconv.FormatFloat(val, 'f', -1, 64))
+			result += fmt.Sprintf("%s, ", val)
 		}
 		result += string('\n')
 	}
@@ -49,8 +54,8 @@ func Multiply(a, b Matrix) (Matrix, error) {
 	return new_mat, nil
 }
 
-func dot(a, b Matrix, row, col int) float64 {
-	var sum float64
+func dot(a, b Matrix, row, col int) Element {
+	var sum Element
 	for i, _ := range a {
 		sum += a[row][i] * b[i][col]
 	}
@@ -68,11 +73,11 @@ func Transpose(a Matrix) Matrix {
 	return new_mat
 }
 
-func Determinant(a Matrix) float64 {
+func Determinant(a Matrix) Element {
 	if len(a) == 2 {
-		return a[0][0]*a[1][1] - a[0][1]*a[1][0]
+		return Element(a[0][0]*a[1][1] - a[0][1]*a[1][0])
 	} else {
-		deter := 0.0
+		var deter Element
 		for n, elem := range a[0] {
 			deter += elem * Cofactor(a, 0, n)
 		}
@@ -94,11 +99,11 @@ func Submatrix(a Matrix, col, row int) Matrix {
 	return new_mat
 }
 
-func Minor(a Matrix, col, row int) float64 {
+func Minor(a Matrix, col, row int) Element {
 	return Determinant(Submatrix(a, col, row))
 }
 
-func Cofactor(a Matrix, col, row int) float64 {
+func Cofactor(a Matrix, col, row int) Element {
 	deter := Minor(a, col, row)
 	if (col+row)%2 != 0 {
 		deter *= -1
