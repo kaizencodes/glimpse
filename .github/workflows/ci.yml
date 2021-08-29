@@ -1,8 +1,6 @@
 name: CI
 
-on:
-  push:
-    branches: [ master ]
+on: [push]
 
 jobs:
   build:
@@ -21,10 +19,6 @@ jobs:
     # - name: Build
     #   run: go build .
 
-    - name: Test With Coverage
+    - name: Test
       run: go test -gcflags=-l -v ./...
 
-    - name: Run Vet & Lint
-      run: |
-        go vet ./...
-        golint -set_exit_status=1 ./...
