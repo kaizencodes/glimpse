@@ -57,3 +57,13 @@ func dot(a, b Matrix, row, col int) float64 {
 
 	return sum
 }
+
+func Transpose(a Matrix) Matrix {
+	new_mat := New(len(a))
+	for n := 0; n < len(a)-1/2; n++ {
+		for m := 0; m < len(a[n])-1/2; m++ {
+			new_mat[n][m], new_mat[m][n] = a[m][n], a[n][m]
+		}
+	}
+	return new_mat
+}

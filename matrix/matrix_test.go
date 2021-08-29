@@ -105,3 +105,44 @@ func TestInvalidMultiply(t *testing.T) {
     }
 }
 
+func TestTranspose(t *testing.T) {
+    var tests = []struct {
+        a    Matrix
+        want Matrix
+    }{
+        {
+            a: Matrix{
+                []float64{0, 9, 3, 0},
+                []float64{9, 6, 0, 8},
+                []float64{1, 8, 2, 3},
+                []float64{0, 0, 5, 4},
+            },
+            want: Matrix{
+                []float64{0, 9, 1, 0},
+                []float64{9, 6, 8, 0},
+                []float64{3, 0, 2, 5},
+                []float64{0, 8, 3, 4},
+            },
+        },
+        {
+            a: Matrix{
+                []float64{1, 0, 0, 0},
+                []float64{0, 1, 0, 0},
+                []float64{0, 0, 1, 0},
+                []float64{0, 0, 0, 1},
+            },
+            want: Matrix{
+                []float64{1, 0, 0, 0},
+                []float64{0, 1, 0, 0},
+                []float64{0, 0, 1, 0},
+                []float64{0, 0, 0, 1},
+            },
+        },
+    }
+
+    for _, test := range tests {
+        if got := Transpose(test.a); got.String() != test.want.String() {
+            t.Errorf("matrix transposition,\na:\n%s\ngot:\n%s\nexpected: \n%s", test.a, got, test.want)
+        }
+    }
+}
