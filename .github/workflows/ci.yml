@@ -18,8 +18,8 @@ jobs:
       run: |
         go version
         go get -u golang.org/x/lint/golint
-    - name: Build
-      run: go build .
+    # - name: Build
+    #   run: go build .
 
     - name: Test With Coverage
       run: go test -gcflags=-l -v ./...
