@@ -106,3 +106,18 @@ func Cofactor(a Matrix, col, row int) float64 {
 
 	return deter
 }
+
+func Inverse(a Matrix) (Matrix, error) {
+	det := Determinant(a)
+	if det == 0 {
+		return nil, fmt.Errorf("noninvertible matrix, determinant is zero")
+	}
+
+	inverse := New(len(a))
+	for n, col := range inverse {
+		for m, _ := range col {
+			inverse[m][n] = Cofactor(a, n, m) / det
+		}
+	}
+	return inverse, nil
+}
