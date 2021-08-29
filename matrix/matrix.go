@@ -34,3 +34,26 @@ func NewIdentity(size int) Matrix {
 	}
 	return identity
 }
+
+func Multiply(a, b Matrix) (Matrix, error) {
+	if len(a) != len(b) {
+		return nil, fmt.Errorf("incompatible matrices: len: %d, %d.", len(a), len(b))
+	}
+
+	new_mat := New(len(a))
+	for n, row := range new_mat {
+		for m, _ := range row {
+			new_mat[n][m] = dot(a, b, n, m)
+		}
+	}
+	return new_mat, nil
+}
+
+func dot(a, b Matrix, row, col int) float64 {
+	var sum float64
+	for i, _ := range a {
+		sum += a[row][i] * b[i][col]
+	}
+
+	return sum
+}
