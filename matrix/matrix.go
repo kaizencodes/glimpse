@@ -67,3 +67,42 @@ func Transpose(a Matrix) Matrix {
 	}
 	return new_mat
 }
+
+func Determinant(a Matrix) float64 {
+	if len(a) == 2 {
+		return a[0][0]*a[1][1] - a[0][1]*a[1][0]
+	} else {
+		deter := 0.0
+		for n, elem := range a[0] {
+			deter += elem * Cofactor(a, 0, n)
+		}
+		return deter
+	}
+}
+
+func Submatrix(a Matrix, col, row int) Matrix {
+	new_mat := New(len(a))
+	for n, col := range a {
+		copy(new_mat[n], col)
+	}
+
+	new_mat = append(new_mat[:col], new_mat[col+1:]...)
+	for n := 0; n < len(new_mat); n++ {
+		new_mat[n] = append(new_mat[n][:row], new_mat[n][row+1:]...)
+	}
+
+	return new_mat
+}
+
+func Minor(a Matrix, col, row int) float64 {
+	return Determinant(Submatrix(a, col, row))
+}
+
+func Cofactor(a Matrix, col, row int) float64 {
+	deter := Minor(a, col, row)
+	if (col+row)%2 != 0 {
+		deter *= -1
+	}
+
+	return deter
+}

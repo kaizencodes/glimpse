@@ -146,3 +146,157 @@ func TestTranspose(t *testing.T) {
         }
     }
 }
+
+func TestDeterminant(t *testing.T) {
+    var tests = []struct {
+        a    Matrix
+        want float64
+    }{
+        {
+            a: Matrix{
+                []float64{1, 5},
+                []float64{-3, 2},
+            },
+            want: 17,
+        },
+        {
+            a: Matrix{
+                []float64{1, 2, 6},
+                []float64{-5, 8, -4},
+                []float64{2, 6, 4},
+            },
+            want: -196,
+        },
+        {
+            a: Matrix{
+                []float64{-2, -8, 3, 5},
+                []float64{-3, 1, 7, 3},
+                []float64{1, 2, -9, 6},
+                []float64{-6, 7, 7, -9},
+            },
+            want: -4071,
+        },
+    }
+
+    for _, test := range tests {
+        if got := Determinant(test.a); got != test.want {
+            t.Errorf("matrix determinant,\na:\n%s\ngot: %f\nexpected: %f", test.a, got, test.want)
+        }
+    }
+}
+
+func TestSubmatrix(t *testing.T) {
+    var tests = []struct {
+        a    Matrix
+        col  int
+        row  int
+        want Matrix
+    }{
+        {
+            a: Matrix{
+                []float64{1, 5, 0},
+                []float64{-3, 2, 7},
+                []float64{0, 6, -3},
+            },
+            col: 0,
+            row: 2,
+            want: Matrix{
+                []float64{-3, 2},
+                []float64{0, 6},
+            },
+        },
+        {
+            a: Matrix{
+                []float64{-6, 1, 1, 6},
+                []float64{-8, 5, 8, 6},
+                []float64{-1, 0, 8, 2},
+                []float64{-7, 1, -1, 1},
+            },
+            col: 2,
+            row: 1,
+            want: Matrix{
+                []float64{-6, 1, 6},
+                []float64{-8, 8, 6},
+                []float64{-7, -1, 1},
+            },
+        },
+    }
+
+    for _, test := range tests {
+        if got := Submatrix(test.a, test.col, test.row); got.String() != test.want.String() {
+            t.Errorf("submatrix,\na:\n%s\n col: %d\n row: %d\ngot:\n%s\nexpected: \n%s", test.a, test.col, test.row, got, test.want)
+        }
+    }
+}
+
+func TestMinor(t *testing.T) {
+    var tests = []struct {
+        a    Matrix
+        col  int
+        row  int
+        want float64
+    }{
+        {
+            a: Matrix{
+                []float64{3, 5, 0},
+                []float64{2, -1, -7},
+                []float64{6, -1, 5},
+            },
+            col:  1,
+            row:  0,
+            want: 25,
+        },
+        {
+            a: Matrix{
+                []float64{3, 5, 0},
+                []float64{2, -1, -7},
+                []float64{6, -1, 5},
+            },
+            col:  0,
+            row:  2,
+            want: 4,
+        },
+    }
+
+    for _, test := range tests {
+        if got := Minor(test.a, test.col, test.row); got != test.want {
+            t.Errorf("Minor,\na:\n%s\n col: %d\n row: %d\ngot: %f\nexpected: %f", test.a, test.col, test.row, got, test.want)
+        }
+    }
+}
+
+func TestCofactor(t *testing.T) {
+    var tests = []struct {
+        a    Matrix
+        col  int
+        row  int
+        want float64
+    }{
+        {
+            a: Matrix{
+                []float64{3, 5, 0},
+                []float64{2, -1, -7},
+                []float64{6, -1, 5},
+            },
+            col:  0,
+            row:  2,
+            want: 4,
+        },
+        {
+            a: Matrix{
+                []float64{3, 5, 0},
+                []float64{2, -1, -7},
+                []float64{6, -1, 5},
+            },
+            col:  1,
+            row:  0,
+            want: -25,
+        },
+    }
+
+    for _, test := range tests {
+        if got := Cofactor(test.a, test.col, test.row); got != test.want {
+            t.Errorf("Cofactor,\na:\n%s\n col: %d\n row: %d\ngot: %f\nexpected: %f", test.a, test.col, test.row, got, test.want)
+        }
+    }
+}
