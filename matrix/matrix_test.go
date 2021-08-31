@@ -6,22 +6,22 @@ import (
 
 func TestNew(t *testing.T) {
     var tests = []struct {
-        s    int
+        n, m int
         want Matrix
     }{
         {
-            s: 3,
+            n: 3, m: 2,
             want: Matrix{
-                []Element{0, 0, 0},
-                []Element{0, 0, 0},
-                []Element{0, 0, 0},
+                []Element{0, 0},
+                []Element{0, 0},
+                []Element{0, 0},
             },
         },
     }
 
     for _, test := range tests {
-        if got := New(test.s); got.String() != test.want.String() {
-            t.Errorf("matrix size:%d, got: \n%s. \nexpected: \n%s", test.s, got, test.want)
+        if got := New(test.n, test.m); got.String() != test.want.String() {
+            t.Errorf("matrix size:%d, %d. got: \n%s. \nexpected: \n%s", test.n, test.m, got, test.want)
         }
     }
 }
@@ -69,6 +69,21 @@ func TestMultiply(t *testing.T) {
                 []Element{6, 12, 18},
                 []Element{15, 30, 45},
                 []Element{24, 48, 72},
+            },
+        },
+        {
+            a: Matrix{
+                []Element{1, 2, 3},
+                []Element{4, 5, 6},
+            },
+            b: Matrix{
+                []Element{1, 2},
+                []Element{1, 2},
+                []Element{1, 2},
+            },
+            want: Matrix{
+                []Element{6, 12},
+                []Element{15, 30},
             },
         },
     }
