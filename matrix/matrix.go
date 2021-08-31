@@ -64,13 +64,13 @@ func dot(a, b Matrix, row, col int) Element {
 }
 
 func (a Matrix) Transpose() Matrix {
-	new_mat := New(len(a), len(a[0]))
-	for n := 0; n < len(a)-1/2; n++ {
-		for m := 0; m < len(a[n])-1/2; m++ {
-			new_mat[n][m], new_mat[m][n] = a[m][n], a[n][m]
+	mat := New(len(a[0]), len(a))
+	for n := 0; n < len(mat); n++ {
+		for m := 0; m < len(mat[0]); m++ {
+			mat[n][m] = a[m][n]
 		}
 	}
-	return new_mat
+	return mat
 }
 
 func (a Matrix) Determinant() Element {

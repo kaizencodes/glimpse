@@ -153,6 +153,29 @@ func TestTranspose(t *testing.T) {
                 []Element{0, 0, 0, 1},
             },
         },
+        {
+            a: Matrix{
+                []Element{1, 7},
+                []Element{9, 6},
+                []Element{4, 8},
+                []Element{2, 3},
+            },
+            want: Matrix{
+                []Element{1, 9, 4, 2},
+                []Element{7, 6, 8, 3},
+            },
+        },
+        {
+            a: Matrix{
+                []Element{1, 9, 4, 2},
+            },
+            want: Matrix{
+                []Element{1},
+                []Element{9},
+                []Element{4},
+                []Element{2},
+            },
+        },
     }
 
     for _, test := range tests {
