@@ -2,22 +2,22 @@ package matrix
 
 import (
 	"fmt"
+	"glimpse/tuple"
 	"strconv"
 )
 
-type Element float64
-type Matrix [][]Element
+type Matrix [][]float64
+
+type Multiplicable interface {
+	fmt.Stringer
+}
 
 func New(n, m int) Matrix {
 	mat := make(Matrix, n)
 	for i := 0; i < int(n); i++ {
-		mat[i] = make([]Element, m)
+		mat[i] = make([]float64, m)
 	}
 	return mat
-}
-
-func (e Element) String() string {
-	return strconv.FormatFloat(float64(e), 'f', -1, 64)
 }
 
 func (m Matrix) String() string {
@@ -25,7 +25,7 @@ func (m Matrix) String() string {
 
 	for _, row := range m {
 		for _, val := range row {
-			result += fmt.Sprintf("%s, ", val)
+			result += strconv.FormatFloat(val, 'f', -1, 64)
 		}
 		result += string('\n')
 	}
@@ -40,7 +40,29 @@ func NewIdentity(size int) Matrix {
 	return identity
 }
 
-func Multiply(a, b Matrix) (Matrix, error) {
+func Multiply(a Matrix, b Multiplicable) (Multiplicable, error) {
+	switch b := b.(type) {
+	case Matrix:
+		return multiply_matrices(a, b)
+
+	case tuple.Tuple:
+		mat := New(4, 1)
+		for i, v := range b.ToSlice() {
+			mat[i][0] = float64(v)
+		}
+		mat, err := multiply_matrices(a, mat)
+		if err != nil {
+			return nil, err
+		}
+		mat = mat.Transpose()
+		return tuple.Tuple{mat[0][0], mat[0][1], mat[0][2], mat[0][3]}, nil
+
+	default:
+		return nil, fmt.Errorf("incompatible type for matrix multiplication: %T", b)
+	}
+}
+
+func multiply_matrices(a, b Matrix) (Matrix, error) {
 	if len(a[0]) != len(b) {
 		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d.", len(a[0]), len(b))
 	}
@@ -54,8 +76,8 @@ func Multiply(a, b Matrix) (Matrix, error) {
 	return new_mat, nil
 }
 
-func dot(a, b Matrix, row, col int) Element {
-	var sum Element
+func dot(a, b Matrix, row, col int) float64 {
+	var sum float64
 	for i, _ := range a[0] {
 		sum += a[row][i] * b[i][col]
 	}
@@ -73,11 +95,11 @@ func (a Matrix) Transpose() Matrix {
 	return mat
 }
 
-func (a Matrix) Determinant() Element {
+func (a Matrix) Determinant() float64 {
 	if len(a) == 2 {
-		return Element(a[0][0]*a[1][1] - a[0][1]*a[1][0])
+		return float64(a[0][0]*a[1][1] - a[0][1]*a[1][0])
 	} else {
-		var deter Element
+		var deter float64
 		for n, elem := range a[0] {
 			deter += elem * a.Cofactor(0, n)
 		}
@@ -99,11 +121,11 @@ func (a Matrix) Submatrix(col, row int) Matrix {
 	return new_mat
 }
 
-func (a Matrix) Minor(col, row int) Element {
+func (a Matrix) Minor(col, row int) float64 {
 	return a.Submatrix(col, row).Determinant()
 }
 
-func (a Matrix) Cofactor(col, row int) Element {
+func (a Matrix) Cofactor(col, row int) float64 {
 	deter := a.Minor(col, row)
 	if (col+row)%2 != 0 {
 		deter *= -1
