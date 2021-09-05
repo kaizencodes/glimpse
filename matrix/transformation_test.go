@@ -2,6 +2,7 @@ package matrix
 
 import (
     "glimpse/tuple"
+    "math"
     "testing"
 )
 
@@ -52,6 +53,87 @@ func TestScale(t *testing.T) {
     want = tuple.Tuple{-8, 18, 32, 0}
     if got, _ := Scale(vector, x, y, z); got.String() != want.String() {
         t.Errorf("vector scaling(%f, %f, %f),\na:\n%s\n\ngot:\n%s", x, y, z, vector, got)
+    }
+
+}
+
+func TestRotateX(t *testing.T) {
+    point := tuple.Tuple{0, 1, 0, 1}
+    r := math.Pi / 2
+    want := tuple.Tuple{0, 0.00000000000000006123233995736757, 1, 1}
+
+    if got, _ := RotateX(point, r); got.String() != want.String() {
+        t.Errorf("rotating(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+    r = math.Pi / 4
+    want = tuple.Tuple{0, 0.7071067811865476, 0.7071067811865475, 1}
+
+    if got, _ := RotateX(point, r); got.String() != want.String() {
+        t.Errorf("rotatingX(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+    inv, err := rotation_x_matrix(r).Inverse()
+    if err != nil {
+        t.Error(err)
+    }
+    want = tuple.Tuple{0, 0.7071067811865476, -0.7071067811865475, 1}
+    if got, _ := Multiply(inv, point); got.String() != want.String() {
+        t.Errorf("inverse rotatingX(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+}
+
+func TestRotateY(t *testing.T) {
+    point := tuple.Tuple{0, 0, 1, 1}
+    r := math.Pi / 2
+    want := tuple.Tuple{1, 0, 0.00000000000000006123233995736757, 1}
+
+    if got, _ := RotateY(point, r); got.String() != want.String() {
+        t.Errorf("rotating(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+    r = math.Pi / 4
+    want = tuple.Tuple{0.7071067811865475, 0, 0.7071067811865476, 1}
+
+    if got, _ := RotateY(point, r); got.String() != want.String() {
+        t.Errorf("rotatingY(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+    inv, err := rotation_y_matrix(r).Inverse()
+    if err != nil {
+        t.Error(err)
+    }
+    want = tuple.Tuple{-0.7071067811865475, 0, 0.7071067811865476, 1}
+    if got, _ := Multiply(inv, point); got.String() != want.String() {
+        t.Errorf("inverse rotatingY(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+}
+
+func TestRotateZ(t *testing.T) {
+    point := tuple.Tuple{0, 1, 0, 1}
+    r := math.Pi / 2
+    want := tuple.Tuple{-1, 0.00000000000000006123233995736757, 0, 1}
+
+    if got, _ := RotateZ(point, r); got.String() != want.String() {
+        t.Errorf("rotating(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+    r = math.Pi / 4
+    want = tuple.Tuple{-0.7071067811865475, 0.7071067811865476, 0, 1}
+
+    if got, _ := RotateZ(point, r); got.String() != want.String() {
+        t.Errorf("rotatingZ(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
+    }
+
+    inv, err := rotation_z_matrix(r).Inverse()
+    if err != nil {
+        t.Error(err)
+    }
+    want = tuple.Tuple{0.7071067811865475, 0.7071067811865476, 0, 1}
+    if got, _ := Multiply(inv, point); got.String() != want.String() {
+        t.Errorf("inverse rotatingZ(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
     }
 
 }
