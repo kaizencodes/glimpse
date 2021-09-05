@@ -2,15 +2,14 @@ package matrix
 
 import (
 	"fmt"
-	"glimpse/tuple"
 	"strconv"
 )
 
 type Matrix [][]float64
 
-type Transformable interface {
-	fmt.Stringer
-}
+// type Transformable interface {
+// 	fmt.Stringer
+// }
 
 func New(n, m int) Matrix {
 	mat := make(Matrix, n)
@@ -40,29 +39,7 @@ func NewIdentity(size int) Matrix {
 	return identity
 }
 
-func Multiply(a Matrix, b Transformable) (Transformable, error) {
-	switch b := b.(type) {
-	case Matrix:
-		return multiply_matrices(a, b)
-
-	case tuple.Tuple:
-		mat := New(4, 1)
-		for i, v := range b.ToSlice() {
-			mat[i][0] = float64(v)
-		}
-		mat, err := multiply_matrices(a, mat)
-		if err != nil {
-			return nil, err
-		}
-		mat = mat.Transpose()
-		return tuple.Tuple{mat[0][0], mat[0][1], mat[0][2], mat[0][3]}, nil
-
-	default:
-		return nil, fmt.Errorf("incompatible type for matrix multiplication: %T", b)
-	}
-}
-
-func multiply_matrices(a, b Matrix) (Matrix, error) {
+func Multiply(a, b Matrix) (Matrix, error) {
 	if len(a[0]) != len(b) {
 		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d.", len(a[0]), len(b))
 	}

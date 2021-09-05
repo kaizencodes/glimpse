@@ -1,7 +1,6 @@
 package matrix
 
 import (
-    "glimpse/tuple"
     "testing"
 )
 
@@ -52,8 +51,8 @@ func TestNewIdentity(t *testing.T) {
 func TestMultiply(t *testing.T) {
     var tests = []struct {
         a    Matrix
-        b    Transformable
-        want Transformable
+        b    Matrix
+        want Matrix
     }{
         {
             a: Matrix{
@@ -86,16 +85,6 @@ func TestMultiply(t *testing.T) {
                 []float64{6, 12},
                 []float64{15, 30},
             },
-        },
-        {
-            a: Matrix{
-                []float64{1, 2, 3, 4},
-                []float64{2, 4, 4, 2},
-                []float64{8, 6, 4, 1},
-                []float64{0, 0, 0, 1},
-            },
-            b:    tuple.Tuple{1, 2, 3, 1},
-            want: tuple.Tuple{18, 24, 33, 1},
         },
     }
 

@@ -2,6 +2,7 @@ package tuple
 
 import (
     "glimpse/calc"
+    "glimpse/matrix"
     "math"
     "testing"
 )
@@ -146,6 +147,32 @@ func TestSubtract(t *testing.T) {
 
 func TestMultiply(t *testing.T) {
     var tests = []struct {
+        a    matrix.Matrix
+        b    Tuple
+        want Tuple
+    }{
+        {
+            a: matrix.Matrix{
+                []float64{1, 2, 3, 4},
+                []float64{2, 4, 4, 2},
+                []float64{8, 6, 4, 1},
+                []float64{0, 0, 0, 1},
+            },
+            b:    Tuple{1, 2, 3, 1},
+            want: Tuple{18, 24, 33, 1},
+        },
+    }
+
+    for _, test := range tests {
+        got, _ := Multiply(test.a, test.b)
+        if got.String() != test.want.String() {
+            t.Errorf("multiplication,\na:\n%s\nb:\n%s\ngot:\n%s\nexpected: \n%s", test.a, test.b, got, test.want)
+        }
+    }
+}
+
+func TestScalar(t *testing.T) {
+    var tests = []struct {
         tuple  Tuple
         scalar float64
         want   Tuple
@@ -168,7 +195,7 @@ func TestMultiply(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Multiply(test.tuple, test.scalar); !got.Equal(test.want) {
+        if got := test.tuple.Scalar(test.scalar); !got.Equal(test.want) {
             t.Errorf("input: %s + %f \ngot: %s. \nexpected: %s", test.tuple, test.scalar, got, test.want)
         }
     }

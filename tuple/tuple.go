@@ -3,6 +3,7 @@ package tuple
 import (
 	"fmt"
 	"glimpse/calc"
+	"glimpse/matrix"
 	"math"
 	"strconv"
 )
@@ -62,7 +63,20 @@ func Subtract(a, b Tuple) Tuple {
 	return Tuple{a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W}
 }
 
-func Multiply(t Tuple, s float64) Tuple {
+func Multiply(a matrix.Matrix, b Tuple) (Tuple, error) {
+	mat := matrix.New(4, 1)
+	for i, v := range b.ToSlice() {
+		mat[i][0] = float64(v)
+	}
+	mat, err := matrix.Multiply(a, mat)
+	if err != nil {
+		return Tuple{}, err
+	}
+	mat = mat.Transpose()
+	return Tuple{mat[0][0], mat[0][1], mat[0][2], mat[0][3]}, nil
+}
+
+func (t Tuple) Scalar(s float64) Tuple {
 	return Tuple{t.X * s, t.Y * s, t.Z * s, t.W * s}
 }
 
