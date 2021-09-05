@@ -52,8 +52,8 @@ func TestNewIdentity(t *testing.T) {
 func TestMultiply(t *testing.T) {
     var tests = []struct {
         a    Matrix
-        b    Multiplicable
-        want Multiplicable
+        b    Transformable
+        want Transformable
     }{
         {
             a: Matrix{

@@ -8,7 +8,7 @@ import (
 
 type Matrix [][]float64
 
-type Multiplicable interface {
+type Transformable interface {
 	fmt.Stringer
 }
 
@@ -40,7 +40,7 @@ func NewIdentity(size int) Matrix {
 	return identity
 }
 
-func Multiply(a Matrix, b Multiplicable) (Multiplicable, error) {
+func Multiply(a Matrix, b Transformable) (Transformable, error) {
 	switch b := b.(type) {
 	case Matrix:
 		return multiply_matrices(a, b)
