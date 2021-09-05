@@ -137,3 +137,50 @@ func TestRotateZ(t *testing.T) {
     }
 
 }
+
+func TestShear(t *testing.T) {
+    var tests = []struct {
+        point                  Tuple
+        xy, xz, yx, yz, zx, zy float64
+        want                   Tuple
+    }{
+        {
+            point: Tuple{2, 3, 4, 1},
+            xy:    1, xz: 0, yx: 0, yz: 0, zx: 0, zy: 0,
+            want: Tuple{5, 3, 4, 1},
+        },
+        {
+            point: Tuple{2, 3, 4, 1},
+            xy:    0, xz: 1, yx: 0, yz: 0, zx: 0, zy: 0,
+            want: Tuple{6, 3, 4, 1},
+        },
+        {
+            point: Tuple{2, 3, 4, 1},
+            xy:    0, xz: 0, yx: 1, yz: 0, zx: 0, zy: 0,
+            want: Tuple{2, 5, 4, 1},
+        },
+        {
+            point: Tuple{2, 3, 4, 1},
+            xy:    0, xz: 0, yx: 0, yz: 1, zx: 0, zy: 0,
+            want: Tuple{2, 7, 4, 1},
+        },
+        {
+            point: Tuple{2, 3, 4, 1},
+            xy:    0, xz: 0, yx: 0, yz: 0, zx: 1, zy: 0,
+            want: Tuple{2, 3, 6, 1},
+        },
+        {
+            point: Tuple{2, 3, 4, 1},
+            xy:    0, xz: 0, yx: 0, yz: 0, zx: 0, zy: 1,
+            want: Tuple{2, 3, 7, 1},
+        },
+    }
+
+    for _, test := range tests {
+        got, _ := test.point.Shear(test.xy, test.xz, test.yx, test.yz, test.zx, test.zy)
+        if !got.Equal(test.want) {
+            t.Errorf("shearing,\npoint:\n%s\nwith:\n%f, %f, %f, %f, %f, %f, \ngot:\n%s\nexpected: \n%s", test.point, test.xy, test.xz, test.yx, test.yz, test.zx, test.zy, got, test.want)
+        }
+    }
+
+}

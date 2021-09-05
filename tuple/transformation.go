@@ -21,3 +21,7 @@ func (t Tuple) RotateY(r float64) (Tuple, error) {
 func (t Tuple) RotateZ(r float64) (Tuple, error) {
 	return Multiply(matrix.GetRotationZ(r), t)
 }
+
+func (t Tuple) Shear(xy, xz, yx, yz, zx, zy float64) (Tuple, error) {
+	return Multiply(matrix.GetShearing(xy, xz, yx, yz, zx, zy), t)
+}
