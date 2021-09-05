@@ -7,10 +7,6 @@ import (
 
 type Matrix [][]float64
 
-// type Transformable interface {
-// 	fmt.Stringer
-// }
-
 func New(n, m int) Matrix {
 	mat := make(Matrix, n)
 	for i := 0; i < int(n); i++ {
