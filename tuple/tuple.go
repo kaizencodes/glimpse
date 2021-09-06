@@ -3,90 +3,108 @@ package tuple
 import (
 	"fmt"
 	"glimpse/calc"
+	"glimpse/matrix"
 	"math"
 	"strconv"
 )
 
 type Tuple struct {
-	x, y, z, w float64
+	X, Y, Z, W float64
 }
 
-func (t *Tuple) IsPoint() bool {
-	return t.w == 1.0
+func (t Tuple) IsPoint() bool {
+	return t.W == 1.0
 }
 
-func (t *Tuple) IsVector() bool {
-	return t.w == 0.0
+func (t Tuple) IsVector() bool {
+	return t.W == 0.0
 }
 
-func (t *Tuple) GetX() float64 {
-	return t.x
+func (t Tuple) GetX() float64 {
+	return t.X
 }
 
-func (t *Tuple) GetY() float64 {
-	return t.y
+func (t Tuple) GetY() float64 {
+	return t.Y
 }
 
-func (t *Tuple) GetZ() float64 {
-	return t.z
+func (t Tuple) GetZ() float64 {
+	return t.Z
 }
 
-func (t *Tuple) Equal(other *Tuple) bool {
-	return calc.FloatEquals(t.x, other.x) && calc.FloatEquals(t.y, other.y) &&
-		calc.FloatEquals(t.z, other.z) && calc.FloatEquals(t.w, other.w)
+func (t Tuple) Equal(other Tuple) bool {
+	return calc.FloatEquals(t.X, other.X) && calc.FloatEquals(t.Y, other.Y) &&
+		calc.FloatEquals(t.Z, other.Z) && calc.FloatEquals(t.W, other.W)
 }
 
-func (t *Tuple) Magnitude() float64 {
-	return math.Sqrt(math.Pow(t.x, 2) + math.Pow(t.y, 2) + math.Pow(t.z, 2))
+func (t Tuple) Magnitude() float64 {
+	return math.Sqrt(math.Pow(t.X, 2) + math.Pow(t.Y, 2) + math.Pow(t.Z, 2))
 }
 
-func (t *Tuple) Normalize() *Tuple {
+func (t Tuple) Normalize() Tuple {
 	mag := t.Magnitude()
-	return &Tuple{t.x / mag, t.y / mag, t.z / mag, t.w / mag}
+	return Tuple{t.X / mag, t.Y / mag, t.Z / mag, t.W / mag}
 }
 
-func (t *Tuple) String() string {
-	x := strconv.FormatFloat(t.x, 'f', -1, 64)
-	y := strconv.FormatFloat(t.y, 'f', -1, 64)
-	z := strconv.FormatFloat(t.z, 'f', -1, 64)
-	w := strconv.FormatFloat(t.w, 'f', -1, 64)
+func (t Tuple) String() string {
+	X := strconv.FormatFloat(t.X, 'f', -1, 64)
+	Y := strconv.FormatFloat(t.Y, 'f', -1, 64)
+	Z := strconv.FormatFloat(t.Z, 'f', -1, 64)
+	W := strconv.FormatFloat(t.W, 'f', -1, 64)
 
-	return fmt.Sprintf("Tuple(x: %s, y: %s, z: %s, w: %s)", x, y, z, w)
+	return fmt.Sprintf("Tuple(X: %s, Y: %s, Z: %s, W: %s)", X, Y, Z, W)
 }
 
-func Add(a, b *Tuple) *Tuple {
-	return &Tuple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
+func Add(a, b Tuple) Tuple {
+	return Tuple{a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W}
 }
 
-func Subtract(a, b *Tuple) *Tuple {
-	return &Tuple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}
+func Subtract(a, b Tuple) Tuple {
+	return Tuple{a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W}
 }
 
-func Multiply(t *Tuple, s float64) *Tuple {
-	return &Tuple{t.x * s, t.y * s, t.z * s, t.w * s}
+func Multiply(a matrix.Matrix, b Tuple) (Tuple, error) {
+	mat := matrix.New(4, 1)
+	for i, v := range b.ToSlice() {
+		mat[i][0] = float64(v)
+	}
+	mat, err := matrix.Multiply(a, mat)
+	if err != nil {
+		return Tuple{}, err
+	}
+	mat = mat.Transpose()
+	return Tuple{mat[0][0], mat[0][1], mat[0][2], mat[0][3]}, nil
 }
 
-func Negate(t *Tuple) *Tuple {
-	return &Tuple{-t.x, -t.y, -t.z, -t.w}
+func (t Tuple) Scalar(s float64) Tuple {
+	return Tuple{t.X * s, t.Y * s, t.Z * s, t.W * s}
 }
 
-func Dot(a *Tuple, b *Tuple) float64 {
-	return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
+func Negate(t Tuple) Tuple {
+	return Tuple{-t.X, -t.Y, -t.Z, -t.W}
 }
 
-func Cross(a *Tuple, b *Tuple) *Tuple {
-	return &Tuple{
-		a.y*b.z - a.z*b.y,
-		a.z*b.x - a.x*b.z,
-		a.x*b.y - a.y*b.x,
+func Dot(a Tuple, b Tuple) float64 {
+	return a.X*b.X + a.Y*b.Y + a.Z*b.Z + a.W*b.W
+}
+
+func Cross(a Tuple, b Tuple) Tuple {
+	return Tuple{
+		a.Y*b.Z - a.Z*b.Y,
+		a.Z*b.X - a.X*b.Z,
+		a.X*b.Y - a.Y*b.X,
 		0.0,
 	}
 }
 
-func NewVector(x, y, z float64) *Tuple {
-	return &Tuple{x, y, z, 0.0}
+func (t Tuple) ToSlice() []float64 {
+	return []float64{t.X, t.Y, t.Z, t.W}
 }
 
-func NewPoint(x, y, z float64) *Tuple {
-	return &Tuple{x, y, z, 1.0}
+func NewVector(X, Y, Z float64) Tuple {
+	return Tuple{X, Y, Z, 0.0}
+}
+
+func NewPoint(X, Y, Z float64) Tuple {
+	return Tuple{X, Y, Z, 1.0}
 }

@@ -5,19 +5,14 @@ import (
 	"strconv"
 )
 
-type Element float64
-type Matrix [][]Element
+type Matrix [][]float64
 
-func New(size int) Matrix {
-	m := make(Matrix, size)
-	for i := 0; i < int(size); i++ {
-		m[i] = make([]Element, size)
+func New(n, m int) Matrix {
+	mat := make(Matrix, n)
+	for i := 0; i < int(n); i++ {
+		mat[i] = make([]float64, m)
 	}
-	return m
-}
-
-func (e Element) String() string {
-	return strconv.FormatFloat(float64(e), 'f', -1, 64)
+	return mat
 }
 
 func (m Matrix) String() string {
@@ -25,7 +20,7 @@ func (m Matrix) String() string {
 
 	for _, row := range m {
 		for _, val := range row {
-			result += fmt.Sprintf("%s, ", val)
+			result += strconv.FormatFloat(val, 'f', -1, 64)
 		}
 		result += string('\n')
 	}
@@ -33,7 +28,7 @@ func (m Matrix) String() string {
 }
 
 func NewIdentity(size int) Matrix {
-	identity := New(size)
+	identity := New(size, size)
 	for n, _ := range identity {
 		identity[n][n] = 1
 	}
@@ -41,11 +36,11 @@ func NewIdentity(size int) Matrix {
 }
 
 func Multiply(a, b Matrix) (Matrix, error) {
-	if len(a) != len(b) {
-		return nil, fmt.Errorf("incompatible matrices: len: %d, %d.", len(a), len(b))
+	if len(a[0]) != len(b) {
+		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d.", len(a[0]), len(b))
 	}
 
-	new_mat := New(len(a))
+	new_mat := New(len(a), len(b[0]))
 	for n, row := range new_mat {
 		for m, _ := range row {
 			new_mat[n][m] = dot(a, b, n, m)
@@ -54,9 +49,9 @@ func Multiply(a, b Matrix) (Matrix, error) {
 	return new_mat, nil
 }
 
-func dot(a, b Matrix, row, col int) Element {
-	var sum Element
-	for i, _ := range a {
+func dot(a, b Matrix, row, col int) float64 {
+	var sum float64
+	for i, _ := range a[0] {
 		sum += a[row][i] * b[i][col]
 	}
 
@@ -64,20 +59,20 @@ func dot(a, b Matrix, row, col int) Element {
 }
 
 func (a Matrix) Transpose() Matrix {
-	new_mat := New(len(a))
-	for n := 0; n < len(a)-1/2; n++ {
-		for m := 0; m < len(a[n])-1/2; m++ {
-			new_mat[n][m], new_mat[m][n] = a[m][n], a[n][m]
+	mat := New(len(a[0]), len(a))
+	for n := 0; n < len(mat); n++ {
+		for m := 0; m < len(mat[0]); m++ {
+			mat[n][m] = a[m][n]
 		}
 	}
-	return new_mat
+	return mat
 }
 
-func (a Matrix) Determinant() Element {
+func (a Matrix) Determinant() float64 {
 	if len(a) == 2 {
-		return Element(a[0][0]*a[1][1] - a[0][1]*a[1][0])
+		return float64(a[0][0]*a[1][1] - a[0][1]*a[1][0])
 	} else {
-		var deter Element
+		var deter float64
 		for n, elem := range a[0] {
 			deter += elem * a.Cofactor(0, n)
 		}
@@ -86,7 +81,7 @@ func (a Matrix) Determinant() Element {
 }
 
 func (a Matrix) Submatrix(col, row int) Matrix {
-	new_mat := New(len(a))
+	new_mat := New(len(a), len(a[0]))
 	for n, col := range a {
 		copy(new_mat[n], col)
 	}
@@ -99,11 +94,11 @@ func (a Matrix) Submatrix(col, row int) Matrix {
 	return new_mat
 }
 
-func (a Matrix) Minor(col, row int) Element {
+func (a Matrix) Minor(col, row int) float64 {
 	return a.Submatrix(col, row).Determinant()
 }
 
-func (a Matrix) Cofactor(col, row int) Element {
+func (a Matrix) Cofactor(col, row int) float64 {
 	deter := a.Minor(col, row)
 	if (col+row)%2 != 0 {
 		deter *= -1
@@ -118,7 +113,7 @@ func (a Matrix) Inverse() (Matrix, error) {
 		return nil, fmt.Errorf("noninvertible matrix, determinant is zero")
 	}
 
-	inverse := New(len(a))
+	inverse := New(len(a), len(a[0]))
 	for n, col := range inverse {
 		for m, _ := range col {
 			inverse[m][n] = a.Cofactor(n, m) / det
