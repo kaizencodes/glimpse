@@ -2,6 +2,7 @@ package ray
 
 import (
     "glimpse/tuple"
+    "math"
     "testing"
 )
 
@@ -45,12 +46,12 @@ func TestIntersect(t *testing.T) {
     var tests = []struct {
         ray  Ray
         s    *Sphere
-        want []Intersection
+        want Intersections
     }{
         {
             ray: New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1)),
             s:   &shpere,
-            want: []Intersection{
+            want: Intersections{
                 Intersection{t: 4.0, object: &shpere},
                 Intersection{t: 6.0, object: &shpere},
             },
@@ -58,7 +59,7 @@ func TestIntersect(t *testing.T) {
         {
             ray: New(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1)),
             s:   &shpere,
-            want: []Intersection{
+            want: Intersections{
                 Intersection{t: 5.0, object: &shpere},
                 Intersection{t: 5.0, object: &shpere},
             },
@@ -66,12 +67,12 @@ func TestIntersect(t *testing.T) {
         {
             ray:  New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1)),
             s:    &shpere,
-            want: []Intersection{},
+            want: Intersections{},
         },
         {
             ray: New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
             s:   &shpere,
-            want: []Intersection{
+            want: Intersections{
                 Intersection{t: -1.0, object: &shpere},
                 Intersection{t: 1.0, object: &shpere},
             },
@@ -79,7 +80,7 @@ func TestIntersect(t *testing.T) {
         {
             ray: New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1)),
             s:   &shpere,
-            want: []Intersection{
+            want: Intersections{
                 Intersection{t: -6.0, object: &shpere},
                 Intersection{t: -4.0, object: &shpere},
             },
@@ -95,6 +96,51 @@ func TestIntersect(t *testing.T) {
             if got[i].object != test.want[i].object {
                 t.Errorf("incorrect object of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", test.ray, got[i].object, test.want[i].object)
             }
+        }
+    }
+}
+
+func TestHit(t *testing.T) {
+    shpere := NewShpere()
+    var tests = []struct {
+        collection Intersections
+        want       Intersection
+    }{
+        {
+            collection: Intersections{
+                Intersection{t: 1.0, object: &shpere},
+                Intersection{t: 2.0, object: &shpere},
+            },
+            want: Intersection{t: 1.0, object: &shpere},
+        },
+        {
+            collection: Intersections{
+                Intersection{t: -1.0, object: &shpere},
+                Intersection{t: 1.0, object: &shpere},
+            },
+            want: Intersection{t: 1.0, object: &shpere},
+        },
+        {
+            collection: Intersections{
+                Intersection{t: -2.0, object: &shpere},
+                Intersection{t: -1.0, object: &shpere},
+            },
+            want: Intersection{t: math.MaxFloat64},
+        },
+        {
+            collection: Intersections{
+                Intersection{t: 5.0, object: &shpere},
+                Intersection{t: 7.0, object: &shpere},
+                Intersection{t: -3.0, object: &shpere},
+                Intersection{t: 2.0, object: &shpere},
+            },
+            want: Intersection{t: 2.0, object: &shpere},
+        },
+    }
+
+    for _, test := range tests {
+        if got := Hit(test.collection); got.t != test.want.t {
+            t.Errorf("Hit: collection\n%s \ngot: \n%f. \nexpected: \n%f", test.collection, got.t, test.want.t)
         }
     }
 }
