@@ -39,3 +39,62 @@ func TestPosition(t *testing.T) {
         }
     }
 }
+
+func TestIntersect(t *testing.T) {
+    shpere := NewShpere()
+    var tests = []struct {
+        ray  Ray
+        s    *Sphere
+        want []Intersection
+    }{
+        {
+            ray: New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1)),
+            s:   &shpere,
+            want: []Intersection{
+                Intersection{t: 4.0, object: &shpere},
+                Intersection{t: 6.0, object: &shpere},
+            },
+        },
+        {
+            ray: New(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1)),
+            s:   &shpere,
+            want: []Intersection{
+                Intersection{t: 5.0, object: &shpere},
+                Intersection{t: 5.0, object: &shpere},
+            },
+        },
+        {
+            ray:  New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1)),
+            s:    &shpere,
+            want: []Intersection{},
+        },
+        {
+            ray: New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
+            s:   &shpere,
+            want: []Intersection{
+                Intersection{t: -1.0, object: &shpere},
+                Intersection{t: 1.0, object: &shpere},
+            },
+        },
+        {
+            ray: New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1)),
+            s:   &shpere,
+            want: []Intersection{
+                Intersection{t: -6.0, object: &shpere},
+                Intersection{t: -4.0, object: &shpere},
+            },
+        },
+    }
+
+    for _, test := range tests {
+        got := Intersect(test.ray, test.s)
+        for i, _ := range got {
+            if got[i].t != test.want[i].t {
+                t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", test.ray, got[i].t, test.want[i].t)
+            }
+            if got[i].object != test.want[i].object {
+                t.Errorf("incorrect object of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", test.ray, got[i].object, test.want[i].object)
+            }
+        }
+    }
+}
