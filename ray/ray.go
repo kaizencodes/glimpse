@@ -2,6 +2,7 @@ package ray
 
 import (
 	"fmt"
+	"glimpse/matrix"
 	"glimpse/tuple"
 	"math"
 	"strconv"
@@ -38,6 +39,10 @@ func (r Ray) Position(dist float64) tuple.Tuple {
 
 func (r Ray) String() string {
 	return fmt.Sprintf("Ray(origin: %s, direction: %s)", r.origin, r.direction)
+}
+
+func (r Ray) Equal(other Ray) bool {
+	return r.origin.Equal(other.origin) && r.direction.Equal(other.direction)
 }
 
 func (s *Sphere) String() string {
@@ -83,4 +88,24 @@ func Hit(coll Intersections) Intersection {
 		}
 	}
 	return res
+}
+
+func (r Ray) Translate(x, y, z float64) Ray {
+	origin, err := tuple.Multiply(matrix.GetTranslation(x, y, z), r.origin)
+	if err != nil {
+		panic(err)
+	}
+	return Ray{origin: origin, direction: r.direction}
+}
+
+func (r Ray) Scale(x, y, z float64) Ray {
+	origin, err := tuple.Multiply(matrix.GetScaling(x, y, z), r.origin)
+	if err != nil {
+		panic(err)
+	}
+	direction, err := tuple.Multiply(matrix.GetScaling(x, y, z), r.direction)
+	if err != nil {
+		panic(err)
+	}
+	return Ray{origin: origin, direction: direction}
 }

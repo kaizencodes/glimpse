@@ -144,3 +144,30 @@ func TestHit(t *testing.T) {
         }
     }
 }
+
+func TestTranslate(t *testing.T) {
+    ray := New(tuple.NewPoint(1, 2, 3), tuple.NewVector(0, 1, 0))
+    want := New(tuple.NewPoint(4, 6, 8), tuple.NewVector(0, 1, 0))
+    x, y, z := 3.0, 4.0, 5.0
+
+    if got := ray.Translate(x, y, z); !got.Equal(want) {
+        t.Errorf("translation(%f, %f, %f),\nray:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, ray, got, want)
+    }
+
+    x, y, z = 2.0, 3.0, 4.0
+    want = New(tuple.NewPoint(2, 6, 12), tuple.NewVector(0, 3, 0))
+
+    if got := ray.Scale(x, y, z); !got.Equal(want) {
+        t.Errorf("scale(%f, %f, %f),\nray:\n%s\n\ngot:\n%s", x, y, z, ray, got)
+    }
+}
+
+func TestScale(t *testing.T) {
+    ray := New(tuple.NewPoint(1, 2, 3), tuple.NewVector(0, 1, 0))
+    want := New(tuple.NewPoint(2, 6, 12), tuple.NewVector(0, 3, 0))
+    x, y, z := 2.0, 3.0, 4.0
+
+    if got := ray.Scale(x, y, z); !got.Equal(want) {
+        t.Errorf("scale(%f, %f, %f),\nray:\n%s\n\ngot:\n%s", x, y, z, ray, got)
+    }
+}
