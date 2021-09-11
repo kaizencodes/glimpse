@@ -3,6 +3,7 @@ package ray
 import (
 	"fmt"
 	"glimpse/matrix"
+	"glimpse/objects"
 	"glimpse/tuple"
 	"math"
 	"strconv"
@@ -13,24 +14,15 @@ type Ray struct {
 	direction tuple.Tuple
 }
 
-type Sphere struct {
-	center tuple.Tuple
-	radius float64
-}
-
 type Intersection struct {
 	t      float64
-	object *Sphere
+	object *objects.Sphere
 }
 
 type Intersections []Intersection
 
 func New(origin, direction tuple.Tuple) Ray {
 	return Ray{origin, direction}
-}
-
-func NewShpere() Sphere {
-	return Sphere{center: tuple.NewPoint(0, 0, 0), radius: 1}
 }
 
 func (r Ray) Position(dist float64) tuple.Tuple {
@@ -45,10 +37,6 @@ func (r Ray) Equal(other Ray) bool {
 	return r.origin.Equal(other.origin) && r.direction.Equal(other.direction)
 }
 
-func (s *Sphere) String() string {
-	return fmt.Sprintf("Shpere(center: %s, radius: %f)", s.center, s.radius)
-}
-
 func (c Intersections) String() string {
 	var result string
 
@@ -58,11 +46,19 @@ func (c Intersections) String() string {
 	return result
 }
 
-func Intersect(r Ray, s *Sphere) Intersections {
-	sphere_to_ray := tuple.Subtract(r.origin, tuple.NewPoint(0, 0, 0))
+func Intersect(r Ray, s *objects.Sphere) Intersections {
+	transform, err := s.GetTransform().Inverse()
+	if err != nil {
+		panic(err)
+	}
+	origin, _ := tuple.Multiply(transform, r.origin)
+	direction, _ := tuple.Multiply(transform, r.direction)
+	ray2 := Ray{origin, direction}
 
-	a := tuple.Dot(r.direction, r.direction)
-	b := 2 * tuple.Dot(r.direction, sphere_to_ray)
+	sphere_to_ray := tuple.Subtract(ray2.origin, tuple.NewPoint(0, 0, 0))
+
+	a := tuple.Dot(ray2.direction, ray2.direction)
+	b := 2 * tuple.Dot(ray2.direction, sphere_to_ray)
 	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
 
 	disciminant := math.Pow(b, 2) - 4*a*c
@@ -108,4 +104,8 @@ func (r Ray) Scale(x, y, z float64) Ray {
 		panic(err)
 	}
 	return Ray{origin: origin, direction: direction}
+}
+
+func (inter Intersection) Empty() bool {
+	return inter.t == math.MaxFloat64
 }

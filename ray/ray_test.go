@@ -1,6 +1,8 @@
 package ray
 
 import (
+    "glimpse/matrix"
+    "glimpse/objects"
     "glimpse/tuple"
     "math"
     "testing"
@@ -42,10 +44,10 @@ func TestPosition(t *testing.T) {
 }
 
 func TestIntersect(t *testing.T) {
-    shpere := NewShpere()
+    shpere := objects.NewSphere()
     var tests = []struct {
         ray  Ray
-        s    *Sphere
+        s    *objects.Sphere
         want Intersections
     }{
         {
@@ -101,7 +103,7 @@ func TestIntersect(t *testing.T) {
 }
 
 func TestHit(t *testing.T) {
-    shpere := NewShpere()
+    shpere := objects.NewSphere()
     var tests = []struct {
         collection Intersections
         want       Intersection
@@ -169,5 +171,25 @@ func TestScale(t *testing.T) {
 
     if got := ray.Scale(x, y, z); !got.Equal(want) {
         t.Errorf("scale(%f, %f, %f),\nray:\n%s\n\ngot:\n%s", x, y, z, ray, got)
+    }
+}
+
+func TestShpereTransformations(t *testing.T) {
+    ray := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+    sphere := objects.NewSphere()
+    sphere.SetTransform(matrix.GetScaling(2, 2, 2))
+    want := Intersections{
+        Intersection{t: 3.0, object: &sphere},
+        Intersection{t: 7.0, object: &sphere},
+    }
+
+    got := Intersect(ray, &sphere)
+    for i, _ := range got {
+        if got[i].t != want[i].t {
+            t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", ray, got[i].t, want[i].t)
+        }
+        if got[i].object != want[i].object {
+            t.Errorf("incorrect object of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", ray, got[i].object, want[i].object)
+        }
     }
 }
