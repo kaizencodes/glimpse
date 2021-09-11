@@ -102,6 +102,10 @@ func Cross(a Tuple, b Tuple) Tuple {
 	}
 }
 
+func Reflect(incoming, normal Tuple) Tuple {
+	return Subtract(incoming, normal.Scalar(2.0*Dot(incoming, normal)))
+}
+
 func (t Tuple) ToSlice() []float64 {
 	return []float64{t.x, t.y, t.z, t.w}
 }

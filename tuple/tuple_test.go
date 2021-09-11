@@ -315,3 +315,28 @@ func TestCross(t *testing.T) {
         }
     }
 }
+
+func TestReflect(t *testing.T) {
+    var tests = []struct {
+        in     Tuple
+        normal Tuple
+        want   Tuple
+    }{
+        {
+            in:     Tuple{1.0, -1.0, 0.0, 0.0},
+            normal: Tuple{0.0, 1.0, 0.0, 0.0},
+            want:   Tuple{1.0, 1.0, 0.0, 0.0},
+        },
+        {
+            in:     Tuple{0.0, -1.0, 0.0, 0.0},
+            normal: Tuple{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0.0, 0.0},
+            want:   Tuple{1.0, 0.0, 0.0, 0.0},
+        },
+    }
+
+    for _, test := range tests {
+        if got := Reflect(test.in, test.normal); !got.Equal(test.want) {
+            t.Errorf("Reflect of %s and %s\ngot: %s. \nexpected: %s", test.in, test.normal, got, test.want)
+        }
+    }
+}
