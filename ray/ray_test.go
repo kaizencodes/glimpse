@@ -52,39 +52,39 @@ func TestIntersect(t *testing.T) {
     }{
         {
             ray: New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1)),
-            s:   &shpere,
+            s:   shpere,
             want: Intersections{
-                Intersection{t: 4.0, object: &shpere},
-                Intersection{t: 6.0, object: &shpere},
+                Intersection{t: 4.0, object: shpere},
+                Intersection{t: 6.0, object: shpere},
             },
         },
         {
             ray: New(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1)),
-            s:   &shpere,
+            s:   shpere,
             want: Intersections{
-                Intersection{t: 5.0, object: &shpere},
-                Intersection{t: 5.0, object: &shpere},
+                Intersection{t: 5.0, object: shpere},
+                Intersection{t: 5.0, object: shpere},
             },
         },
         {
             ray:  New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1)),
-            s:    &shpere,
+            s:    shpere,
             want: Intersections{},
         },
         {
             ray: New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
-            s:   &shpere,
+            s:   shpere,
             want: Intersections{
-                Intersection{t: -1.0, object: &shpere},
-                Intersection{t: 1.0, object: &shpere},
+                Intersection{t: -1.0, object: shpere},
+                Intersection{t: 1.0, object: shpere},
             },
         },
         {
             ray: New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1)),
-            s:   &shpere,
+            s:   shpere,
             want: Intersections{
-                Intersection{t: -6.0, object: &shpere},
-                Intersection{t: -4.0, object: &shpere},
+                Intersection{t: -6.0, object: shpere},
+                Intersection{t: -4.0, object: shpere},
             },
         },
     }
@@ -110,33 +110,33 @@ func TestHit(t *testing.T) {
     }{
         {
             collection: Intersections{
-                Intersection{t: 1.0, object: &shpere},
-                Intersection{t: 2.0, object: &shpere},
+                Intersection{t: 1.0, object: shpere},
+                Intersection{t: 2.0, object: shpere},
             },
-            want: Intersection{t: 1.0, object: &shpere},
+            want: Intersection{t: 1.0, object: shpere},
         },
         {
             collection: Intersections{
-                Intersection{t: -1.0, object: &shpere},
-                Intersection{t: 1.0, object: &shpere},
+                Intersection{t: -1.0, object: shpere},
+                Intersection{t: 1.0, object: shpere},
             },
-            want: Intersection{t: 1.0, object: &shpere},
+            want: Intersection{t: 1.0, object: shpere},
         },
         {
             collection: Intersections{
-                Intersection{t: -2.0, object: &shpere},
-                Intersection{t: -1.0, object: &shpere},
+                Intersection{t: -2.0, object: shpere},
+                Intersection{t: -1.0, object: shpere},
             },
             want: Intersection{t: math.MaxFloat64},
         },
         {
             collection: Intersections{
-                Intersection{t: 5.0, object: &shpere},
-                Intersection{t: 7.0, object: &shpere},
-                Intersection{t: -3.0, object: &shpere},
-                Intersection{t: 2.0, object: &shpere},
+                Intersection{t: 5.0, object: shpere},
+                Intersection{t: 7.0, object: shpere},
+                Intersection{t: -3.0, object: shpere},
+                Intersection{t: 2.0, object: shpere},
             },
-            want: Intersection{t: 2.0, object: &shpere},
+            want: Intersection{t: 2.0, object: shpere},
         },
     }
 
@@ -179,11 +179,11 @@ func TestShpereTransformations(t *testing.T) {
     sphere := objects.NewSphere()
     sphere.SetTransform(matrix.GetScaling(2, 2, 2))
     want := Intersections{
-        Intersection{t: 3.0, object: &sphere},
-        Intersection{t: 7.0, object: &sphere},
+        Intersection{t: 3.0, object: sphere},
+        Intersection{t: 7.0, object: sphere},
     }
 
-    got := Intersect(ray, &sphere)
+    got := Intersect(ray, sphere)
     for i, _ := range got {
         if got[i].t != want[i].t {
             t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", ray, got[i].t, want[i].t)

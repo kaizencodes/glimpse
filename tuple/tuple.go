@@ -32,6 +32,11 @@ func (t Tuple) GetZ() float64 {
 	return t.z
 }
 
+// this is kind of a hack for gettign the surface normal. Not used anywhere else.
+func (t Tuple) ToVector() Tuple {
+	return Tuple{t.x, t.y, t.z, 0}
+}
+
 func (t Tuple) Equal(other Tuple) bool {
 	return calc.FloatEquals(t.x, other.x) && calc.FloatEquals(t.y, other.y) &&
 		calc.FloatEquals(t.z, other.z) && calc.FloatEquals(t.w, other.w)
