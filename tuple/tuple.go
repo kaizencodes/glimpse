@@ -85,7 +85,7 @@ func (t Tuple) Scalar(s float64) Tuple {
 	return Tuple{t.x * s, t.y * s, t.z * s, t.w * s}
 }
 
-func Negate(t Tuple) Tuple {
+func (t Tuple) Negate() Tuple {
 	return Tuple{-t.x, -t.y, -t.z, -t.w}
 }
 

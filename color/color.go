@@ -18,7 +18,7 @@ func Subtract(a, b Color) Color {
 	return Color{a.R - b.R, a.G - b.G, a.B - b.B}
 }
 
-func Multiply(c Color, s float64) Color {
+func (c Color) Scalar(s float64) Color {
 	return Color{c.R * s, c.G * s, c.B * s}
 }
 
@@ -37,4 +37,8 @@ func (c Color) String() string {
 	b := strconv.FormatFloat(c.B, 'f', -1, 64)
 
 	return fmt.Sprintf("(%s, %s, %s)", r, g, b)
+}
+
+func Black() Color {
+	return Color{}
 }

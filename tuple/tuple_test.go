@@ -217,7 +217,7 @@ func TestNegate(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Negate(test.input); !got.Equal(test.want) {
+        if got := test.input.Negate(); !got.Equal(test.want) {
             t.Errorf("Negating: %s\n got: %s. \nexpected: %s", test.input, got, test.want)
         }
     }

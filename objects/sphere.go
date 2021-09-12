@@ -10,6 +10,7 @@ type Sphere struct {
 	center    tuple.Tuple
 	radius    float64
 	transform matrix.Matrix
+	material  Material
 }
 
 func NewSphere() *Sphere {
@@ -17,6 +18,7 @@ func NewSphere() *Sphere {
 		center:    tuple.NewPoint(0, 0, 0),
 		radius:    1,
 		transform: matrix.NewIdentity(4),
+		material:  DefaultMaterial(),
 	}
 }
 
@@ -26,6 +28,14 @@ func (s *Sphere) String() string {
 
 func (s *Sphere) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
+}
+
+func (s *Sphere) SetMaterial(mat Material) {
+	s.material = mat
+}
+
+func (s *Sphere) GetMaterial() Material {
+	return s.material
 }
 
 func (s *Sphere) GetTransform() matrix.Matrix {

@@ -1,6 +1,7 @@
 package ray
 
 import (
+    "glimpse/color"
     "glimpse/matrix"
     "glimpse/objects"
     "glimpse/tuple"
@@ -190,6 +191,54 @@ func TestShpereTransformations(t *testing.T) {
         }
         if got[i].object != want[i].object {
             t.Errorf("incorrect object of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", ray, got[i].object, want[i].object)
+        }
+    }
+}
+
+func TestLighting(t *testing.T) {
+    var tests = []struct {
+        eyeV    tuple.Tuple
+        normalV tuple.Tuple
+        light   PointLight
+        want    color.Color
+    }{
+        {
+            eyeV:    tuple.NewVector(0, 0, -1),
+            normalV: tuple.NewVector(0, 0, -1),
+            light:   NewPointLight(tuple.NewPoint(0, 0, -10), color.Color{1, 1, 1}),
+            want:    color.Color{1.9, 1.9, 1.9},
+        },
+        {
+            eyeV:    tuple.NewVector(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0),
+            normalV: tuple.NewVector(0, 0, -1),
+            light:   NewPointLight(tuple.NewPoint(0, 0, -10), color.Color{1, 1, 1}),
+            want:    color.Color{1.0, 1.0, 1.0},
+        },
+        {
+            eyeV:    tuple.NewVector(0, 0, -1),
+            normalV: tuple.NewVector(0, 0, -1),
+            light:   NewPointLight(tuple.NewPoint(0, 10, -10), color.Color{1, 1, 1}),
+            want:    color.Color{0.7363961030678927, 0.7363961030678927, 0.7363961030678927},
+        },
+        {
+            eyeV:    tuple.NewVector(0, -math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0),
+            normalV: tuple.NewVector(0, 0, -1),
+            light:   NewPointLight(tuple.NewPoint(0, 10, -10), color.Color{1, 1, 1}),
+            want:    color.Color{1.6363961030678928, 1.6363961030678928, 1.6363961030678928},
+        },
+        {
+            eyeV:    tuple.NewVector(0, 0, -1),
+            normalV: tuple.NewVector(0, 0, -1),
+            light:   NewPointLight(tuple.NewPoint(0, 0, 10), color.Color{1, 1, 1}),
+            want:    color.Color{0.1, 0.1, 0.1},
+        },
+    }
+
+    mat := objects.DefaultMaterial()
+    pos := tuple.NewPoint(0, 0, 0)
+    for _, test := range tests {
+        if got := Lighting(mat, test.light, pos, test.eyeV, test.normalV); !got.Equal(test.want) {
+            t.Errorf("Lighting:\n light: %s \neyeV: %s \nnormalV: %s\ngot: \n%s. \nexpected: \n%s", test.light, test.eyeV, test.normalV, got, test.want)
         }
     }
 }

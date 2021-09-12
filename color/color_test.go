@@ -52,7 +52,7 @@ func TestSubtract(t *testing.T) {
     }
 }
 
-func TestMultiply(t *testing.T) {
+func TestScalar(t *testing.T) {
     var tests = []struct {
         tuple  Color
         scalar float64
@@ -76,7 +76,7 @@ func TestMultiply(t *testing.T) {
     }
 
     for _, test := range tests {
-        if got := Multiply(test.tuple, test.scalar); !got.Equal(test.want) {
+        if got := test.tuple.Scalar(test.scalar); !got.Equal(test.want) {
             t.Errorf("input: %s + %f \ngot: %s. \nexpected: %s", test.tuple, test.scalar, got, test.want)
         }
     }
