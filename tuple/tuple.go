@@ -20,16 +20,21 @@ func (t Tuple) IsVector() bool {
 	return t.w == 0.0
 }
 
-func (t Tuple) GetX() float64 {
+func (t Tuple) X() float64 {
 	return t.x
 }
 
-func (t Tuple) GetY() float64 {
+func (t Tuple) Y() float64 {
 	return t.y
 }
 
-func (t Tuple) GetZ() float64 {
+func (t Tuple) Z() float64 {
 	return t.z
+}
+
+// this is kind of a hack for getting the surface normal. Not used anywhere else.
+func (t Tuple) ToVector() Tuple {
+	return Tuple{t.x, t.y, t.z, 0}
 }
 
 func (t Tuple) Equal(other Tuple) bool {
@@ -55,6 +60,26 @@ func (t Tuple) String() string {
 	return fmt.Sprintf("Tuple(x: %s, y: %s, z: %s, w: %s)", x, y, z, w)
 }
 
+func (t Tuple) Scalar(s float64) Tuple {
+	return Tuple{t.x * s, t.y * s, t.z * s, t.w * s}
+}
+
+func (t Tuple) Negate() Tuple {
+	return Tuple{-t.x, -t.y, -t.z, -t.w}
+}
+
+func (t Tuple) ToSlice() []float64 {
+	return []float64{t.x, t.y, t.z, t.w}
+}
+
+func NewVector(x, y, z float64) Tuple {
+	return Tuple{x, y, z, 0.0}
+}
+
+func NewPoint(x, y, z float64) Tuple {
+	return Tuple{x, y, z, 1.0}
+}
+
 func Add(a, b Tuple) Tuple {
 	return Tuple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
 }
@@ -76,14 +101,6 @@ func Multiply(a matrix.Matrix, b Tuple) (Tuple, error) {
 	return Tuple{mat[0][0], mat[0][1], mat[0][2], mat[0][3]}, nil
 }
 
-func (t Tuple) Scalar(s float64) Tuple {
-	return Tuple{t.x * s, t.y * s, t.z * s, t.w * s}
-}
-
-func Negate(t Tuple) Tuple {
-	return Tuple{-t.x, -t.y, -t.z, -t.w}
-}
-
 func Dot(a Tuple, b Tuple) float64 {
 	return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
 }
@@ -97,14 +114,6 @@ func Cross(a Tuple, b Tuple) Tuple {
 	}
 }
 
-func (t Tuple) ToSlice() []float64 {
-	return []float64{t.x, t.y, t.z, t.w}
-}
-
-func NewVector(x, y, z float64) Tuple {
-	return Tuple{x, y, z, 0.0}
-}
-
-func NewPoint(x, y, z float64) Tuple {
-	return Tuple{x, y, z, 1.0}
+func Reflect(incoming, normal Tuple) Tuple {
+	return Subtract(incoming, normal.Scalar(2.0*Dot(incoming, normal)))
 }

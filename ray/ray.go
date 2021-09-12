@@ -14,17 +14,6 @@ type Ray struct {
 	direction tuple.Tuple
 }
 
-type Intersection struct {
-	t      float64
-	object *objects.Sphere
-}
-
-type Intersections []Intersection
-
-func New(origin, direction tuple.Tuple) Ray {
-	return Ray{origin, direction}
-}
-
 func (r Ray) Position(dist float64) tuple.Tuple {
 	return tuple.Add(r.origin, r.direction.Scalar(dist))
 }
@@ -37,6 +26,57 @@ func (r Ray) Equal(other Ray) bool {
 	return r.origin.Equal(other.origin) && r.direction.Equal(other.direction)
 }
 
+func (r Ray) Translate(x, y, z float64) Ray {
+	origin, err := tuple.Multiply(matrix.Translation(x, y, z), r.origin)
+	if err != nil {
+		panic(err)
+	}
+	return Ray{origin: origin, direction: r.direction}
+}
+
+func (r Ray) Scale(x, y, z float64) Ray {
+	origin, err := tuple.Multiply(matrix.Scaling(x, y, z), r.origin)
+	if err != nil {
+		panic(err)
+	}
+	direction, err := tuple.Multiply(matrix.Scaling(x, y, z), r.direction)
+	if err != nil {
+		panic(err)
+	}
+	return Ray{origin: origin, direction: direction}
+}
+
+func (r Ray) Origin() tuple.Tuple {
+	return r.origin
+}
+
+func (r Ray) Direction() tuple.Tuple {
+	return r.direction
+}
+
+func New(origin, direction tuple.Tuple) Ray {
+	return Ray{origin, direction}
+}
+
+type Intersection struct {
+	t      float64
+	object *objects.Sphere
+}
+
+type Intersections []Intersection
+
+func (inter Intersection) Empty() bool {
+	return inter.t == math.MaxFloat64
+}
+
+func (inter Intersection) GetT() float64 {
+	return inter.t
+}
+
+func (inter Intersection) GetObject() *objects.Sphere {
+	return inter.object
+}
+
 func (c Intersections) String() string {
 	var result string
 
@@ -47,7 +87,7 @@ func (c Intersections) String() string {
 }
 
 func Intersect(r Ray, s *objects.Sphere) Intersections {
-	transform, err := s.GetTransform().Inverse()
+	transform, err := s.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
@@ -84,28 +124,4 @@ func Hit(coll Intersections) Intersection {
 		}
 	}
 	return res
-}
-
-func (r Ray) Translate(x, y, z float64) Ray {
-	origin, err := tuple.Multiply(matrix.GetTranslation(x, y, z), r.origin)
-	if err != nil {
-		panic(err)
-	}
-	return Ray{origin: origin, direction: r.direction}
-}
-
-func (r Ray) Scale(x, y, z float64) Ray {
-	origin, err := tuple.Multiply(matrix.GetScaling(x, y, z), r.origin)
-	if err != nil {
-		panic(err)
-	}
-	direction, err := tuple.Multiply(matrix.GetScaling(x, y, z), r.direction)
-	if err != nil {
-		panic(err)
-	}
-	return Ray{origin: origin, direction: direction}
-}
-
-func (inter Intersection) Empty() bool {
-	return inter.t == math.MaxFloat64
 }

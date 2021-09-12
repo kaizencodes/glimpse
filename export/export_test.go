@@ -14,13 +14,13 @@ func TestExport(t *testing.T) {
         {
             c: canvas.Canvas{
                 []color.Color{
-                    color.Color{1.5, 0, 0}, color.Color{0, 0.5, 0},
+                    color.New(1.5, 0, 0), color.New(0, 0.5, 0),
                 },
                 []color.Color{
-                    color.Color{-0.5, 0, 1}, color.Color{},
+                    color.New(-0.5, 0, 1), color.New(0, 0, 0),
                 },
                 []color.Color{
-                    color.Color{}, color.Color{},
+                    color.New(0, 0, 0), color.New(0, 0, 0),
                 },
             },
             want: `P3

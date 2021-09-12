@@ -15,7 +15,7 @@ func TestTranslate(t *testing.T) {
         t.Errorf("translation(%f, %f, %f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, point, got, want)
     }
 
-    inv, err := matrix.GetTranslation(x, y, z).Inverse()
+    inv, err := matrix.Translation(x, y, z).Inverse()
     if err != nil {
         t.Error(err)
     }
@@ -39,7 +39,7 @@ func TestScale(t *testing.T) {
         t.Errorf("scaling(%f, %f, %f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, point, got, want)
     }
 
-    inv, err := matrix.GetScaling(x, y, z).Inverse()
+    inv, err := matrix.Scaling(x, y, z).Inverse()
     if err != nil {
         t.Error(err)
     }
@@ -72,7 +72,7 @@ func TestRotateX(t *testing.T) {
         t.Errorf("rotatingX(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
     }
 
-    inv, err := matrix.GetRotationX(r).Inverse()
+    inv, err := matrix.RotationX(r).Inverse()
     if err != nil {
         t.Error(err)
     }
@@ -99,7 +99,7 @@ func TestRotateY(t *testing.T) {
         t.Errorf("rotatingY(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
     }
 
-    inv, err := matrix.GetRotationY(r).Inverse()
+    inv, err := matrix.RotationY(r).Inverse()
     if err != nil {
         t.Error(err)
     }
@@ -126,7 +126,7 @@ func TestRotateZ(t *testing.T) {
         t.Errorf("rotatingZ(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, want)
     }
 
-    inv, err := matrix.GetRotationZ(r).Inverse()
+    inv, err := matrix.RotationZ(r).Inverse()
     if err != nil {
         t.Error(err)
     }
