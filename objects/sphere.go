@@ -13,15 +13,6 @@ type Sphere struct {
 	material  Material
 }
 
-func NewSphere() *Sphere {
-	return &Sphere{
-		center:    tuple.NewPoint(0, 0, 0),
-		radius:    1,
-		transform: matrix.NewIdentity(4),
-		material:  DefaultMaterial(),
-	}
-}
-
 func (s *Sphere) String() string {
 	return fmt.Sprintf("Shpere(center: %s, radius: %f, transform: %s)", s.center, s.radius, s.transform)
 }
@@ -34,11 +25,11 @@ func (s *Sphere) SetMaterial(mat Material) {
 	s.material = mat
 }
 
-func (s *Sphere) GetMaterial() Material {
+func (s *Sphere) Material() Material {
 	return s.material
 }
 
-func (s *Sphere) GetTransform() matrix.Matrix {
+func (s *Sphere) Transform() matrix.Matrix {
 	return s.transform
 }
 
@@ -51,4 +42,13 @@ func (s *Sphere) Normal(worldPoint tuple.Tuple) tuple.Tuple {
 	objectNormal := tuple.Subtract(objectPoint, s.center)
 	worldNormal, _ := tuple.Multiply(inv_mat.Transpose(), objectNormal)
 	return worldNormal.ToVector().Normalize()
+}
+
+func NewSphere() *Sphere {
+	return &Sphere{
+		center:    tuple.NewPoint(0, 0, 0),
+		radius:    1,
+		transform: matrix.NewIdentity(4),
+		material:  DefaultMaterial(),
+	}
 }

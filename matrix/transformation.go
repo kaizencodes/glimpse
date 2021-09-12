@@ -2,7 +2,7 @@ package matrix
 
 import "math"
 
-func GetTranslation(x, y, z float64) Matrix {
+func Translation(x, y, z float64) Matrix {
 	return Matrix{
 		[]float64{1, 0, 0, x},
 		[]float64{0, 1, 0, y},
@@ -11,7 +11,7 @@ func GetTranslation(x, y, z float64) Matrix {
 	}
 }
 
-func GetScaling(x, y, z float64) Matrix {
+func Scaling(x, y, z float64) Matrix {
 	return Matrix{
 		[]float64{x, 0, 0, 0},
 		[]float64{0, y, 0, 0},
@@ -20,7 +20,7 @@ func GetScaling(x, y, z float64) Matrix {
 	}
 }
 
-func GetRotationX(rad float64) Matrix {
+func RotationX(rad float64) Matrix {
 	return Matrix{
 		[]float64{1, 0, 0, 0},
 		[]float64{0, math.Cos(rad), -math.Sin(rad), 0},
@@ -29,7 +29,7 @@ func GetRotationX(rad float64) Matrix {
 	}
 }
 
-func GetRotationY(rad float64) Matrix {
+func RotationY(rad float64) Matrix {
 	return Matrix{
 		[]float64{math.Cos(rad), 0, math.Sin(rad), 0},
 		[]float64{0, 1, 0, 0},
@@ -38,7 +38,7 @@ func GetRotationY(rad float64) Matrix {
 	}
 }
 
-func GetRotationZ(rad float64) Matrix {
+func RotationZ(rad float64) Matrix {
 	return Matrix{
 		[]float64{math.Cos(rad), -math.Sin(rad), 0, 0},
 		[]float64{math.Sin(rad), math.Cos(rad), 0, 0},
@@ -47,7 +47,7 @@ func GetRotationZ(rad float64) Matrix {
 	}
 }
 
-func GetShearing(xy, xz, yx, yz, zx, zy float64) Matrix {
+func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 	return Matrix{
 		[]float64{1, xy, xz, 0},
 		[]float64{yx, 1, yz, 0},

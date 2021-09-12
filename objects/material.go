@@ -7,9 +7,29 @@ type Material struct {
 	ambient, diffuse, specular, shininess float64
 }
 
+func (mat Material) Color() color.Color {
+	return mat.color
+}
+
+func (mat Material) Ambient() float64 {
+	return mat.ambient
+}
+
+func (mat Material) Diffuse() float64 {
+	return mat.diffuse
+}
+
+func (mat Material) Specular() float64 {
+	return mat.specular
+}
+
+func (mat Material) Shininess() float64 {
+	return mat.shininess
+}
+
 func DefaultMaterial() Material {
 	return Material{
-		color:     color.Color{1, 1, 1},
+		color:     color.New(1, 1, 1),
 		ambient:   0.1,
 		diffuse:   0.9,
 		specular:  0.9,
@@ -19,24 +39,4 @@ func DefaultMaterial() Material {
 
 func NewMaterial(col color.Color, ambient, diffuse, specular, shininess float64) Material {
 	return Material{col, ambient, diffuse, specular, shininess}
-}
-
-func (mat Material) GetColor() color.Color {
-	return mat.color
-}
-
-func (mat Material) GetAmbient() float64 {
-	return mat.ambient
-}
-
-func (mat Material) GetDiffuse() float64 {
-	return mat.diffuse
-}
-
-func (mat Material) GetSpecular() float64 {
-	return mat.specular
-}
-
-func (mat Material) GetShininess() float64 {
-	return mat.shininess
 }

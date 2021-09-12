@@ -7,57 +7,6 @@ import (
 
 type Matrix [][]float64
 
-func New(n, m int) Matrix {
-	mat := make(Matrix, n)
-	for i := 0; i < int(n); i++ {
-		mat[i] = make([]float64, m)
-	}
-	return mat
-}
-
-func (m Matrix) String() string {
-	var result string
-
-	for _, row := range m {
-		for _, val := range row {
-			result += strconv.FormatFloat(val, 'f', -1, 64)
-		}
-		result += string('\n')
-	}
-	return result
-}
-
-func NewIdentity(size int) Matrix {
-	identity := New(size, size)
-	for n, _ := range identity {
-		identity[n][n] = 1
-	}
-	return identity
-}
-
-func Multiply(a, b Matrix) (Matrix, error) {
-	if len(a[0]) != len(b) {
-		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d.", len(a[0]), len(b))
-	}
-
-	new_mat := New(len(a), len(b[0]))
-	for n, row := range new_mat {
-		for m, _ := range row {
-			new_mat[n][m] = dot(a, b, n, m)
-		}
-	}
-	return new_mat, nil
-}
-
-func dot(a, b Matrix, row, col int) float64 {
-	var sum float64
-	for i, _ := range a[0] {
-		sum += a[row][i] * b[i][col]
-	}
-
-	return sum
-}
-
 func (a Matrix) Transpose() Matrix {
 	mat := New(len(a[0]), len(a))
 	for n := 0; n < len(mat); n++ {
@@ -120,4 +69,55 @@ func (a Matrix) Inverse() (Matrix, error) {
 		}
 	}
 	return inverse, nil
+}
+
+func New(n, m int) Matrix {
+	mat := make(Matrix, n)
+	for i := 0; i < int(n); i++ {
+		mat[i] = make([]float64, m)
+	}
+	return mat
+}
+
+func (m Matrix) String() string {
+	var result string
+
+	for _, row := range m {
+		for _, val := range row {
+			result += strconv.FormatFloat(val, 'f', -1, 64)
+		}
+		result += string('\n')
+	}
+	return result
+}
+
+func NewIdentity(size int) Matrix {
+	identity := New(size, size)
+	for n, _ := range identity {
+		identity[n][n] = 1
+	}
+	return identity
+}
+
+func Multiply(a, b Matrix) (Matrix, error) {
+	if len(a[0]) != len(b) {
+		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d.", len(a[0]), len(b))
+	}
+
+	new_mat := New(len(a), len(b[0]))
+	for n, row := range new_mat {
+		for m, _ := range row {
+			new_mat[n][m] = dot(a, b, n, m)
+		}
+	}
+	return new_mat, nil
+}
+
+func dot(a, b Matrix, row, col int) float64 {
+	var sum float64
+	for i, _ := range a[0] {
+		sum += a[row][i] * b[i][col]
+	}
+
+	return sum
 }

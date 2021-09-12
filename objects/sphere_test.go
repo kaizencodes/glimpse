@@ -52,7 +52,7 @@ func TestNormal(t *testing.T) {
     }
 
     sphere := NewSphere()
-    sphere.SetTransform(matrix.GetTranslation(0, 1, 0))
+    sphere.SetTransform(matrix.Translation(0, 1, 0))
     point := tuple.NewPoint(0, 1.70711, -0.70711)
     want := tuple.NewVector(0, 0.7071067811865475, -0.7071067811865476)
 
@@ -60,7 +60,7 @@ func TestNormal(t *testing.T) {
         t.Errorf("shpere normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", sphere, point, got, want)
     }
 
-    transform, _ := matrix.Multiply(matrix.GetScaling(1, 0.5, 1), matrix.GetRotationZ(math.Pi/5.0))
+    transform, _ := matrix.Multiply(matrix.Scaling(1, 0.5, 1), matrix.RotationZ(math.Pi/5.0))
     sphere.SetTransform(transform)
     point = tuple.NewPoint(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0)
     want = tuple.NewVector(0, 0.9701425001453319, -0.24253562503633294)
