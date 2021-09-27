@@ -103,40 +103,40 @@ func TestIntersect(t *testing.T) {
 }
 
 func TestHit(t *testing.T) {
-    shpere := objects.NewSphere()
+    object := objects.Object(objects.NewSphere())
     var tests = []struct {
         collection Intersections
         want       Intersection
     }{
         {
             collection: Intersections{
-                Intersection{t: 1.0, object: shpere},
-                Intersection{t: 2.0, object: shpere},
+                Intersection{t: 1.0, object: object},
+                Intersection{t: 2.0, object: object},
             },
-            want: Intersection{t: 1.0, object: shpere},
+            want: Intersection{t: 1.0, object: object},
         },
         {
             collection: Intersections{
-                Intersection{t: -1.0, object: shpere},
-                Intersection{t: 1.0, object: shpere},
+                Intersection{t: -1.0, object: object},
+                Intersection{t: 1.0, object: object},
             },
-            want: Intersection{t: 1.0, object: shpere},
+            want: Intersection{t: 1.0, object: object},
         },
         {
             collection: Intersections{
-                Intersection{t: -2.0, object: shpere},
-                Intersection{t: -1.0, object: shpere},
+                Intersection{t: -2.0, object: object},
+                Intersection{t: -1.0, object: object},
             },
             want: Intersection{t: math.MaxFloat64},
         },
         {
             collection: Intersections{
-                Intersection{t: 5.0, object: shpere},
-                Intersection{t: 7.0, object: shpere},
-                Intersection{t: -3.0, object: shpere},
-                Intersection{t: 2.0, object: shpere},
+                Intersection{t: 5.0, object: object},
+                Intersection{t: 7.0, object: object},
+                Intersection{t: -3.0, object: object},
+                Intersection{t: 2.0, object: object},
             },
-            want: Intersection{t: 2.0, object: shpere},
+            want: Intersection{t: 2.0, object: object},
         },
     }
 

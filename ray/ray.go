@@ -6,6 +6,7 @@ import (
 	"glimpse/objects"
 	"glimpse/tuple"
 	"math"
+	"sort"
 	"strconv"
 )
 
@@ -60,7 +61,7 @@ func New(origin, direction tuple.Tuple) Ray {
 
 type Intersection struct {
 	t      float64
-	object *objects.Sphere
+	object objects.Object
 }
 
 type Intersections []Intersection
@@ -73,7 +74,7 @@ func (inter Intersection) GetT() float64 {
 	return inter.t
 }
 
-func (inter Intersection) GetObject() *objects.Sphere {
+func (inter Intersection) GetObject() objects.Object {
 	return inter.object
 }
 
@@ -86,8 +87,14 @@ func (c Intersections) String() string {
 	return result
 }
 
-func Intersect(r Ray, s *objects.Sphere) Intersections {
-	transform, err := s.Transform().Inverse()
+func (c Intersections) Sort() {
+	sort.Slice(c, func(i, j int) bool {
+		return c[i].t < c[j].t
+	})
+}
+
+func Intersect(r Ray, o objects.Object) Intersections {
+	transform, err := o.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +117,7 @@ func Intersect(r Ray, s *objects.Sphere) Intersections {
 	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
 	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
 
-	return Intersections{Intersection{t: t1, object: s}, Intersection{t: t2, object: s}}
+	return Intersections{Intersection{t: t1, object: o}, Intersection{t: t2, object: o}}
 }
 
 func Hit(coll Intersections) Intersection {
