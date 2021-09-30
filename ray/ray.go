@@ -55,6 +55,33 @@ func (r Ray) Direction() tuple.Tuple {
 	return r.direction
 }
 
+func (r Ray) Intersect(o objects.Object) Intersections {
+	transform, err := o.Transform().Inverse()
+	if err != nil {
+		panic(err)
+	}
+	origin, _ := tuple.Multiply(transform, r.origin)
+	direction, _ := tuple.Multiply(transform, r.direction)
+	ray2 := Ray{origin, direction}
+
+	sphere_to_ray := tuple.Subtract(ray2.origin, tuple.NewPoint(0, 0, 0))
+
+	a := tuple.Dot(ray2.direction, ray2.direction)
+	b := 2 * tuple.Dot(ray2.direction, sphere_to_ray)
+	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
+
+	disciminant := math.Pow(b, 2) - 4*a*c
+
+	if disciminant < 0 {
+		return Intersections{}
+	}
+
+	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
+	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
+
+	return Intersections{Intersection{t: t1, object: o}, Intersection{t: t2, object: o}}
+}
+
 func New(origin, direction tuple.Tuple) Ray {
 	return Ray{origin, direction}
 }
@@ -93,36 +120,9 @@ func (c Intersections) Sort() {
 	})
 }
 
-func Intersect(r Ray, o objects.Object) Intersections {
-	transform, err := o.Transform().Inverse()
-	if err != nil {
-		panic(err)
-	}
-	origin, _ := tuple.Multiply(transform, r.origin)
-	direction, _ := tuple.Multiply(transform, r.direction)
-	ray2 := Ray{origin, direction}
-
-	sphere_to_ray := tuple.Subtract(ray2.origin, tuple.NewPoint(0, 0, 0))
-
-	a := tuple.Dot(ray2.direction, ray2.direction)
-	b := 2 * tuple.Dot(ray2.direction, sphere_to_ray)
-	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
-
-	disciminant := math.Pow(b, 2) - 4*a*c
-
-	if disciminant < 0 {
-		return Intersections{}
-	}
-
-	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
-	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
-
-	return Intersections{Intersection{t: t1, object: o}, Intersection{t: t2, object: o}}
-}
-
-func Hit(coll Intersections) Intersection {
+func (c Intersections) Hit() Intersection {
 	res := Intersection{t: math.MaxFloat64}
-	for _, val := range coll {
+	for _, val := range c {
 		if val.t < 0 {
 			continue
 		}
@@ -131,6 +131,10 @@ func Hit(coll Intersections) Intersection {
 		}
 	}
 	return res
+}
+
+func NewIntersection(t float64, obj objects.Object) Intersection {
+	return Intersection{t, obj}
 }
 
 type Computations struct {
