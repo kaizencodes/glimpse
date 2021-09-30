@@ -12,8 +12,8 @@ func TestIntersect(t *testing.T) {
     sections := world.Intersect(r)
     expected := []float64{4, 4.5, 5.5, 6}
     for i, v := range expected {
-        if sections[i].GetT() != v {
-            t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, sections[i].GetT(), v)
+        if sections[i].T() != v {
+            t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, sections[i].T(), v)
         }
     }
 }

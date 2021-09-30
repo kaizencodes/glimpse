@@ -193,3 +193,51 @@ func TestShpereTransformations(t *testing.T) {
         }
     }
 }
+
+func TestPrepareComputations(t *testing.T) {
+    r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+    sphere := objects.NewSphere()
+    i := Intersection{4, sphere}
+    comps := PrepareComputations(i, r)
+    point := tuple.NewPoint(0, 0, -1)
+    eyeV := tuple.NewVector(0, 0, -1)
+    normalV := tuple.NewVector(0, 0, -1)
+
+    testComputation(t, comps, sphere, i, point, eyeV, normalV, false)
+
+    r = New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+    i = Intersection{1, sphere}
+    comps = PrepareComputations(i, r)
+    point = tuple.NewPoint(0, 0, 1)
+    eyeV = tuple.NewVector(0, 0, -1)
+    normalV = tuple.NewVector(0, 0, -1)
+
+    testComputation(t, comps, sphere, i, point, eyeV, normalV, true)
+
+}
+
+func testComputation(t *testing.T, comps Computations, obj objects.Object, i Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {
+    if comps.T() != i.T() {
+        t.Errorf("incorrect T, expected %f, got: %f", i.T(), comps.T())
+    }
+
+    if comps.Object() != obj {
+        t.Errorf("incorrect T, expected %s, got: %s", obj, comps.Object())
+    }
+
+    if comps.Point() != point {
+        t.Errorf("incorrect point, expected %s, got: %s", point, comps.Point())
+    }
+
+    if comps.EyeV() != eyeV {
+        t.Errorf("incorrect eyeV, expected %s, got: %s", eyeV, comps.EyeV())
+    }
+
+    if comps.NormalV() != normalV {
+        t.Errorf("incorrect normalV, expected %s, got: %s", normalV, comps.NormalV())
+    }
+
+    if comps.Inside() != inside {
+        t.Errorf("incorrect inside, expected %t, got: %t", inside, comps.Inside())
+    }
+}

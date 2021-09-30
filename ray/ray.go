@@ -70,11 +70,11 @@ func (inter Intersection) Empty() bool {
 	return inter.t == math.MaxFloat64
 }
 
-func (inter Intersection) GetT() float64 {
+func (inter Intersection) T() float64 {
 	return inter.t
 }
 
-func (inter Intersection) GetObject() objects.Object {
+func (inter Intersection) Object() objects.Object {
 	return inter.object
 }
 
@@ -131,4 +131,60 @@ func Hit(coll Intersections) Intersection {
 		}
 	}
 	return res
+}
+
+type Computations struct {
+	t       float64
+	object  objects.Object
+	point   tuple.Tuple
+	eyeV    tuple.Tuple
+	normalV tuple.Tuple
+	inside  bool
+}
+
+func (c Computations) T() float64 {
+	return c.t
+}
+
+func (c Computations) Object() objects.Object {
+	return c.object
+}
+
+func (c Computations) Point() tuple.Tuple {
+	return c.point
+}
+
+func (c Computations) EyeV() tuple.Tuple {
+	return c.eyeV
+}
+
+func (c Computations) NormalV() tuple.Tuple {
+	return c.normalV
+}
+
+func (c Computations) Inside() bool {
+	return c.inside
+}
+
+func PrepareComputations(i Intersection, r Ray) Computations {
+	point := r.Position(i.t)
+	normalV := i.object.Normal(point)
+	eyeV := r.Direction().Negate()
+
+	var inside bool
+	if tuple.Dot(normalV, eyeV) < 0 {
+		inside = true
+		normalV = normalV.Negate()
+	} else {
+		inside = false
+	}
+
+	return Computations{
+		t:       i.T(),
+		object:  i.Object(),
+		point:   point,
+		eyeV:    eyeV,
+		normalV: normalV,
+		inside:  inside,
+	}
 }
