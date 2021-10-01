@@ -8,7 +8,7 @@ import (
     "testing"
 )
 
-func Testintersect(t *testing.T) {
+func TestIntersect(t *testing.T) {
     w := Default()
     r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
     sections := w.intersect(r)
@@ -20,7 +20,7 @@ func Testintersect(t *testing.T) {
     }
 }
 
-func TestshadeHit(t *testing.T) {
+func TestShadeHit(t *testing.T) {
     w := Default()
     r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
     object := w.Objects()[0]
@@ -41,10 +41,7 @@ func TestshadeHit(t *testing.T) {
     comps = ray.PrepareComputations(i, r)
 
     result = w.shadeHit(comps)
-    // book has these values however I don't see any issues in the code.
-    // every other calculation is 100% correct. error in the book?
-    // 0.90498, 0.90498, 0.90498
-    expected = color.New(0.6365076432344583, 0.6365076432344583, 0.6365076432344583)
+    expected = color.New(0.9049844720832575, 0.9049844720832575, 0.9049844720832575)
     if result != expected {
         t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
     }
