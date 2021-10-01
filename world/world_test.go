@@ -34,7 +34,9 @@ func TestShadeHit(t *testing.T) {
     }
 
     w = Default()
-    w.SetLight(ray.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)))
+    w.SetLights([]ray.Light{
+        ray.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
+    })
     r = ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
     object = w.Objects()[1]
     i = ray.NewIntersection(0.5, object)
@@ -42,6 +44,22 @@ func TestShadeHit(t *testing.T) {
 
     result = w.shadeHit(comps)
     expected = color.New(0.9049844720832575, 0.9049844720832575, 0.9049844720832575)
+    if result != expected {
+        t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
+    }
+
+    w = Default()
+    w.SetLights([]ray.Light{
+        ray.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
+        ray.NewLight(tuple.NewPoint(1, 0, 1), color.New(0.9, 0.7, 0)),
+    })
+    r = ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+    object = w.Objects()[1]
+    i = ray.NewIntersection(0.5, object)
+    comps = ray.PrepareComputations(i, r)
+
+    result = w.shadeHit(comps)
+    expected = color.New(0.9949844720832575, 0.9749844720832574, 0.9049844720832575)
     if result != expected {
         t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
     }

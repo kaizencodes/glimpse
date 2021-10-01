@@ -10,19 +10,19 @@ import (
 
 type World struct {
 	objects []objects.Object
-	light   ray.Light
+	lights  []ray.Light
 }
 
 func (w *World) Objects() []objects.Object {
 	return w.objects
 }
 
-func (w *World) Light() ray.Light {
-	return w.light
+func (w *World) Lights() []ray.Light {
+	return w.lights
 }
 
-func (w *World) SetLight(l ray.Light) {
-	w.light = l
+func (w *World) SetLights(lights []ray.Light) {
+	w.lights = lights
 }
 
 func (w *World) ColorAt(r ray.Ray) color.Color {
@@ -45,13 +45,27 @@ func (w *World) intersect(r ray.Ray) ray.Intersections {
 }
 
 func (w *World) shadeHit(comps ray.Computations) color.Color {
-	return ray.Lighting(
+	c := ray.Lighting(
 		comps.Object().Material(),
-		w.Light(),
+		w.Lights()[0],
 		comps.Point(),
 		comps.EyeV(),
 		comps.NormalV(),
 	)
+	for i, l := range w.Lights() {
+		if i == 0 {
+			continue
+		}
+		c = color.Add(c, ray.Lighting(
+			comps.Object().Material(),
+			l,
+			comps.Point(),
+			comps.EyeV(),
+			comps.NormalV()))
+	}
+
+	return c
+
 }
 
 func Default() *World {
@@ -64,10 +78,12 @@ func Default() *World {
 		objects: []objects.Object{
 			objects.Object(o1), objects.Object(o2),
 		},
-		light: ray.NewLight(tuple.NewPoint(-10, 10, -10), color.New(1, 1, 1)),
+		lights: []ray.Light{
+			ray.NewLight(tuple.NewPoint(-10, 10, -10), color.New(1, 1, 1)),
+		},
 	}
 }
 
-func New(objects []objects.Object, light ray.Light) *World {
-	return &World{objects, light}
+func New(objects []objects.Object, lights []ray.Light) *World {
+	return &World{objects, lights}
 }
