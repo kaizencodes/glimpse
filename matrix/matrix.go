@@ -85,6 +85,7 @@ func (m Matrix) String() string {
 	for _, row := range m {
 		for _, val := range row {
 			result += strconv.FormatFloat(val, 'f', -1, 64)
+			result += ", "
 		}
 		result += string('\n')
 	}

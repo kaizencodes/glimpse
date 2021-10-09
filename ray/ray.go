@@ -6,6 +6,7 @@ import (
 	"glimpse/objects"
 	"glimpse/tuple"
 	"math"
+	"sort"
 	"strconv"
 )
 
@@ -54,40 +55,8 @@ func (r Ray) Direction() tuple.Tuple {
 	return r.direction
 }
 
-func New(origin, direction tuple.Tuple) Ray {
-	return Ray{origin, direction}
-}
-
-type Intersection struct {
-	t      float64
-	object *objects.Sphere
-}
-
-type Intersections []Intersection
-
-func (inter Intersection) Empty() bool {
-	return inter.t == math.MaxFloat64
-}
-
-func (inter Intersection) GetT() float64 {
-	return inter.t
-}
-
-func (inter Intersection) GetObject() *objects.Sphere {
-	return inter.object
-}
-
-func (c Intersections) String() string {
-	var result string
-
-	for _, section := range c {
-		result += strconv.FormatFloat(section.t, 'f', -1, 64) + ", "
-	}
-	return result
-}
-
-func Intersect(r Ray, s *objects.Sphere) Intersections {
-	transform, err := s.Transform().Inverse()
+func (r Ray) Intersect(o objects.Object) Intersections {
+	transform, err := o.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
@@ -110,12 +79,50 @@ func Intersect(r Ray, s *objects.Sphere) Intersections {
 	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
 	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
 
-	return Intersections{Intersection{t: t1, object: s}, Intersection{t: t2, object: s}}
+	return Intersections{Intersection{t: t1, object: o}, Intersection{t: t2, object: o}}
 }
 
-func Hit(coll Intersections) Intersection {
+func New(origin, direction tuple.Tuple) Ray {
+	return Ray{origin, direction}
+}
+
+type Intersection struct {
+	t      float64
+	object objects.Object
+}
+
+type Intersections []Intersection
+
+func (inter Intersection) Empty() bool {
+	return inter.t == math.MaxFloat64
+}
+
+func (inter Intersection) T() float64 {
+	return inter.t
+}
+
+func (inter Intersection) Object() objects.Object {
+	return inter.object
+}
+
+func (c Intersections) String() string {
+	var result string
+
+	for _, section := range c {
+		result += strconv.FormatFloat(section.t, 'f', -1, 64) + ", "
+	}
+	return result
+}
+
+func (c Intersections) Sort() {
+	sort.Slice(c, func(i, j int) bool {
+		return c[i].t < c[j].t
+	})
+}
+
+func (c Intersections) Hit() Intersection {
 	res := Intersection{t: math.MaxFloat64}
-	for _, val := range coll {
+	for _, val := range c {
 		if val.t < 0 {
 			continue
 		}
@@ -124,4 +131,64 @@ func Hit(coll Intersections) Intersection {
 		}
 	}
 	return res
+}
+
+func NewIntersection(t float64, obj objects.Object) Intersection {
+	return Intersection{t, obj}
+}
+
+type Computations struct {
+	t       float64
+	object  objects.Object
+	point   tuple.Tuple
+	eyeV    tuple.Tuple
+	normalV tuple.Tuple
+	inside  bool
+}
+
+func (c Computations) T() float64 {
+	return c.t
+}
+
+func (c Computations) Object() objects.Object {
+	return c.object
+}
+
+func (c Computations) Point() tuple.Tuple {
+	return c.point
+}
+
+func (c Computations) EyeV() tuple.Tuple {
+	return c.eyeV
+}
+
+func (c Computations) NormalV() tuple.Tuple {
+	return c.normalV
+}
+
+func (c Computations) Inside() bool {
+	return c.inside
+}
+
+func PrepareComputations(i Intersection, r Ray) Computations {
+	point := r.Position(i.t)
+	normalV := i.object.Normal(point)
+	eyeV := r.Direction().Negate()
+
+	var inside bool
+	if tuple.Dot(normalV, eyeV) < 0 {
+		inside = true
+		normalV = normalV.Negate()
+	} else {
+		inside = false
+	}
+
+	return Computations{
+		t:       i.T(),
+		object:  i.Object(),
+		point:   point,
+		eyeV:    eyeV,
+		normalV: normalV,
+		inside:  inside,
+	}
 }
