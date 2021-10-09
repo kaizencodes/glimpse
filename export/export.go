@@ -14,9 +14,9 @@ const (
 
 func Export(c canvas.Canvas) string {
 	result := header(c)
-	for _, row := range c {
-		for _, val := range row {
-			result += convertColor(val)
+	for y := 0; y < len(c[0]); y++ {
+		for x := 0; x < len(c); x++ {
+			result += convertColor(c[x][y])
 		}
 		result += string('\n')
 	}

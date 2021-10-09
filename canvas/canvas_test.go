@@ -16,13 +16,10 @@ func TestNew(t *testing.T) {
             h: 3,
             want: Canvas{
                 []color.Color{
-                    color.Color{}, color.Color{},
+                    color.Color{}, color.Color{}, color.Color{},
                 },
                 []color.Color{
-                    color.Color{}, color.Color{},
-                },
-                []color.Color{
-                    color.Color{}, color.Color{},
+                    color.Color{}, color.Color{}, color.Color{},
                 },
             },
         },
