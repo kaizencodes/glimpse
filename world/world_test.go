@@ -118,52 +118,6 @@ func TestColorAt(t *testing.T) {
     }
 }
 
-func TestViewTransformation(t *testing.T) {
-    var tests = []struct {
-        from     tuple.Tuple
-        to       tuple.Tuple
-        up       tuple.Tuple
-        expected matrix.Matrix
-    }{
-        {
-            from:     tuple.NewPoint(0, 0, 0),
-            to:       tuple.NewPoint(0, 0, -1),
-            up:       tuple.NewVector(0, 1, 0),
-            expected: matrix.NewIdentity(4),
-        },
-        {
-            from:     tuple.NewPoint(0, 0, 0),
-            to:       tuple.NewPoint(0, 0, 1),
-            up:       tuple.NewVector(0, 1, 0),
-            expected: matrix.Scaling(-1, 1, -1),
-        },
-        {
-            from:     tuple.NewPoint(0, 0, 8),
-            to:       tuple.NewPoint(0, 0, 0),
-            up:       tuple.NewVector(0, 1, 0),
-            expected: matrix.Translation(0, 0, -8),
-        },
-        {
-            from: tuple.NewPoint(1, 3, 2),
-            to:   tuple.NewPoint(4, -2, 8),
-            up:   tuple.NewVector(1, 1, 0),
-            expected: matrix.Matrix{
-                []float64{-0.5070925528371099, 0.5070925528371099, 0.6761234037828132, -2.366431913239846},
-                []float64{0.7677159338596801, 0.6060915267313263, 0.12121830534626524, -2.8284271247461894},
-                []float64{-0.35856858280031806, 0.5976143046671968, -0.7171371656006361, 0},
-                []float64{0, 0, 0, 1},
-            },
-        },
-    }
-
-    for _, test := range tests {
-        result := ViewTransformation(test.from, test.to, test.up)
-        if result.String() != test.expected.String() {
-            t.Errorf("ViewTransformation,\nto:\n%s\nfrom:\n%s\nup:\n%s\nresult:\n%s\nexpected: \n%s", test.to, test.from, test.up, result, test.expected)
-        }
-    }
-}
-
 func TestShadowAt(t *testing.T) {
     w := Default()
     var tests = []struct {
