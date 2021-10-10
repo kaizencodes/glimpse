@@ -3,8 +3,8 @@ package world
 import (
     "glimpse/color"
     "glimpse/matrix"
-    "glimpse/objects"
     "glimpse/ray"
+    "glimpse/shapes"
     "glimpse/tuple"
     "testing"
 )
@@ -24,8 +24,8 @@ func TestIntersect(t *testing.T) {
 func TestShadeHit(t *testing.T) {
     w := Default()
     r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-    object := w.Objects()[0]
-    i := ray.NewIntersection(4, object)
+    shape := w.Shapes()[0]
+    i := ray.NewIntersection(4, shape)
     comps := ray.PrepareComputations(i, r)
 
     result := w.shadeHit(comps)
@@ -39,8 +39,8 @@ func TestShadeHit(t *testing.T) {
         ray.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
     })
     r = ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-    object = w.Objects()[1]
-    i = ray.NewIntersection(0.5, object)
+    shape = w.Shapes()[1]
+    i = ray.NewIntersection(0.5, shape)
     comps = ray.PrepareComputations(i, r)
 
     result = w.shadeHit(comps)
@@ -55,8 +55,8 @@ func TestShadeHit(t *testing.T) {
         ray.NewLight(tuple.NewPoint(1, 0, 1), color.New(0.9, 0.7, 0)),
     })
     r = ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-    object = w.Objects()[1]
-    i = ray.NewIntersection(0.5, object)
+    shape = w.Shapes()[1]
+    i = ray.NewIntersection(0.5, shape)
     comps = ray.PrepareComputations(i, r)
 
     result = w.shadeHit(comps)
@@ -69,10 +69,10 @@ func TestShadeHit(t *testing.T) {
     w.SetLights([]ray.Light{
         ray.NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
     })
-    s1 := objects.NewSphere()
-    s2 := objects.NewSphere()
+    s1 := shapes.NewSphere()
+    s2 := shapes.NewSphere()
     s2.SetTransform(matrix.Translation(0, 0, 10))
-    w.SetObjects([]objects.Object{s1, s2})
+    w.SetShapes([]shapes.Shape{s1, s2})
 
     r = ray.New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1))
     i = ray.NewIntersection(4, s2)
@@ -103,12 +103,12 @@ func TestColorAt(t *testing.T) {
     }
 
     w = Default()
-    outer := w.Objects()[0]
+    outer := w.Shapes()[0]
     m := outer.Material()
-    outer.SetMaterial(objects.NewMaterial(m.Color(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
-    inner := w.Objects()[1]
+    outer.SetMaterial(shapes.NewMaterial(m.Color(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+    inner := w.Shapes()[1]
     m = inner.Material()
-    inner.SetMaterial(objects.NewMaterial(m.Color(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+    inner.SetMaterial(shapes.NewMaterial(m.Color(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
 
     r = ray.New(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
     result = w.ColorAt(r)

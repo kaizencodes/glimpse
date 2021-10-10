@@ -2,7 +2,7 @@ package ray
 
 import (
     "glimpse/color"
-    "glimpse/objects"
+    "glimpse/shapes"
     "glimpse/tuple"
     "math"
     "testing"
@@ -60,7 +60,7 @@ func TestLighting(t *testing.T) {
         },
     }
 
-    mat := objects.DefaultMaterial()
+    mat := shapes.DefaultMaterial()
     pos := tuple.NewPoint(0, 0, 0)
     for _, test := range tests {
         if got := Lighting(mat, test.light, pos, test.eyeV, test.normalV, test.inShadow); !got.Equal(test.expected) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"glimpse/calc"
 	"glimpse/matrix"
-	"glimpse/objects"
+	"glimpse/shapes"
 	"glimpse/tuple"
 	"math"
 	"sort"
@@ -56,8 +56,8 @@ func (r Ray) Direction() tuple.Tuple {
 	return r.direction
 }
 
-func (r Ray) Intersect(o objects.Object) Intersections {
-	transform, err := o.Transform().Inverse()
+func (r Ray) Intersect(s shapes.Shape) Intersections {
+	transform, err := s.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +80,7 @@ func (r Ray) Intersect(o objects.Object) Intersections {
 	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
 	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
 
-	return Intersections{Intersection{t: t1, object: o}, Intersection{t: t2, object: o}}
+	return Intersections{Intersection{t: t1, shape: s}, Intersection{t: t2, shape: s}}
 }
 
 func New(origin, direction tuple.Tuple) Ray {
@@ -88,8 +88,8 @@ func New(origin, direction tuple.Tuple) Ray {
 }
 
 type Intersection struct {
-	t      float64
-	object objects.Object
+	t     float64
+	shape shapes.Shape
 }
 
 type Intersections []Intersection
@@ -102,8 +102,8 @@ func (inter Intersection) T() float64 {
 	return inter.t
 }
 
-func (inter Intersection) Object() objects.Object {
-	return inter.object
+func (inter Intersection) Shape() shapes.Shape {
+	return inter.shape
 }
 
 func (c Intersections) String() string {
@@ -134,13 +134,13 @@ func (c Intersections) Hit() Intersection {
 	return res
 }
 
-func NewIntersection(t float64, obj objects.Object) Intersection {
+func NewIntersection(t float64, obj shapes.Shape) Intersection {
 	return Intersection{t, obj}
 }
 
 type Computations struct {
 	t         float64
-	object    objects.Object
+	shape     shapes.Shape
 	point     tuple.Tuple
 	eyeV      tuple.Tuple
 	normalV   tuple.Tuple
@@ -152,8 +152,8 @@ func (c Computations) T() float64 {
 	return c.t
 }
 
-func (c Computations) Object() objects.Object {
-	return c.object
+func (c Computations) Shape() shapes.Shape {
+	return c.shape
 }
 
 func (c Computations) Point() tuple.Tuple {
@@ -178,7 +178,7 @@ func (c Computations) Inside() bool {
 
 func PrepareComputations(i Intersection, r Ray) Computations {
 	point := r.Position(i.t)
-	normalV := i.object.Normal(point)
+	normalV := i.shape.Normal(point)
 	eyeV := r.Direction().Negate()
 
 	var inside bool
@@ -192,7 +192,7 @@ func PrepareComputations(i Intersection, r Ray) Computations {
 
 	return Computations{
 		t:         i.T(),
-		object:    i.Object(),
+		shape:     i.Shape(),
 		point:     point,
 		eyeV:      eyeV,
 		normalV:   normalV,

@@ -3,7 +3,7 @@ package ray
 import (
     "glimpse/calc"
     "glimpse/matrix"
-    "glimpse/objects"
+    "glimpse/shapes"
     "glimpse/tuple"
     "math"
     "testing"
@@ -45,47 +45,47 @@ func TestPosition(t *testing.T) {
 }
 
 func TestIntersect(t *testing.T) {
-    shpere := objects.NewSphere()
+    sphere := shapes.NewSphere()
     var tests = []struct {
         ray  Ray
-        s    *objects.Sphere
+        s    *shapes.Sphere
         want Intersections
     }{
         {
             ray: New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1)),
-            s:   shpere,
+            s:   sphere,
             want: Intersections{
-                Intersection{t: 4.0, object: shpere},
-                Intersection{t: 6.0, object: shpere},
+                Intersection{t: 4.0, shape: sphere},
+                Intersection{t: 6.0, shape: sphere},
             },
         },
         {
             ray: New(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1)),
-            s:   shpere,
+            s:   sphere,
             want: Intersections{
-                Intersection{t: 5.0, object: shpere},
-                Intersection{t: 5.0, object: shpere},
+                Intersection{t: 5.0, shape: sphere},
+                Intersection{t: 5.0, shape: sphere},
             },
         },
         {
             ray:  New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1)),
-            s:    shpere,
+            s:    sphere,
             want: Intersections{},
         },
         {
             ray: New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
-            s:   shpere,
+            s:   sphere,
             want: Intersections{
-                Intersection{t: -1.0, object: shpere},
-                Intersection{t: 1.0, object: shpere},
+                Intersection{t: -1.0, shape: sphere},
+                Intersection{t: 1.0, shape: sphere},
             },
         },
         {
             ray: New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1)),
-            s:   shpere,
+            s:   sphere,
             want: Intersections{
-                Intersection{t: -6.0, object: shpere},
-                Intersection{t: -4.0, object: shpere},
+                Intersection{t: -6.0, shape: sphere},
+                Intersection{t: -4.0, shape: sphere},
             },
         },
     }
@@ -96,48 +96,48 @@ func TestIntersect(t *testing.T) {
             if got[i].t != test.want[i].t {
                 t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", test.ray, got[i].t, test.want[i].t)
             }
-            if got[i].object != test.want[i].object {
-                t.Errorf("incorrect object of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", test.ray, got[i].object, test.want[i].object)
+            if got[i].shape != test.want[i].shape {
+                t.Errorf("incorrect Shape of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", test.ray, got[i].shape, test.want[i].shape)
             }
         }
     }
 }
 
 func TestHit(t *testing.T) {
-    object := objects.Object(objects.NewSphere())
+    shape := shapes.Shape(shapes.NewSphere())
     var tests = []struct {
         collection Intersections
         want       Intersection
     }{
         {
             collection: Intersections{
-                Intersection{t: 1.0, object: object},
-                Intersection{t: 2.0, object: object},
+                Intersection{t: 1.0, shape: shape},
+                Intersection{t: 2.0, shape: shape},
             },
-            want: Intersection{t: 1.0, object: object},
+            want: Intersection{t: 1.0, shape: shape},
         },
         {
             collection: Intersections{
-                Intersection{t: -1.0, object: object},
-                Intersection{t: 1.0, object: object},
+                Intersection{t: -1.0, shape: shape},
+                Intersection{t: 1.0, shape: shape},
             },
-            want: Intersection{t: 1.0, object: object},
+            want: Intersection{t: 1.0, shape: shape},
         },
         {
             collection: Intersections{
-                Intersection{t: -2.0, object: object},
-                Intersection{t: -1.0, object: object},
+                Intersection{t: -2.0, shape: shape},
+                Intersection{t: -1.0, shape: shape},
             },
             want: Intersection{t: math.MaxFloat64},
         },
         {
             collection: Intersections{
-                Intersection{t: 5.0, object: object},
-                Intersection{t: 7.0, object: object},
-                Intersection{t: -3.0, object: object},
-                Intersection{t: 2.0, object: object},
+                Intersection{t: 5.0, shape: shape},
+                Intersection{t: 7.0, shape: shape},
+                Intersection{t: -3.0, shape: shape},
+                Intersection{t: 2.0, shape: shape},
             },
-            want: Intersection{t: 2.0, object: object},
+            want: Intersection{t: 2.0, shape: shape},
         },
     }
 
@@ -175,13 +175,13 @@ func TestScale(t *testing.T) {
     }
 }
 
-func TestShpereTransformations(t *testing.T) {
+func TestSphereTransformations(t *testing.T) {
     r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-    sphere := objects.NewSphere()
+    sphere := shapes.NewSphere()
     sphere.SetTransform(matrix.Scaling(2, 2, 2))
     want := Intersections{
-        Intersection{t: 3.0, object: sphere},
-        Intersection{t: 7.0, object: sphere},
+        Intersection{t: 3.0, shape: sphere},
+        Intersection{t: 7.0, shape: sphere},
     }
 
     got := r.Intersect(sphere)
@@ -189,15 +189,15 @@ func TestShpereTransformations(t *testing.T) {
         if got[i].t != want[i].t {
             t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, got[i].t, want[i].t)
         }
-        if got[i].object != want[i].object {
-            t.Errorf("incorrect object of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", r, got[i].object, want[i].object)
+        if got[i].shape != want[i].shape {
+            t.Errorf("incorrect Shape of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", r, got[i].shape, want[i].shape)
         }
     }
 }
 
 func TestPrepareComputations(t *testing.T) {
     r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-    s := objects.NewSphere()
+    s := shapes.NewSphere()
     i := Intersection{4, s}
     comps := PrepareComputations(i, r)
     point := tuple.NewPoint(0, 0, -1)
@@ -218,7 +218,7 @@ func TestPrepareComputations(t *testing.T) {
     testComputation(t, comps, s, i, point, eyeV, normalV, inside)
 
     r = New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-    s = objects.NewSphere()
+    s = shapes.NewSphere()
     s.SetTransform(matrix.Translation(0, 0, 1))
     i = Intersection{5, s}
     comps = PrepareComputations(i, r)
@@ -238,13 +238,13 @@ func TestPrepareComputations(t *testing.T) {
 
 }
 
-func testComputation(t *testing.T, comps Computations, obj objects.Object, i Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {
+func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {
     if comps.T() != i.T() {
         t.Errorf("incorrect T, expected %f, got: %f", i.T(), comps.T())
     }
 
-    if comps.Object() != obj {
-        t.Errorf("incorrect T, expected %s, got: %s", obj, comps.Object())
+    if comps.Shape() != shape {
+        t.Errorf("incorrect T, expected %s, got: %s", shape, comps.Shape())
     }
 
     if comps.Point() != point {

@@ -3,7 +3,7 @@ package ray
 import (
 	"fmt"
 	"glimpse/color"
-	"glimpse/objects"
+	"glimpse/shapes"
 	"glimpse/tuple"
 	"math"
 )
@@ -29,7 +29,7 @@ func NewLight(position tuple.Tuple, intensity color.Color) Light {
 	return Light{position, intensity}
 }
 
-func Lighting(mat objects.Material, light Light, point, eyeV, normalV tuple.Tuple, inShadow bool) color.Color {
+func Lighting(mat shapes.Material, light Light, point, eyeV, normalV tuple.Tuple, inShadow bool) color.Color {
 	effectiveColor := color.HadamardProduct(mat.Color(), light.intensity)
 	lightV := tuple.Subtract(light.position, point).Normalize()
 	ambient := effectiveColor.Scalar(mat.Ambient())

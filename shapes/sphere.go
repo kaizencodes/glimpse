@@ -1,4 +1,4 @@
-package objects
+package shapes
 
 import (
 	"fmt"
@@ -38,9 +38,9 @@ func (s *Sphere) Normal(worldPoint tuple.Tuple) tuple.Tuple {
 	if err != nil {
 		panic(err)
 	}
-	objectPoint, _ := tuple.Multiply(inv_mat, worldPoint)
-	objectNormal := tuple.Subtract(objectPoint, s.center)
-	worldNormal, _ := tuple.Multiply(inv_mat.Transpose(), objectNormal)
+	ShapePoint, _ := tuple.Multiply(inv_mat, worldPoint)
+	ShapeNormal := tuple.Subtract(ShapePoint, s.center)
+	worldNormal, _ := tuple.Multiply(inv_mat.Transpose(), ShapeNormal)
 	return worldNormal.ToVector().Normalize()
 }
 

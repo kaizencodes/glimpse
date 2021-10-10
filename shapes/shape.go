@@ -1,11 +1,11 @@
-package objects
+package shapes
 
 import (
 	"glimpse/matrix"
 	"glimpse/tuple"
 )
 
-type Object interface {
+type Shape interface {
 	Material() Material
 	SetMaterial(m Material)
 	Transform() matrix.Matrix

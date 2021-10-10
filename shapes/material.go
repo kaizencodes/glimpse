@@ -1,4 +1,4 @@
-package objects
+package shapes
 
 import "glimpse/color"
 
