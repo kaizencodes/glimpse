@@ -17,14 +17,26 @@ func (l Light) String() string {
 	return fmt.Sprintf("Light(position: %f, intensity: %f)", l.position, l.intensity)
 }
 
+func (l Light) Position() tuple.Tuple {
+	return l.position
+}
+
+func (l Light) Intensity() color.Color {
+	return l.intensity
+}
+
 func NewLight(position tuple.Tuple, intensity color.Color) Light {
 	return Light{position, intensity}
 }
 
-func Lighting(mat objects.Material, light Light, point, eyeV, normalV tuple.Tuple) color.Color {
+func Lighting(mat objects.Material, light Light, point, eyeV, normalV tuple.Tuple, inShadow bool) color.Color {
 	effectiveColor := color.HadamardProduct(mat.Color(), light.intensity)
 	lightV := tuple.Subtract(light.position, point).Normalize()
 	ambient := effectiveColor.Scalar(mat.Ambient())
+	if inShadow {
+		return ambient
+	}
+
 	lightDotNormal := tuple.Dot(lightV, normalV)
 	var diffuse, specular color.Color
 	if lightDotNormal < 0 {

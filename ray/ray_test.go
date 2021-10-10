@@ -1,6 +1,7 @@
 package ray
 
 import (
+    "glimpse/calc"
     "glimpse/matrix"
     "glimpse/objects"
     "glimpse/tuple"
@@ -196,23 +197,44 @@ func TestShpereTransformations(t *testing.T) {
 
 func TestPrepareComputations(t *testing.T) {
     r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-    sphere := objects.NewSphere()
-    i := Intersection{4, sphere}
+    s := objects.NewSphere()
+    i := Intersection{4, s}
     comps := PrepareComputations(i, r)
     point := tuple.NewPoint(0, 0, -1)
     eyeV := tuple.NewVector(0, 0, -1)
     normalV := tuple.NewVector(0, 0, -1)
+    inside := false
 
-    testComputation(t, comps, sphere, i, point, eyeV, normalV, false)
+    testComputation(t, comps, s, i, point, eyeV, normalV, inside)
 
     r = New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-    i = Intersection{1, sphere}
+    i = Intersection{1, s}
     comps = PrepareComputations(i, r)
     point = tuple.NewPoint(0, 0, 1)
     eyeV = tuple.NewVector(0, 0, -1)
     normalV = tuple.NewVector(0, 0, -1)
+    inside = true
 
-    testComputation(t, comps, sphere, i, point, eyeV, normalV, true)
+    testComputation(t, comps, s, i, point, eyeV, normalV, inside)
+
+    r = New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+    s = objects.NewSphere()
+    s.SetTransform(matrix.Translation(0, 0, 1))
+    i = Intersection{5, s}
+    comps = PrepareComputations(i, r)
+    point = tuple.NewPoint(0, 0, 0)
+    eyeV = tuple.NewVector(0, 0, -1)
+    normalV = tuple.NewVector(0, 0, -1)
+    inside = false
+
+    testComputation(t, comps, s, i, point, eyeV, normalV, inside)
+    if comps.OverPoint().Z() > -calc.EPSILON/2 {
+        t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint().Z(), -calc.EPSILON/2)
+    }
+
+    if comps.Point().Z() < comps.OverPoint().Z() {
+        t.Errorf("incorrect Z %f < OverPoint.Z %f", comps.Point().Z(), comps.OverPoint().Z())
+    }
 
 }
 

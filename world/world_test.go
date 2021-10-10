@@ -60,7 +60,26 @@ func TestShadeHit(t *testing.T) {
     comps = ray.PrepareComputations(i, r)
 
     result = w.shadeHit(comps)
-    expected = color.New(0.9949844720832575, 0.9749844720832574, 0.9049844720832575)
+    expected = color.New(0.19, 0.16999999999999998, 0.1)
+    if result != expected {
+        t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
+    }
+
+    w = Default()
+    w.SetLights([]ray.Light{
+        ray.NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
+    })
+    s1 := objects.NewSphere()
+    s2 := objects.NewSphere()
+    s2.SetTransform(matrix.Translation(0, 0, 10))
+    w.SetObjects([]objects.Object{s1, s2})
+
+    r = ray.New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1))
+    i = ray.NewIntersection(4, s2)
+    comps = ray.PrepareComputations(i, r)
+
+    result = w.shadeHit(comps)
+    expected = color.New(0.1, 0.1, 0.1)
     if result != expected {
         t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
     }
@@ -141,6 +160,43 @@ func TestViewTransformation(t *testing.T) {
         result := ViewTransformation(test.from, test.to, test.up)
         if result.String() != test.expected.String() {
             t.Errorf("ViewTransformation,\nto:\n%s\nfrom:\n%s\nup:\n%s\nresult:\n%s\nexpected: \n%s", test.to, test.from, test.up, result, test.expected)
+        }
+    }
+}
+
+func TestShadowAt(t *testing.T) {
+    w := Default()
+    var tests = []struct {
+        w        *World
+        point    tuple.Tuple
+        expected bool
+    }{
+        {
+            w:        w,
+            point:    tuple.NewPoint(0, 10, 0),
+            expected: false,
+        },
+        {
+            w:        w,
+            point:    tuple.NewPoint(10, -10, 10),
+            expected: true,
+        },
+        {
+            w:        w,
+            point:    tuple.NewPoint(-20, 20, -20),
+            expected: false,
+        },
+        {
+            w:        w,
+            point:    tuple.NewPoint(-2, 2, -2),
+            expected: false,
+        },
+    }
+
+    for _, test := range tests {
+        result := test.w.shadowAt(test.point)
+        if result != test.expected {
+            t.Errorf("ShadowAt,\npoint:\n%s\nresult:\n%t\nexpected: \n%t", test.point, result, test.expected)
         }
     }
 }
