@@ -63,12 +63,21 @@ func (r Ray) Intersect(s shapes.Shape) Intersections {
 	}
 	origin, _ := tuple.Multiply(transform, r.origin)
 	direction, _ := tuple.Multiply(transform, r.direction)
-	ray2 := Ray{origin, direction}
+	localRay := Ray{origin, direction}
 
-	sphere_to_ray := tuple.Subtract(ray2.origin, tuple.NewPoint(0, 0, 0))
+	switch s := s.(type) {
+	case *shapes.Sphere:
+		return localRay.intersectSphere(s)
+	default:
+		panic(fmt.Errorf("Not supported shape %T", s))
+	}
+}
 
-	a := tuple.Dot(ray2.direction, ray2.direction)
-	b := 2 * tuple.Dot(ray2.direction, sphere_to_ray)
+func (r Ray) intersectSphere(s shapes.Shape) Intersections {
+	sphere_to_ray := tuple.Subtract(r.origin, tuple.NewPoint(0, 0, 0))
+
+	a := tuple.Dot(r.direction, r.direction)
+	b := 2 * tuple.Dot(r.direction, sphere_to_ray)
 	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
 
 	disciminant := math.Pow(b, 2) - 4*a*c
