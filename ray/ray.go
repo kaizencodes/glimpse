@@ -178,7 +178,7 @@ func (c Computations) Inside() bool {
 
 func PrepareComputations(i Intersection, r Ray) Computations {
 	point := r.Position(i.t)
-	normalV := i.shape.Normal(point)
+	normalV := shapes.NormalAt(point, i.shape)
 	eyeV := r.Direction().Negate()
 
 	var inside bool

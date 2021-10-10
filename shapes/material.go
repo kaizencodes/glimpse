@@ -1,6 +1,9 @@
 package shapes
 
-import "glimpse/color"
+import (
+	"fmt"
+	"glimpse/color"
+)
 
 type Material struct {
 	color                                 color.Color
@@ -25,6 +28,16 @@ func (mat Material) Specular() float64 {
 
 func (mat Material) Shininess() float64 {
 	return mat.shininess
+}
+
+func (mat Material) String() string {
+	return fmt.Sprintf("Material(color: %s\n, ambient: %f, diffuse: %f, specular: %f, shininess: %f,)",
+		mat.color,
+		mat.ambient,
+		mat.diffuse,
+		mat.specular,
+		mat.shininess,
+	)
 }
 
 func DefaultMaterial() Material {
