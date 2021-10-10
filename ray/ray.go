@@ -2,6 +2,7 @@ package ray
 
 import (
 	"fmt"
+	"glimpse/calc"
 	"glimpse/matrix"
 	"glimpse/objects"
 	"glimpse/tuple"
@@ -138,12 +139,13 @@ func NewIntersection(t float64, obj objects.Object) Intersection {
 }
 
 type Computations struct {
-	t       float64
-	object  objects.Object
-	point   tuple.Tuple
-	eyeV    tuple.Tuple
-	normalV tuple.Tuple
-	inside  bool
+	t         float64
+	object    objects.Object
+	point     tuple.Tuple
+	eyeV      tuple.Tuple
+	normalV   tuple.Tuple
+	overPoint tuple.Tuple
+	inside    bool
 }
 
 func (c Computations) T() float64 {
@@ -166,6 +168,10 @@ func (c Computations) NormalV() tuple.Tuple {
 	return c.normalV
 }
 
+func (c Computations) OverPoint() tuple.Tuple {
+	return c.overPoint
+}
+
 func (c Computations) Inside() bool {
 	return c.inside
 }
@@ -182,13 +188,15 @@ func PrepareComputations(i Intersection, r Ray) Computations {
 	} else {
 		inside = false
 	}
+	overPoint := tuple.Add(point, normalV.Scalar(calc.EPSILON))
 
 	return Computations{
-		t:       i.T(),
-		object:  i.Object(),
-		point:   point,
-		eyeV:    eyeV,
-		normalV: normalV,
-		inside:  inside,
+		t:         i.T(),
+		object:    i.Object(),
+		point:     point,
+		eyeV:      eyeV,
+		normalV:   normalV,
+		inside:    inside,
+		overPoint: overPoint,
 	}
 }

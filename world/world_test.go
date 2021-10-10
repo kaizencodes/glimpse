@@ -60,7 +60,26 @@ func TestShadeHit(t *testing.T) {
     comps = ray.PrepareComputations(i, r)
 
     result = w.shadeHit(comps)
-    expected = color.New(0.9949844720832575, 0.9749844720832574, 0.9049844720832575)
+    expected = color.New(0.19, 0.16999999999999998, 0.1)
+    if result != expected {
+        t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
+    }
+
+    w = Default()
+    w.SetLights([]ray.Light{
+        ray.NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
+    })
+    s1 := objects.NewSphere()
+    s2 := objects.NewSphere()
+    s2.SetTransform(matrix.Translation(0, 0, 10))
+    w.SetObjects([]objects.Object{s1, s2})
+
+    r = ray.New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1))
+    i = ray.NewIntersection(4, s2)
+    comps = ray.PrepareComputations(i, r)
+
+    result = w.shadeHit(comps)
+    expected = color.New(0.1, 0.1, 0.1)
     if result != expected {
         t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
     }
@@ -99,48 +118,39 @@ func TestColorAt(t *testing.T) {
     }
 }
 
-func TestViewTransformation(t *testing.T) {
+func TestShadowAt(t *testing.T) {
+    w := Default()
     var tests = []struct {
-        from     tuple.Tuple
-        to       tuple.Tuple
-        up       tuple.Tuple
-        expected matrix.Matrix
+        w        *World
+        point    tuple.Tuple
+        expected bool
     }{
         {
-            from:     tuple.NewPoint(0, 0, 0),
-            to:       tuple.NewPoint(0, 0, -1),
-            up:       tuple.NewVector(0, 1, 0),
-            expected: matrix.NewIdentity(4),
+            w:        w,
+            point:    tuple.NewPoint(0, 10, 0),
+            expected: false,
         },
         {
-            from:     tuple.NewPoint(0, 0, 0),
-            to:       tuple.NewPoint(0, 0, 1),
-            up:       tuple.NewVector(0, 1, 0),
-            expected: matrix.Scaling(-1, 1, -1),
+            w:        w,
+            point:    tuple.NewPoint(10, -10, 10),
+            expected: true,
         },
         {
-            from:     tuple.NewPoint(0, 0, 8),
-            to:       tuple.NewPoint(0, 0, 0),
-            up:       tuple.NewVector(0, 1, 0),
-            expected: matrix.Translation(0, 0, -8),
+            w:        w,
+            point:    tuple.NewPoint(-20, 20, -20),
+            expected: false,
         },
         {
-            from: tuple.NewPoint(1, 3, 2),
-            to:   tuple.NewPoint(4, -2, 8),
-            up:   tuple.NewVector(1, 1, 0),
-            expected: matrix.Matrix{
-                []float64{-0.5070925528371099, 0.5070925528371099, 0.6761234037828132, -2.366431913239846},
-                []float64{0.7677159338596801, 0.6060915267313263, 0.12121830534626524, -2.8284271247461894},
-                []float64{-0.35856858280031806, 0.5976143046671968, -0.7171371656006361, 0},
-                []float64{0, 0, 0, 1},
-            },
+            w:        w,
+            point:    tuple.NewPoint(-2, 2, -2),
+            expected: false,
         },
     }
 
     for _, test := range tests {
-        result := ViewTransformation(test.from, test.to, test.up)
-        if result.String() != test.expected.String() {
-            t.Errorf("ViewTransformation,\nto:\n%s\nfrom:\n%s\nup:\n%s\nresult:\n%s\nexpected: \n%s", test.to, test.from, test.up, result, test.expected)
+        result := test.w.shadowAt(test.point)
+        if result != test.expected {
+            t.Errorf("ShadowAt,\npoint:\n%s\nresult:\n%t\nexpected: \n%t", test.point, result, test.expected)
         }
     }
 }

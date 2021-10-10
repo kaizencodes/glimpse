@@ -21,6 +21,10 @@ func (w *World) Lights() []ray.Light {
 	return w.lights
 }
 
+func (w *World) SetObjects(objs []objects.Object) {
+	w.objects = objs
+}
+
 func (w *World) SetLights(lights []ray.Light) {
 	w.lights = lights
 }
@@ -45,12 +49,14 @@ func (w *World) intersect(r ray.Ray) ray.Intersections {
 }
 
 func (w *World) shadeHit(comps ray.Computations) color.Color {
+	isShadowed := w.shadowAt(comps.OverPoint())
 	c := ray.Lighting(
 		comps.Object().Material(),
 		w.Lights()[0],
 		comps.Point(),
 		comps.EyeV(),
 		comps.NormalV(),
+		isShadowed,
 	)
 	for i, l := range w.Lights() {
 		if i == 0 {
@@ -61,11 +67,26 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 			l,
 			comps.Point(),
 			comps.EyeV(),
-			comps.NormalV()))
+			comps.NormalV(),
+			isShadowed))
 	}
 
 	return c
 
+}
+
+func (w *World) shadowAt(point tuple.Tuple) bool {
+	for _, l := range w.lights {
+		v := tuple.Subtract(l.Position(), point)
+		dist := v.Magnitude()
+		r := ray.New(point, v.Normalize())
+		hit := w.intersect(r).Hit()
+
+		if !hit.Empty() && hit.T() < dist {
+			return true
+		}
+	}
+	return false
 }
 
 func Default() *World {
@@ -86,21 +107,4 @@ func Default() *World {
 
 func New(objects []objects.Object, lights []ray.Light) *World {
 	return &World{objects, lights}
-}
-
-func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
-	forward := tuple.Subtract(to, from).Normalize()
-	left := tuple.Cross(forward, up.Normalize())
-	trueUp := tuple.Cross(left, forward)
-
-	orientation := matrix.Matrix{
-		[]float64{left.X(), left.Y(), left.Z(), 0},
-		[]float64{trueUp.X(), trueUp.Y(), trueUp.Z(), 0},
-		[]float64{-forward.X(), -forward.Y(), -forward.Z(), 0},
-		[]float64{0, 0, 0, 1},
-	}
-
-	result, _ := matrix.Multiply(orientation, matrix.Translation(-from.X(), -from.Y(), -from.Z()))
-
-	return result
 }
