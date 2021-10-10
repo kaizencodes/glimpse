@@ -46,9 +46,10 @@ func TestPosition(t *testing.T) {
 
 func TestIntersect(t *testing.T) {
     sphere := shapes.NewSphere()
+    plane := shapes.NewPlane()
     var tests = []struct {
         ray  Ray
-        s    *shapes.Sphere
+        s    shapes.Shape
         want Intersections
     }{
         {
@@ -86,6 +87,34 @@ func TestIntersect(t *testing.T) {
             want: Intersections{
                 Intersection{t: -6.0, shape: sphere},
                 Intersection{t: -4.0, shape: sphere},
+            },
+        },
+        {
+            // Intersect with a ray parallel to the plane
+            ray:  New(tuple.NewPoint(0, 10, 0), tuple.NewVector(0, 0, 1)),
+            s:    plane,
+            want: Intersections{},
+        },
+        {
+            // Intersect with a coplanar ray
+            ray:  New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
+            s:    plane,
+            want: Intersections{},
+        },
+        {
+            // A ray intersecting a plane from above
+            ray: New(tuple.NewPoint(0, 1, 0), tuple.NewVector(0, -1, 0)),
+            s:   plane,
+            want: Intersections{
+                Intersection{t: 1, shape: plane},
+            },
+        },
+        {
+            // A ray intersecting a plane from below
+            ray: New(tuple.NewPoint(0, -1, 0), tuple.NewVector(0, 1, 0)),
+            s:   plane,
+            want: Intersections{
+                Intersection{t: 1, shape: plane},
             },
         },
     }
