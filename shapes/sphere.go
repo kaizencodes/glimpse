@@ -1,4 +1,4 @@
-package objects
+package shapes
 
 import (
 	"fmt"
@@ -33,22 +33,15 @@ func (s *Sphere) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Sphere) Normal(worldPoint tuple.Tuple) tuple.Tuple {
-	inv_mat, err := s.transform.Inverse()
-	if err != nil {
-		panic(err)
-	}
-	objectPoint, _ := tuple.Multiply(inv_mat, worldPoint)
-	objectNormal := tuple.Subtract(objectPoint, s.center)
-	worldNormal, _ := tuple.Multiply(inv_mat.Transpose(), objectNormal)
-	return worldNormal.ToVector().Normalize()
+func (s *Sphere) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+	return tuple.Subtract(point, s.center)
 }
 
 func NewSphere() *Sphere {
 	return &Sphere{
 		center:    tuple.NewPoint(0, 0, 0),
 		radius:    1,
-		transform: matrix.NewIdentity(4),
+		transform: DefaultTransform(),
 		material:  DefaultMaterial(),
 	}
 }
