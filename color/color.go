@@ -58,3 +58,7 @@ func HadamardProduct(a, b Color) Color {
 func Black() Color {
 	return Color{}
 }
+
+func White() Color {
+	return Color{1, 1, 1}
+}
