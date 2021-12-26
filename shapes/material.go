@@ -3,15 +3,22 @@ package shapes
 import (
 	"fmt"
 	"glimpse/color"
+	"glimpse/patterns"
+	"glimpse/tuple"
 )
 
 type Material struct {
-	color                                 color.Color
+	// color                                 color.Color
+	pattern                               patterns.Pattern
 	ambient, diffuse, specular, shininess float64
 }
 
 func (mat Material) Color() color.Color {
-	return mat.color
+	return mat.pattern.ColorAt(tuple.NewPoint(0, 0, 0))
+}
+
+func (mat Material) ColorAt(pos tuple.Tuple) color.Color {
+	return mat.pattern.ColorAt(pos)
 }
 
 func (mat Material) Ambient() float64 {
@@ -31,8 +38,8 @@ func (mat Material) Shininess() float64 {
 }
 
 func (mat Material) String() string {
-	return fmt.Sprintf("Material(color: %s\n, ambient: %f, diffuse: %f, specular: %f, shininess: %f,)",
-		mat.color,
+	return fmt.Sprintf("Material(pattern: %s\n, ambient: %f, diffuse: %f, specular: %f, shininess: %f,)",
+		mat.pattern,
 		mat.ambient,
 		mat.diffuse,
 		mat.specular,
@@ -42,7 +49,7 @@ func (mat Material) String() string {
 
 func DefaultMaterial() Material {
 	return Material{
-		color:     color.New(1, 1, 1),
+		pattern:   patterns.NewMonoPattern(color.White()),
 		ambient:   0.1,
 		diffuse:   0.9,
 		specular:  0.9,
@@ -50,6 +57,6 @@ func DefaultMaterial() Material {
 	}
 }
 
-func NewMaterial(col color.Color, ambient, diffuse, specular, shininess float64) Material {
-	return Material{col, ambient, diffuse, specular, shininess}
+func NewMaterial(pattern patterns.Pattern, ambient, diffuse, specular, shininess float64) Material {
+	return Material{pattern, ambient, diffuse, specular, shininess}
 }

@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-func TestStripeAt(t *testing.T) {
-	pattern := StripePattern(color.White(), color.Black())
+func TestColorAt(t *testing.T) {
+	pattern := NewStripePattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
 		expected color.Color
@@ -66,8 +66,8 @@ func TestStripeAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := StripeAt(pattern, test.point); test.expected.Equal(result) {
-			t.Errorf("StripeAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
+		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
 		}
 	}
 }

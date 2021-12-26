@@ -30,7 +30,8 @@ func NewLight(position tuple.Tuple, intensity color.Color) Light {
 }
 
 func Lighting(mat shapes.Material, light Light, point, eyeV, normalV tuple.Tuple, inShadow bool) color.Color {
-	effectiveColor := color.HadamardProduct(mat.Color(), light.intensity)
+	coloring := mat.ColorAt(point)
+	effectiveColor := color.HadamardProduct(coloring, light.intensity)
 	lightV := tuple.Subtract(light.position, point).Normalize()
 	ambient := effectiveColor.Scalar(mat.Ambient())
 	if inShadow {
