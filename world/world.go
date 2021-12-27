@@ -52,7 +52,7 @@ func (w *World) intersect(r ray.Ray) ray.Intersections {
 func (w *World) shadeHit(comps ray.Computations) color.Color {
 	isShadowed := w.shadowAt(comps.OverPoint())
 	c := ray.Lighting(
-		comps.Shape().Material(),
+		comps.Shape(),
 		w.Lights()[0],
 		comps.Point(),
 		comps.EyeV(),
@@ -64,7 +64,7 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 			continue
 		}
 		c = color.Add(c, ray.Lighting(
-			comps.Shape().Material(),
+			comps.Shape(),
 			l,
 			comps.Point(),
 			comps.EyeV(),

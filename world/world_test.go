@@ -3,7 +3,6 @@ package world
 import (
 	"glimpse/color"
 	"glimpse/matrix"
-	"glimpse/patterns"
 	"glimpse/ray"
 	"glimpse/shapes"
 	"glimpse/tuple"
@@ -106,14 +105,14 @@ func TestColorAt(t *testing.T) {
 	w = Default()
 	outer := w.Shapes()[0]
 	m := outer.Material()
-	outer.SetMaterial(shapes.NewMaterial(patterns.NewMonoPattern(m.Color()), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	outer.SetMaterial(shapes.NewMaterial(m.Pattern(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
 	inner := w.Shapes()[1]
 	m = inner.Material()
-	inner.SetMaterial(shapes.NewMaterial(patterns.NewMonoPattern(m.Color()), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	inner.SetMaterial(shapes.NewMaterial(m.Pattern(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
 
 	r = ray.New(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
 	result = w.ColorAt(r)
-	expected = inner.Material().Color()
+	expected = inner.Material().ColorAt(r.Origin())
 	if result != expected {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}

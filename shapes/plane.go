@@ -9,7 +9,7 @@ import (
 type Plane struct {
 	center    tuple.Tuple
 	transform matrix.Matrix
-	material  Material
+	material  *Material
 }
 
 func (s *Plane) String() string {
@@ -20,11 +20,11 @@ func (s *Plane) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
 }
 
-func (s *Plane) SetMaterial(mat Material) {
+func (s *Plane) SetMaterial(mat *Material) {
 	s.material = mat
 }
 
-func (s *Plane) Material() Material {
+func (s *Plane) Material() *Material {
 	return s.material
 }
 
@@ -39,7 +39,7 @@ func (s *Plane) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 func NewPlane() *Plane {
 	return &Plane{
 		center:    tuple.NewPoint(0, 0, 0),
-		transform: DefaultTransform(),
+		transform: matrix.DefaultTransform(),
 		material:  DefaultMaterial(),
 	}
 }

@@ -61,10 +61,10 @@ func TestLighting(t *testing.T) {
 		},
 	}
 
-	mat := shapes.DefaultMaterial()
+	shape := shapes.NewSphere()
 	pos := tuple.NewPoint(0, 0, 0)
 	for _, test := range tests {
-		if got := Lighting(mat, test.light, pos, test.eyeV, test.normalV, test.inShadow); !got.Equal(test.expected) {
+		if got := Lighting(shape, test.light, pos, test.eyeV, test.normalV, test.inShadow); !got.Equal(test.expected) {
 			t.Errorf("Lighting:\n light: %s \neyeV: %s \nnormalV: %s\ninShadow: %t\ngot: \n%s. \nexpected: \n%s", test.light, test.eyeV, test.normalV, test.inShadow, got, test.expected)
 		}
 	}
@@ -77,11 +77,12 @@ func TestLighting(t *testing.T) {
 	inShadow := false
 	pattern := patterns.NewStripePattern(color.White(), color.Black())
 	ambientMat := shapes.NewMaterial(pattern, 1, 0, 0, 0)
+	shape.SetMaterial(ambientMat)
 	pos1 := tuple.NewPoint(0.9, 0, 0)
 	pos2 := tuple.NewPoint(1.1, 0, 0)
 
-	color1 := Lighting(ambientMat, light, pos1, eyeV, normalV, inShadow)
-	color2 := Lighting(ambientMat, light, pos2, eyeV, normalV, inShadow)
+	color1 := Lighting(shape, light, pos1, eyeV, normalV, inShadow)
+	color2 := Lighting(shape, light, pos2, eyeV, normalV, inShadow)
 
 	if !color1.Equal(color.White()) {
 		t.Errorf("Lighting:\n light: %s \neyeV: %s \nnormalV: %s\ninShadow: %t\ngot: \n%s. \nexpected: \n%s", light, eyeV, normalV, inShadow, color1, color.White())
