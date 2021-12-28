@@ -26,9 +26,8 @@ func NewStripePattern(a, b color.Color) *Pattern {
 			a, b := a, b
 			if math.Mod(math.Floor(point.X()), 2) == 0 {
 				return a
-			} else {
-				return b
 			}
+			return b
 		},
 	}
 }
@@ -53,9 +52,22 @@ func NewRingPattern(a, b color.Color) *Pattern {
 			comp := math.Sqrt(math.Pow(point.X(), 2) + math.Pow(point.Z(), 2))
 			if math.Mod(math.Floor(comp), 2) == 0 {
 				return a
-			} else {
-				return b
 			}
+			return b
+		},
+	}
+}
+
+func NewCheckerPattern(a, b color.Color) *Pattern {
+	return &Pattern{
+		transform: matrix.DefaultTransform(),
+		colorAt: func(point tuple.Tuple) color.Color {
+			a, b := a, b
+			sum := math.Floor(point.X()) + math.Floor(point.Y()) + math.Floor(point.Z())
+			if math.Mod(math.Floor(sum), 2) == 0 {
+				return a
+			}
+			return b
 		},
 	}
 }

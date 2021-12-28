@@ -135,3 +135,57 @@ func TestRingPattern(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckerPattern(t *testing.T) {
+	pattern := NewCheckerPattern(color.White(), color.Black())
+	var tests = []struct {
+		point    tuple.Tuple
+		expected color.Color
+	}{
+		// Checkers should repeat in x
+		{
+			point:    tuple.NewPoint(0, 0, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(0.99, 0, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(1.01, 0, 0),
+			expected: color.Black(),
+		},
+		// Checkers should repeat in y
+		{
+			point:    tuple.NewPoint(0, 0, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(0, 0.99, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(0, 1.01, 0),
+			expected: color.Black(),
+		},
+		// Checkers should repeat in y
+		{
+			point:    tuple.NewPoint(0, 0, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(0, 0, 0.99),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(0, 0, 1.01),
+			expected: color.Black(),
+		},
+	}
+
+	for _, test := range tests {
+		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
+		}
+	}
+}
