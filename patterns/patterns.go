@@ -45,6 +45,21 @@ func NewGradientPattern(a, b color.Color) *Pattern {
 	}
 }
 
+func NewRingPattern(a, b color.Color) *Pattern {
+	return &Pattern{
+		transform: matrix.DefaultTransform(),
+		colorAt: func(point tuple.Tuple) color.Color {
+			a, b := a, b
+			comp := math.Sqrt(math.Pow(point.X(), 2) + math.Pow(point.Z(), 2))
+			if math.Mod(math.Floor(comp), 2) == 0 {
+				return a
+			} else {
+				return b
+			}
+		},
+	}
+}
+
 func (p *Pattern) ColorAt(point tuple.Tuple) color.Color {
 	return p.colorAt(point)
 }

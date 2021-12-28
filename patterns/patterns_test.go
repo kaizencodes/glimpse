@@ -73,6 +73,7 @@ func TestStripePattern(t *testing.T) {
 }
 
 func TestGradientPattern(t *testing.T) {
+	// A gradient linearly interpolates between colors
 	pattern := NewGradientPattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
@@ -93,6 +94,38 @@ func TestGradientPattern(t *testing.T) {
 		{
 			point:    tuple.NewPoint(0.75, 0, 0),
 			expected: color.New(0.25, 0.25, 0.25),
+		},
+	}
+
+	for _, test := range tests {
+		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
+		}
+	}
+}
+
+func TestRingPattern(t *testing.T) {
+	// A ring should extend in both x and z
+	pattern := NewRingPattern(color.White(), color.Black())
+	var tests = []struct {
+		point    tuple.Tuple
+		expected color.Color
+	}{
+		{
+			point:    tuple.NewPoint(0, 0, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(1, 0, 0),
+			expected: color.Black(),
+		},
+		{
+			point:    tuple.NewPoint(0, 0, 1),
+			expected: color.Black(),
+		},
+		{
+			point:    tuple.NewPoint(0.708, 0, 0.708),
+			expected: color.Black(),
 		},
 	}
 
