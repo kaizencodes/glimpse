@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestColorAt(t *testing.T) {
+func TestStripePattern(t *testing.T) {
 	pattern := NewStripePattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
@@ -62,6 +62,37 @@ func TestColorAt(t *testing.T) {
 		{
 			point:    tuple.NewPoint(-1.1, 0, 0),
 			expected: color.White(),
+		},
+	}
+
+	for _, test := range tests {
+		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
+		}
+	}
+}
+
+func TestGradientPattern(t *testing.T) {
+	pattern := NewGradientPattern(color.White(), color.Black())
+	var tests = []struct {
+		point    tuple.Tuple
+		expected color.Color
+	}{
+		{
+			point:    tuple.NewPoint(0, 0, 0),
+			expected: color.White(),
+		},
+		{
+			point:    tuple.NewPoint(0.25, 0, 0),
+			expected: color.New(0.75, 0.75, 0.75),
+		},
+		{
+			point:    tuple.NewPoint(0.5, 0, 0),
+			expected: color.New(0.5, 0.5, 0.5),
+		},
+		{
+			point:    tuple.NewPoint(0.75, 0, 0),
+			expected: color.New(0.25, 0.25, 0.25),
 		},
 	}
 

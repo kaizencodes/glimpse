@@ -12,6 +12,13 @@ type Pattern struct {
 	colorAt   func(tuple.Tuple) color.Color
 }
 
+func NewMonoPattern(c color.Color) *Pattern {
+	return &Pattern{
+		transform: matrix.DefaultTransform(),
+		colorAt:   func(t tuple.Tuple) color.Color { return c },
+	}
+}
+
 func NewStripePattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
@@ -26,15 +33,20 @@ func NewStripePattern(a, b color.Color) *Pattern {
 	}
 }
 
-func (p *Pattern) ColorAt(point tuple.Tuple) color.Color {
-	return p.colorAt(point)
-}
-
-func NewMonoPattern(c color.Color) *Pattern {
+func NewGradientPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
-		colorAt:   func(t tuple.Tuple) color.Color { return c },
+		colorAt: func(point tuple.Tuple) color.Color {
+			a, b := a, b
+			distance := color.Subtract(b, a)
+			fraction := point.X() - math.Floor(point.X())
+			return color.Add(a, distance.Scalar(fraction))
+		},
 	}
+}
+
+func (p *Pattern) ColorAt(point tuple.Tuple) color.Color {
+	return p.colorAt(point)
 }
 
 func (s *Pattern) SetTransform(transform matrix.Matrix) {
