@@ -1,70 +1,46 @@
 package patterns
 
 import (
-	"fmt"
 	"glimpse/color"
 	"glimpse/matrix"
 	"glimpse/tuple"
 	"math"
 )
 
-type Pattern interface {
-	ColorAt(point tuple.Tuple) color.Color
-	Transform() matrix.Matrix
-	SetTransform(transform matrix.Matrix)
-	String() string
-}
-
-type StripePattern struct {
-	a, b      color.Color
+type Pattern struct {
 	transform matrix.Matrix
+	colorAt   func(tuple.Tuple) color.Color
 }
 
-func NewStripePattern(a, b color.Color) *StripePattern {
-	return &StripePattern{a: a, b: b, transform: matrix.DefaultTransform()}
-}
-
-func (p *StripePattern) ColorAt(point tuple.Tuple) color.Color {
-	if math.Mod(math.Floor(point.X()), 2) == 0 {
-		return p.a
-	} else {
-		return p.b
+func NewStripePattern(a, b color.Color) *Pattern {
+	return &Pattern{
+		transform: matrix.DefaultTransform(),
+		colorAt: func(point tuple.Tuple) color.Color {
+			a, b := a, b
+			if math.Mod(math.Floor(point.X()), 2) == 0 {
+				return a
+			} else {
+				return b
+			}
+		},
 	}
 }
 
-func (p *StripePattern) String() string {
-	return fmt.Sprintf("StripePattern(a: %s, b: %s)", p.a, p.b)
+func (p *Pattern) ColorAt(point tuple.Tuple) color.Color {
+	return p.colorAt(point)
 }
 
-type MonoPattern struct {
-	color     color.Color
-	transform matrix.Matrix
+func NewMonoPattern(c color.Color) *Pattern {
+	return &Pattern{
+		transform: matrix.DefaultTransform(),
+		colorAt:   func(t tuple.Tuple) color.Color { return c },
+	}
 }
 
-func NewMonoPattern(c color.Color) *MonoPattern {
-	return &MonoPattern{color: c, transform: matrix.DefaultTransform()}
-}
-
-func (p *MonoPattern) ColorAt(point tuple.Tuple) color.Color {
-	return p.color
-}
-
-func (p *MonoPattern) String() string {
-	return fmt.Sprintf("MonoPattern(color: %s)", p.color)
-}
-
-func (s *MonoPattern) SetTransform(transform matrix.Matrix) {
+func (s *Pattern) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
 }
 
-func (s *MonoPattern) Transform() matrix.Matrix {
-	return s.transform
-}
-
-func (s *StripePattern) SetTransform(transform matrix.Matrix) {
-	s.transform = transform
-}
-
-func (s *StripePattern) Transform() matrix.Matrix {
+func (s *Pattern) Transform() matrix.Matrix {
 	return s.transform
 }

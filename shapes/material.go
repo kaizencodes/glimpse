@@ -9,7 +9,7 @@ import (
 )
 
 type Material struct {
-	pattern                               patterns.Pattern
+	pattern                               *patterns.Pattern
 	ambient, diffuse, specular, shininess float64
 }
 
@@ -35,7 +35,8 @@ func (mat *Material) Shininess() float64 {
 
 func (mat *Material) String() string {
 	return fmt.Sprintf("Material(pattern: %s\n, ambient: %f, diffuse: %f, specular: %f, shininess: %f,)",
-		mat.pattern,
+		// mat.pattern,
+		"pattern",
 		mat.ambient,
 		mat.diffuse,
 		mat.specular,
@@ -53,7 +54,7 @@ func DefaultMaterial() *Material {
 	}
 }
 
-func NewMaterial(pattern patterns.Pattern, ambient, diffuse, specular, shininess float64) *Material {
+func NewMaterial(pattern *patterns.Pattern, ambient, diffuse, specular, shininess float64) *Material {
 	return &Material{pattern, ambient, diffuse, specular, shininess}
 }
 
@@ -61,11 +62,11 @@ func (m *Material) SetTransform(transform matrix.Matrix) {
 	m.pattern.SetTransform(transform)
 }
 
-func (m *Material) SetPattern(pattern patterns.Pattern) {
+func (m *Material) SetPattern(pattern *patterns.Pattern) {
 	m.pattern = pattern
 }
 
-func (s *Material) Pattern() patterns.Pattern {
+func (s *Material) Pattern() *patterns.Pattern {
 	return s.pattern
 }
 
