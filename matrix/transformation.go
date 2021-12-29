@@ -55,3 +55,7 @@ func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 		[]float64{0, 0, 0, 1},
 	}
 }
+
+func DefaultTransform() Matrix {
+	return NewIdentity(4)
+}

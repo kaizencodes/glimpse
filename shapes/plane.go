@@ -2,6 +2,7 @@ package shapes
 
 import (
 	"fmt"
+	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/tuple"
 )
@@ -9,7 +10,7 @@ import (
 type Plane struct {
 	center    tuple.Tuple
 	transform matrix.Matrix
-	material  Material
+	material  *materials.Material
 }
 
 func (s *Plane) String() string {
@@ -20,11 +21,11 @@ func (s *Plane) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
 }
 
-func (s *Plane) SetMaterial(mat Material) {
+func (s *Plane) SetMaterial(mat *materials.Material) {
 	s.material = mat
 }
 
-func (s *Plane) Material() Material {
+func (s *Plane) Material() *materials.Material {
 	return s.material
 }
 
@@ -39,7 +40,7 @@ func (s *Plane) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 func NewPlane() *Plane {
 	return &Plane{
 		center:    tuple.NewPoint(0, 0, 0),
-		transform: DefaultTransform(),
-		material:  DefaultMaterial(),
+		transform: matrix.DefaultTransform(),
+		material:  materials.DefaultMaterial(),
 	}
 }
