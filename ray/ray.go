@@ -11,32 +11,35 @@ import (
 	"strconv"
 )
 
+const BounceLimit = 5
+
 type Ray struct {
-	origin    tuple.Tuple
-	direction tuple.Tuple
+	origin      tuple.Tuple
+	direction   tuple.Tuple
+	bounceLimit int
 }
 
-func (r Ray) Position(dist float64) tuple.Tuple {
+func (r *Ray) Position(dist float64) tuple.Tuple {
 	return tuple.Add(r.origin, r.direction.Scalar(dist))
 }
 
-func (r Ray) String() string {
+func (r *Ray) String() string {
 	return fmt.Sprintf("Ray(origin: %s, direction: %s)", r.origin, r.direction)
 }
 
-func (r Ray) Equal(other Ray) bool {
+func (r *Ray) Equal(other *Ray) bool {
 	return r.origin.Equal(other.origin) && r.direction.Equal(other.direction)
 }
 
-func (r Ray) Translate(x, y, z float64) Ray {
+func (r *Ray) Translate(x, y, z float64) *Ray {
 	origin, err := tuple.Multiply(matrix.Translation(x, y, z), r.origin)
 	if err != nil {
 		panic(err)
 	}
-	return Ray{origin: origin, direction: r.direction}
+	return &Ray{origin: origin, direction: r.direction}
 }
 
-func (r Ray) Scale(x, y, z float64) Ray {
+func (r *Ray) Scale(x, y, z float64) *Ray {
 	origin, err := tuple.Multiply(matrix.Scaling(x, y, z), r.origin)
 	if err != nil {
 		panic(err)
@@ -45,25 +48,33 @@ func (r Ray) Scale(x, y, z float64) Ray {
 	if err != nil {
 		panic(err)
 	}
-	return Ray{origin: origin, direction: direction}
+	return &Ray{origin: origin, direction: direction}
 }
 
-func (r Ray) Origin() tuple.Tuple {
+func (r *Ray) Origin() tuple.Tuple {
 	return r.origin
 }
 
-func (r Ray) Direction() tuple.Tuple {
+func (r *Ray) Direction() tuple.Tuple {
 	return r.direction
 }
 
-func (r Ray) Intersect(s shapes.Shape) Intersections {
+func (r *Ray) BounceLimit() int {
+	return r.bounceLimit
+}
+
+func (r *Ray) SetBounceLimit(bounceLimit int) {
+	r.bounceLimit = bounceLimit
+}
+
+func (r *Ray) Intersect(s shapes.Shape) Intersections {
 	transform, err := s.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
 	origin, _ := tuple.Multiply(transform, r.origin)
 	direction, _ := tuple.Multiply(transform, r.direction)
-	localRay := Ray{origin, direction}
+	localRay := &Ray{origin, direction, BounceLimit}
 
 	switch s := s.(type) {
 	case *shapes.Sphere:
@@ -75,26 +86,26 @@ func (r Ray) Intersect(s shapes.Shape) Intersections {
 	}
 }
 
-func (r Ray) intersectSphere(s *shapes.Sphere) Intersections {
+func (r *Ray) intersectSphere(s *shapes.Sphere) Intersections {
 	sphere_to_ray := tuple.Subtract(r.origin, tuple.NewPoint(0, 0, 0))
 
 	a := tuple.Dot(r.direction, r.direction)
 	b := 2 * tuple.Dot(r.direction, sphere_to_ray)
 	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
 
-	disciminant := math.Pow(b, 2) - 4*a*c
+	discriminant := math.Pow(b, 2) - 4*a*c
 
-	if disciminant < 0 {
+	if discriminant < 0 {
 		return Intersections{}
 	}
 
-	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
-	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
+	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
 	return Intersections{Intersection{t: t1, shape: s}, Intersection{t: t2, shape: s}}
 }
 
-func (r Ray) intersectPlane(s *shapes.Plane) Intersections {
+func (r *Ray) intersectPlane(s *shapes.Plane) Intersections {
 	if math.Abs(r.Direction().Y()) < calc.EPSILON {
 		return Intersections{}
 	}
@@ -105,8 +116,8 @@ func (r Ray) intersectPlane(s *shapes.Plane) Intersections {
 	}
 }
 
-func New(origin, direction tuple.Tuple) Ray {
-	return Ray{origin, direction}
+func New(origin, direction tuple.Tuple) *Ray {
+	return &Ray{origin, direction, BounceLimit}
 }
 
 type Intersection struct {
@@ -161,13 +172,15 @@ func NewIntersection(t float64, obj shapes.Shape) Intersection {
 }
 
 type Computations struct {
-	t         float64
-	shape     shapes.Shape
-	point     tuple.Tuple
-	eyeV      tuple.Tuple
-	normalV   tuple.Tuple
-	overPoint tuple.Tuple
-	inside    bool
+	t           float64
+	shape       shapes.Shape
+	point       tuple.Tuple
+	eyeV        tuple.Tuple
+	normalV     tuple.Tuple
+	reflectV    tuple.Tuple
+	overPoint   tuple.Tuple
+	bounceLimit int
+	inside      bool
 }
 
 func (c Computations) T() float64 {
@@ -190,6 +203,14 @@ func (c Computations) NormalV() tuple.Tuple {
 	return c.normalV
 }
 
+func (c Computations) ReflectV() tuple.Tuple {
+	return c.reflectV
+}
+
+func (c Computations) BounceLimit() int {
+	return c.bounceLimit
+}
+
 func (c Computations) OverPoint() tuple.Tuple {
 	return c.overPoint
 }
@@ -198,7 +219,7 @@ func (c Computations) Inside() bool {
 	return c.inside
 }
 
-func PrepareComputations(i Intersection, r Ray) Computations {
+func PrepareComputations(i Intersection, r *Ray) Computations {
 	point := r.Position(i.t)
 	normalV := shapes.NormalAt(point, i.shape)
 	eyeV := r.Direction().Negate()
@@ -213,12 +234,14 @@ func PrepareComputations(i Intersection, r Ray) Computations {
 	overPoint := tuple.Add(point, normalV.Scalar(calc.EPSILON))
 
 	return Computations{
-		t:         i.T(),
-		shape:     i.Shape(),
-		point:     point,
-		eyeV:      eyeV,
-		normalV:   normalV,
-		inside:    inside,
-		overPoint: overPoint,
+		t:           i.T(),
+		shape:       i.Shape(),
+		point:       point,
+		eyeV:        eyeV,
+		normalV:     normalV,
+		reflectV:    tuple.Reflect(r.Direction(), normalV),
+		inside:      inside,
+		overPoint:   overPoint,
+		bounceLimit: r.BounceLimit(),
 	}
 }

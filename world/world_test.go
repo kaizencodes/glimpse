@@ -7,6 +7,7 @@ import (
 	"glimpse/ray"
 	"glimpse/shapes"
 	"glimpse/tuple"
+	"math"
 	"testing"
 )
 
@@ -50,6 +51,7 @@ func TestShadeHit(t *testing.T) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
+	// multiple light sources
 	w = Default()
 	w.SetLights([]ray.Light{
 		ray.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
@@ -84,6 +86,24 @@ func TestShadeHit(t *testing.T) {
 	if result != expected {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
+
+	// with reflective shapes
+
+	w = Default()
+	r = ray.New(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
+	shape = shapes.NewPlane()
+	shape.SetTransform(matrix.Translation(0, -1, 0))
+	mat := materials.DefaultMaterial()
+	mat.SetReflective(0.5)
+	shape.SetMaterial(mat)
+	i = ray.NewIntersection(math.Sqrt(2), shape)
+	comps = ray.PrepareComputations(i, r)
+	result = w.shadeHit(comps)
+	expected = color.New(0.876755987245857, 0.924338636811946, 0.8291733376797681)
+
+	if result != expected {
+		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
+	}
 }
 
 func TestColorAt(t *testing.T) {
@@ -106,12 +126,12 @@ func TestColorAt(t *testing.T) {
 	w = Default()
 	outer := w.Shapes()[0]
 	m := outer.Material()
-	outer.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	outer.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess(), m.Reflective()))
 	outer.Material().SetPattern(m.Pattern())
 
 	inner := w.Shapes()[1]
 	m = inner.Material()
-	inner.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	inner.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess(), m.Reflective()))
 	inner.Material().SetPattern(m.Pattern())
 
 	r = ray.New(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
@@ -120,6 +140,32 @@ func TestColorAt(t *testing.T) {
 	if result != expected {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
+}
+
+func TestRecusingReflection(t *testing.T) {
+	w := Default()
+	w.SetLights([]ray.Light{
+		ray.NewLight(tuple.NewPoint(0, 0, 0), color.New(1, 1, 1)),
+	})
+
+	mat := materials.DefaultMaterial()
+	mat.SetReflective(1)
+
+	lower := shapes.NewPlane()
+	lower.SetMaterial(mat)
+	lower.SetTransform(matrix.Translation(0, -1, 0))
+
+	upper := shapes.NewPlane()
+	upper.SetMaterial(mat)
+	upper.SetTransform(matrix.Translation(0, 1, 0))
+
+	w.SetShapes([]shapes.Shape{
+		lower, upper,
+	})
+
+	r := ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
+	// If the limit would not be in place this would run into an infinite recursion.
+	w.ColorAt(r)
 }
 
 func TestShadowAt(t *testing.T) {
@@ -156,5 +202,59 @@ func TestShadowAt(t *testing.T) {
 		if result != test.expected {
 			t.Errorf("ShadowAt,\npoint:\n%s\nresult:\n%t\nexpected: \n%t", test.point, result, test.expected)
 		}
+	}
+}
+
+func TestReflectedColor(t *testing.T) {
+	// The reflected color for a nonreflective material
+	w := Default()
+	r := ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+	shape := w.Shapes()[1]
+	mat := shape.Material()
+	mat.SetAmbient(1)
+	i := ray.NewIntersection(1, shape)
+	comps := ray.PrepareComputations(i, r)
+	result := w.reflectedColor(comps)
+	expected := color.Black()
+
+	if result != expected {
+		t.Errorf("incorrect reflected color:\nresult: \n%s. \nexpected: \n%s", result, expected)
+	}
+
+	// The reflected color for a reflective material
+
+	w = Default()
+	r = ray.New(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
+	shape = shapes.NewPlane()
+	shape.SetTransform(matrix.Translation(0, -1, 0))
+	mat = materials.DefaultMaterial()
+	mat.SetReflective(0.5)
+	shape.SetMaterial(mat)
+	i = ray.NewIntersection(math.Sqrt(2), shape)
+	comps = ray.PrepareComputations(i, r)
+	result = w.reflectedColor(comps)
+	expected = color.New(0.1903305982643556, 0.23791324783044449, 0.14274794869826668)
+
+	if result != expected {
+		t.Errorf("incorrect reflected color:\nresult: \n%s. \nexpected: \n%s", result, expected)
+	}
+
+	// Returns when ray has reached the maximum recursive depth.
+
+	w = Default()
+	r = ray.New(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
+	r.SetBounceLimit(0)
+	shape = shapes.NewPlane()
+	shape.SetTransform(matrix.Translation(0, -1, 0))
+	mat = materials.DefaultMaterial()
+	mat.SetReflective(0.5)
+	shape.SetMaterial(mat)
+	i = ray.NewIntersection(math.Sqrt(2), shape)
+	comps = ray.PrepareComputations(i, r)
+	result = w.reflectedColor(comps)
+	expected = color.Black()
+
+	if result != expected {
+		t.Errorf("incorrect reflected color:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 }

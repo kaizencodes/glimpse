@@ -30,7 +30,7 @@ func (w *World) SetLights(lights []ray.Light) {
 	w.lights = lights
 }
 
-func (w *World) ColorAt(r ray.Ray) color.Color {
+func (w *World) ColorAt(r *ray.Ray) color.Color {
 	hit := w.intersect(r).Hit()
 	if hit.Empty() {
 		return color.Black()
@@ -39,7 +39,7 @@ func (w *World) ColorAt(r ray.Ray) color.Color {
 	return w.shadeHit(ray.PrepareComputations(hit, r))
 }
 
-func (w *World) intersect(r ray.Ray) ray.Intersections {
+func (w *World) intersect(r *ray.Ray) ray.Intersections {
 	coll := ray.Intersections{}
 	for _, o := range w.shapes {
 		coll = append(coll, r.Intersect(o)...)
@@ -59,6 +59,8 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 		comps.NormalV(),
 		isShadowed,
 	)
+	c = color.Add(c, w.reflectedColor(comps))
+
 	for i, l := range w.Lights() {
 		if i == 0 {
 			continue
@@ -73,7 +75,6 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 	}
 
 	return c
-
 }
 
 func (w *World) shadowAt(point tuple.Tuple) bool {
@@ -90,9 +91,21 @@ func (w *World) shadowAt(point tuple.Tuple) bool {
 	return false
 }
 
+func (w *World) reflectedColor(comps ray.Computations) color.Color {
+	if comps.Shape().Material().Reflective() == 0 || comps.BounceLimit() < 1 {
+		return color.Black()
+	}
+
+	r := ray.New(comps.OverPoint(), comps.ReflectV())
+	r.SetBounceLimit(comps.BounceLimit() - 1)
+	c := w.ColorAt(r)
+
+	return c.Scalar(comps.Shape().Material().Reflective())
+}
+
 func Default() *World {
 	o1 := shapes.NewSphere()
-	o1.SetMaterial(materials.NewMaterial(color.New(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0))
+	o1.SetMaterial(materials.NewMaterial(color.New(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0, 0))
 	o2 := shapes.NewSphere()
 	o2.SetTransform(matrix.Scaling(0.5, 0.5, 0.5))
 

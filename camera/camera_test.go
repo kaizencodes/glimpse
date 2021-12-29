@@ -42,7 +42,7 @@ func TestRayForPixel(t *testing.T) {
 	var tests = []struct {
 		c        *Camera
 		x, y     int
-		expected ray.Ray
+		expected *ray.Ray
 	}{
 		{
 			c:        New(201, 101, math.Pi/2),
@@ -59,7 +59,7 @@ func TestRayForPixel(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := test.c.RayForPixel(test.x, test.y); result != test.expected {
+		if result := test.c.RayForPixel(test.x, test.y); *result != *test.expected {
 			t.Errorf("RayForPixel expected %s, got %s", test.expected, result)
 		}
 	}
@@ -69,7 +69,7 @@ func TestRayForPixel(t *testing.T) {
 	c.SetTransform(transform)
 	expected := ray.New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0.7071067811865474, 0, -0.7071067811865478))
 
-	if result := c.RayForPixel(100, 50); result != expected {
+	if result := c.RayForPixel(100, 50); *result != *expected {
 		t.Errorf("RayForPixel expected %s, got %s", expected, result)
 	}
 }
