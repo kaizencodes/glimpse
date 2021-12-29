@@ -2,6 +2,7 @@ package world
 
 import (
 	"glimpse/color"
+	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/ray"
 	"glimpse/shapes"
@@ -105,10 +106,13 @@ func TestColorAt(t *testing.T) {
 	w = Default()
 	outer := w.Shapes()[0]
 	m := outer.Material()
-	outer.SetMaterial(shapes.NewMaterial(m.Pattern(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	outer.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	outer.Material().SetPattern(m.Pattern())
+
 	inner := w.Shapes()[1]
 	m = inner.Material()
-	inner.SetMaterial(shapes.NewMaterial(m.Pattern(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	inner.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess()))
+	inner.Material().SetPattern(m.Pattern())
 
 	r = ray.New(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
 	result = w.ColorAt(r)

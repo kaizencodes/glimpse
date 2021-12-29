@@ -2,13 +2,14 @@ package shapes
 
 import (
 	"glimpse/color"
+	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/tuple"
 )
 
 type Shape interface {
-	Material() *Material
-	SetMaterial(m *Material)
+	Material() *materials.Material
+	SetMaterial(m *materials.Material)
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
 	LocalNormalAt(point tuple.Tuple) tuple.Tuple

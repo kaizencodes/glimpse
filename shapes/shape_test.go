@@ -3,8 +3,8 @@ package shapes
 import (
 	"fmt"
 	"glimpse/color"
+	"glimpse/materials"
 	"glimpse/matrix"
-	"glimpse/patterns"
 	"glimpse/tuple"
 	"math"
 	"testing"
@@ -81,7 +81,8 @@ func TestColorAt(t *testing.T) {
 	shape := NewTestShape()
 	shape.SetTransform(matrix.Scaling(2, 2, 2))
 	mat := shape.Material()
-	mat.SetPattern(patterns.NewStripePattern(color.White(), color.Black()))
+
+	mat.SetPattern(materials.NewPattern(materials.Stripe, color.White(), color.Black()))
 
 	point := tuple.NewPoint(1.5, 0, 0)
 	expected := color.White()
@@ -93,7 +94,7 @@ func TestColorAt(t *testing.T) {
 	// Stripes with a pattern transformation
 	shape = NewTestShape()
 	mat = shape.Material()
-	mat.SetPattern(patterns.NewStripePattern(color.White(), color.Black()))
+	mat.SetPattern(materials.NewPattern(materials.Stripe, color.White(), color.Black()))
 	mat.SetTransform(matrix.Scaling(2, 2, 2))
 
 	point = tuple.NewPoint(1.5, 0, 0)
@@ -104,11 +105,10 @@ func TestColorAt(t *testing.T) {
 	}
 
 	// Stripes with both an object and a pattern transformation
-
 	shape = NewTestShape()
 	shape.SetTransform(matrix.Scaling(2, 2, 2))
 	mat = shape.Material()
-	mat.SetPattern(patterns.NewStripePattern(color.White(), color.Black()))
+	mat.SetPattern(materials.NewPattern(materials.Stripe, color.White(), color.Black()))
 	mat.SetTransform(matrix.Translation(0.5, 0, 0))
 
 	point = tuple.NewPoint(2.5, 0, 0)
@@ -121,7 +121,7 @@ func TestColorAt(t *testing.T) {
 
 type TestShape struct {
 	transform matrix.Matrix
-	material  *Material
+	material  *materials.Material
 }
 
 func (s *TestShape) String() string {
@@ -132,11 +132,11 @@ func (s *TestShape) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
 }
 
-func (s *TestShape) SetMaterial(mat *Material) {
+func (s *TestShape) SetMaterial(mat *materials.Material) {
 	s.material = mat
 }
 
-func (s *TestShape) Material() *Material {
+func (s *TestShape) Material() *materials.Material {
 	return s.material
 }
 
@@ -151,6 +151,6 @@ func (s *TestShape) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 func NewTestShape() *TestShape {
 	return &TestShape{
 		transform: matrix.DefaultTransform(),
-		material:  DefaultMaterial(),
+		material:  materials.DefaultMaterial(),
 	}
 }

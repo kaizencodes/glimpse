@@ -1,10 +1,21 @@
-package patterns
+package materials
 
 import (
+	"fmt"
 	"glimpse/color"
 	"glimpse/matrix"
 	"glimpse/tuple"
 	"math"
+)
+
+type PatternType int
+
+const (
+	Base PatternType = iota
+	Stripe
+	Gradient
+	Ring
+	Checker
 )
 
 type Pattern struct {
@@ -12,14 +23,31 @@ type Pattern struct {
 	colorAt   func(tuple.Tuple) color.Color
 }
 
-func NewMonoPattern(c color.Color) *Pattern {
+func NewPattern(pattern PatternType, colors ...color.Color) *Pattern {
+	switch pattern {
+	case Base:
+		return newBasePattern(colors[0])
+	case Stripe:
+		return newStripePattern(colors[0], colors[1])
+	case Gradient:
+		return newGradientPattern(colors[0], colors[1])
+	case Ring:
+		return newRingPattern(colors[0], colors[1])
+	case Checker:
+		return newCheckerPattern(colors[0], colors[1])
+	default:
+		panic(fmt.Errorf("Not supported pattern: %T", pattern))
+	}
+}
+
+func newBasePattern(c color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt:   func(t tuple.Tuple) color.Color { return c },
 	}
 }
 
-func NewStripePattern(a, b color.Color) *Pattern {
+func newStripePattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
@@ -32,7 +60,7 @@ func NewStripePattern(a, b color.Color) *Pattern {
 	}
 }
 
-func NewGradientPattern(a, b color.Color) *Pattern {
+func newGradientPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
@@ -44,7 +72,7 @@ func NewGradientPattern(a, b color.Color) *Pattern {
 	}
 }
 
-func NewRingPattern(a, b color.Color) *Pattern {
+func newRingPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
@@ -58,7 +86,7 @@ func NewRingPattern(a, b color.Color) *Pattern {
 	}
 }
 
-func NewCheckerPattern(a, b color.Color) *Pattern {
+func newCheckerPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
@@ -70,16 +98,4 @@ func NewCheckerPattern(a, b color.Color) *Pattern {
 			return b
 		},
 	}
-}
-
-func (p *Pattern) ColorAt(point tuple.Tuple) color.Color {
-	return p.colorAt(point)
-}
-
-func (s *Pattern) SetTransform(transform matrix.Matrix) {
-	s.transform = transform
-}
-
-func (s *Pattern) Transform() matrix.Matrix {
-	return s.transform
 }

@@ -1,20 +1,19 @@
-package shapes
+package materials
 
 import (
 	"fmt"
 	"glimpse/color"
 	"glimpse/matrix"
-	"glimpse/patterns"
 	"glimpse/tuple"
 )
 
 type Material struct {
-	pattern                               *patterns.Pattern
+	pattern                               *Pattern
 	ambient, diffuse, specular, shininess float64
 }
 
 func (mat *Material) ColorAt(pos tuple.Tuple) color.Color {
-	return mat.pattern.ColorAt(pos)
+	return mat.pattern.colorAt(pos)
 }
 
 func (mat *Material) Ambient() float64 {
@@ -34,9 +33,7 @@ func (mat *Material) Shininess() float64 {
 }
 
 func (mat *Material) String() string {
-	return fmt.Sprintf("Material(pattern: %s\n, ambient: %f, diffuse: %f, specular: %f, shininess: %f,)",
-		// mat.pattern,
-		"pattern",
+	return fmt.Sprintf("Material(ambient: %f, diffuse: %f, specular: %f, shininess: %f,)",
 		mat.ambient,
 		mat.diffuse,
 		mat.specular,
@@ -46,7 +43,7 @@ func (mat *Material) String() string {
 
 func DefaultMaterial() *Material {
 	return &Material{
-		pattern:   patterns.NewMonoPattern(color.White()),
+		pattern:   NewPattern(Base, color.White()),
 		ambient:   0.1,
 		diffuse:   0.9,
 		specular:  0.9,
@@ -54,22 +51,22 @@ func DefaultMaterial() *Material {
 	}
 }
 
-func NewMaterial(pattern *patterns.Pattern, ambient, diffuse, specular, shininess float64) *Material {
-	return &Material{pattern, ambient, diffuse, specular, shininess}
+func NewMaterial(c color.Color, ambient, diffuse, specular, shininess float64) *Material {
+	return &Material{NewPattern(Base, c), ambient, diffuse, specular, shininess}
 }
 
 func (m *Material) SetTransform(transform matrix.Matrix) {
-	m.pattern.SetTransform(transform)
+	m.pattern.transform = (transform)
 }
 
-func (m *Material) SetPattern(pattern *patterns.Pattern) {
+func (m *Material) SetPattern(pattern *Pattern) {
 	m.pattern = pattern
 }
 
-func (s *Material) Pattern() *patterns.Pattern {
+func (s *Material) Pattern() *Pattern {
 	return s.pattern
 }
 
 func (s *Material) Transform() matrix.Matrix {
-	return s.pattern.Transform()
+	return s.pattern.transform
 }

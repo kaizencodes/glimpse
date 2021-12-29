@@ -2,6 +2,7 @@ package shapes
 
 import (
 	"fmt"
+	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/tuple"
 )
@@ -10,22 +11,22 @@ type Sphere struct {
 	center    tuple.Tuple
 	radius    float64
 	transform matrix.Matrix
-	material  *Material
+	material  *materials.Material
 }
 
 func (s *Sphere) String() string {
-	return fmt.Sprintf("Shpere(center: %s, radius: %f, transform: %s)", s.center, s.radius, s.transform)
+	return fmt.Sprintf("Sphere(center: %s, radius: %f, transform: %s)", s.center, s.radius, s.transform)
 }
 
 func (s *Sphere) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
 }
 
-func (s *Sphere) SetMaterial(mat *Material) {
+func (s *Sphere) SetMaterial(mat *materials.Material) {
 	s.material = mat
 }
 
-func (s *Sphere) Material() *Material {
+func (s *Sphere) Material() *materials.Material {
 	return s.material
 }
 
@@ -42,6 +43,6 @@ func NewSphere() *Sphere {
 		center:    tuple.NewPoint(0, 0, 0),
 		radius:    1,
 		transform: matrix.DefaultTransform(),
-		material:  DefaultMaterial(),
+		material:  materials.DefaultMaterial(),
 	}
 }

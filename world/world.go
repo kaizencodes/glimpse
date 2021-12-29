@@ -2,8 +2,8 @@ package world
 
 import (
 	"glimpse/color"
+	"glimpse/materials"
 	"glimpse/matrix"
-	"glimpse/patterns"
 	"glimpse/ray"
 	"glimpse/shapes"
 	"glimpse/tuple"
@@ -92,7 +92,7 @@ func (w *World) shadowAt(point tuple.Tuple) bool {
 
 func Default() *World {
 	o1 := shapes.NewSphere()
-	o1.SetMaterial(shapes.NewMaterial(patterns.NewMonoPattern(color.New(0.8, 1.0, 0.6)), 0.1, 0.7, 0.2, 200.0))
+	o1.SetMaterial(materials.NewMaterial(color.New(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0))
 	o2 := shapes.NewSphere()
 	o2.SetTransform(matrix.Scaling(0.5, 0.5, 0.5))
 

@@ -1,4 +1,4 @@
-package patterns
+package materials
 
 import (
 	"glimpse/color"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestStripePattern(t *testing.T) {
-	pattern := NewStripePattern(color.White(), color.Black())
+	pattern := newStripePattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
 		expected color.Color
@@ -66,7 +66,7 @@ func TestStripePattern(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+		if result := pattern.colorAt(test.point); !test.expected.Equal(result) {
 			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
 		}
 	}
@@ -74,7 +74,7 @@ func TestStripePattern(t *testing.T) {
 
 func TestGradientPattern(t *testing.T) {
 	// A gradient linearly interpolates between colors
-	pattern := NewGradientPattern(color.White(), color.Black())
+	pattern := newGradientPattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
 		expected color.Color
@@ -98,7 +98,7 @@ func TestGradientPattern(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+		if result := pattern.colorAt(test.point); !test.expected.Equal(result) {
 			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
 		}
 	}
@@ -106,7 +106,7 @@ func TestGradientPattern(t *testing.T) {
 
 func TestRingPattern(t *testing.T) {
 	// A ring should extend in both x and z
-	pattern := NewRingPattern(color.White(), color.Black())
+	pattern := newRingPattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
 		expected color.Color
@@ -130,14 +130,14 @@ func TestRingPattern(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+		if result := pattern.colorAt(test.point); !test.expected.Equal(result) {
 			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
 		}
 	}
 }
 
 func TestCheckerPattern(t *testing.T) {
-	pattern := NewCheckerPattern(color.White(), color.Black())
+	pattern := newCheckerPattern(color.White(), color.Black())
 	var tests = []struct {
 		point    tuple.Tuple
 		expected color.Color
@@ -184,7 +184,7 @@ func TestCheckerPattern(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := pattern.ColorAt(test.point); !test.expected.Equal(result) {
+		if result := pattern.colorAt(test.point); !test.expected.Equal(result) {
 			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
 		}
 	}
