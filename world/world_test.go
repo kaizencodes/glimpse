@@ -28,7 +28,7 @@ func TestShadeHit(t *testing.T) {
 	r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	shape := w.Shapes()[0]
 	i := ray.NewIntersection(4, shape)
-	comps := ray.PrepareComputations(i, r)
+	comps := ray.PrepareComputations(i, r, ray.Intersections{i})
 
 	result := w.shadeHit(comps)
 	expected := color.New(0.38066119308103435, 0.47582649135129296, 0.28549589481077575)
@@ -43,7 +43,7 @@ func TestShadeHit(t *testing.T) {
 	r = ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
 	shape = w.Shapes()[1]
 	i = ray.NewIntersection(0.5, shape)
-	comps = ray.PrepareComputations(i, r)
+	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 
 	result = w.shadeHit(comps)
 	expected = color.New(0.9049844720832575, 0.9049844720832575, 0.9049844720832575)
@@ -60,7 +60,7 @@ func TestShadeHit(t *testing.T) {
 	r = ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
 	shape = w.Shapes()[1]
 	i = ray.NewIntersection(0.5, shape)
-	comps = ray.PrepareComputations(i, r)
+	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 
 	result = w.shadeHit(comps)
 	expected = color.New(0.19, 0.16999999999999998, 0.1)
@@ -79,7 +79,7 @@ func TestShadeHit(t *testing.T) {
 
 	r = ray.New(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1))
 	i = ray.NewIntersection(4, s2)
-	comps = ray.PrepareComputations(i, r)
+	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 
 	result = w.shadeHit(comps)
 	expected = color.New(0.1, 0.1, 0.1)
@@ -97,7 +97,7 @@ func TestShadeHit(t *testing.T) {
 	mat.SetReflective(0.5)
 	shape.SetMaterial(mat)
 	i = ray.NewIntersection(math.Sqrt(2), shape)
-	comps = ray.PrepareComputations(i, r)
+	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 	result = w.shadeHit(comps)
 	expected = color.New(0.876755987245857, 0.924338636811946, 0.8291733376797681)
 
@@ -126,12 +126,14 @@ func TestColorAt(t *testing.T) {
 	w = Default()
 	outer := w.Shapes()[0]
 	m := outer.Material()
-	outer.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess(), m.Reflective()))
+	m.SetAmbient(1)
+	outer.SetMaterial(m)
 	outer.Material().SetPattern(m.Pattern())
 
 	inner := w.Shapes()[1]
 	m = inner.Material()
-	inner.SetMaterial(materials.NewMaterial(color.White(), 1, m.Diffuse(), m.Specular(), m.Shininess(), m.Reflective()))
+	m.SetAmbient(1)
+	inner.SetMaterial(m)
 	inner.Material().SetPattern(m.Pattern())
 
 	r = ray.New(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
@@ -213,7 +215,7 @@ func TestReflectedColor(t *testing.T) {
 	mat := shape.Material()
 	mat.SetAmbient(1)
 	i := ray.NewIntersection(1, shape)
-	comps := ray.PrepareComputations(i, r)
+	comps := ray.PrepareComputations(i, r, ray.Intersections{i})
 	result := w.reflectedColor(comps)
 	expected := color.Black()
 
@@ -231,7 +233,7 @@ func TestReflectedColor(t *testing.T) {
 	mat.SetReflective(0.5)
 	shape.SetMaterial(mat)
 	i = ray.NewIntersection(math.Sqrt(2), shape)
-	comps = ray.PrepareComputations(i, r)
+	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 	result = w.reflectedColor(comps)
 	expected = color.New(0.1903305982643556, 0.23791324783044449, 0.14274794869826668)
 
@@ -250,7 +252,7 @@ func TestReflectedColor(t *testing.T) {
 	mat.SetReflective(0.5)
 	shape.SetMaterial(mat)
 	i = ray.NewIntersection(math.Sqrt(2), shape)
-	comps = ray.PrepareComputations(i, r)
+	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 	result = w.reflectedColor(comps)
 	expected = color.Black()
 

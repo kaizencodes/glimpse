@@ -46,3 +46,15 @@ func NewSphere() *Sphere {
 		material:  materials.DefaultMaterial(),
 	}
 }
+
+func NewGlassSphere() *Sphere {
+	mat := materials.DefaultMaterial()
+	mat.SetTransparency(1)
+	mat.SetRefractiveIndex(1.5)
+	return &Sphere{
+		center:    tuple.NewPoint(0, 0, 0),
+		radius:    1,
+		transform: matrix.DefaultTransform(),
+		material:  mat,
+	}
+}

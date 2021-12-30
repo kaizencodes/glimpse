@@ -172,7 +172,7 @@ func NewIntersection(t float64, obj shapes.Shape) Intersection {
 }
 
 type Computations struct {
-	t           float64
+	t, n1, n2   float64
 	shape       shapes.Shape
 	point       tuple.Tuple
 	eyeV        tuple.Tuple
@@ -185,6 +185,14 @@ type Computations struct {
 
 func (c Computations) T() float64 {
 	return c.t
+}
+
+func (c Computations) N1() float64 {
+	return c.n1
+}
+
+func (c Computations) N2() float64 {
+	return c.n2
 }
 
 func (c Computations) Shape() shapes.Shape {
@@ -219,23 +227,48 @@ func (c Computations) Inside() bool {
 	return c.inside
 }
 
-func PrepareComputations(i Intersection, r *Ray) Computations {
-	point := r.Position(i.t)
-	normalV := shapes.NormalAt(point, i.shape)
+func PrepareComputations(hit Intersection, r *Ray, xs Intersections) Computations {
+	point := r.Position(hit.t)
+	normalV := shapes.NormalAt(point, hit.shape)
 	eyeV := r.Direction().Negate()
 
-	var inside bool
+	inside := false
 	if tuple.Dot(normalV, eyeV) < 0 {
 		inside = true
 		normalV = normalV.Negate()
-	} else {
-		inside = false
 	}
 	overPoint := tuple.Add(point, normalV.Scalar(calc.EPSILON))
 
+	container := []shapes.Shape{}
+	n1, n2 := 1.0, 1.0
+	for _, val := range xs {
+		if val == hit {
+			if len(container) == 0 {
+				n1 = 1.0
+			} else {
+				n1 = container[len(container)-1].Material().RefractiveIndex()
+			}
+		}
+
+		ok, at := contains(container, val.shape)
+		if ok {
+			container = remove(container, at)
+		} else {
+			container = append(container, val.shape)
+		}
+
+		if val == hit {
+			if len(container) == 0 {
+				n2 = 1.0
+			} else {
+				n2 = container[len(container)-1].Material().RefractiveIndex()
+			}
+			break
+		}
+	}
 	return Computations{
-		t:           i.T(),
-		shape:       i.Shape(),
+		t:           hit.T(),
+		shape:       hit.Shape(),
 		point:       point,
 		eyeV:        eyeV,
 		normalV:     normalV,
@@ -243,5 +276,22 @@ func PrepareComputations(i Intersection, r *Ray) Computations {
 		inside:      inside,
 		overPoint:   overPoint,
 		bounceLimit: r.BounceLimit(),
+		n1:          n1,
+		n2:          n2,
 	}
+}
+
+func contains(collection []shapes.Shape, shape shapes.Shape) (bool, int) {
+
+	for i, e := range collection {
+		if shape == e {
+			return true, i
+		}
+	}
+	return false, math.MaxInt
+}
+
+func remove(collection []shapes.Shape, i int) []shapes.Shape {
+	collection[i] = collection[len(collection)-1]
+	return collection[:len(collection)-1]
 }

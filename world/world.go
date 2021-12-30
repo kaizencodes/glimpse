@@ -31,12 +31,13 @@ func (w *World) SetLights(lights []ray.Light) {
 }
 
 func (w *World) ColorAt(r *ray.Ray) color.Color {
-	hit := w.intersect(r).Hit()
+	intersections := w.intersect(r)
+	hit := intersections.Hit()
 	if hit.Empty() {
 		return color.Black()
 	}
 
-	return w.shadeHit(ray.PrepareComputations(hit, r))
+	return w.shadeHit(ray.PrepareComputations(hit, r, intersections))
 }
 
 func (w *World) intersect(r *ray.Ray) ray.Intersections {
@@ -105,7 +106,7 @@ func (w *World) reflectedColor(comps ray.Computations) color.Color {
 
 func Default() *World {
 	o1 := shapes.NewSphere()
-	o1.SetMaterial(materials.NewMaterial(color.New(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0, 0))
+	o1.SetMaterial(materials.NewMaterial(color.New(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0, 0, 0, 1))
 	o2 := shapes.NewSphere()
 	o2.SetTransform(matrix.Scaling(0.5, 0.5, 0.5))
 

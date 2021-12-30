@@ -132,6 +132,77 @@ func TestIntersect(t *testing.T) {
 	}
 }
 
+func TestRefraction(t *testing.T) {
+	a := shapes.NewGlassSphere()
+	a.SetTransform(matrix.Scaling(2, 2, 2))
+	a.Material().SetRefractiveIndex(1.5)
+
+	b := shapes.NewGlassSphere()
+	b.SetTransform(matrix.Translation(0, 0, -0.25))
+	b.Material().SetRefractiveIndex(2.0)
+
+	c := shapes.NewGlassSphere()
+	c.SetTransform(matrix.Translation(0, 0, 0.25))
+	c.Material().SetRefractiveIndex(2.5)
+
+	r := New(tuple.NewPoint(0, 0, -4), tuple.NewVector(0, 0, 1))
+	xs := Intersections{
+		Intersection{t: 2.0, shape: a},
+		Intersection{t: 2.75, shape: b},
+		Intersection{t: 3.25, shape: c},
+		Intersection{t: 4.75, shape: b},
+		Intersection{t: 5.25, shape: c},
+		Intersection{t: 6.0, shape: a},
+	}
+
+	var tests = []struct {
+		ray                    *Ray
+		computations           Computations
+		expectedN1, expectedN2 float64
+	}{
+		{
+			computations: PrepareComputations(xs[0], r, xs),
+			expectedN1:   1.0,
+			expectedN2:   1.5,
+		},
+		{
+			computations: PrepareComputations(xs[1], r, xs),
+			expectedN1:   1.5,
+			expectedN2:   2.0,
+		},
+		{
+			computations: PrepareComputations(xs[2], r, xs),
+			expectedN1:   2.0,
+			expectedN2:   2.5,
+		},
+		{
+			computations: PrepareComputations(xs[3], r, xs),
+			expectedN1:   2.5,
+			expectedN2:   2.5,
+		},
+		{
+			computations: PrepareComputations(xs[4], r, xs),
+			expectedN1:   2.5,
+			expectedN2:   1.5,
+		},
+		{
+			computations: PrepareComputations(xs[5], r, xs),
+			expectedN1:   1.5,
+			expectedN2:   1.0,
+		},
+	}
+
+	for _, test := range tests {
+		if test.computations.N1() != test.expectedN1 {
+			t.Errorf("incorrect n1 :\nresult: \n%f. \nexpected: \n%f", test.computations.N1(), test.expectedN1)
+		}
+
+		if test.computations.N2() != test.expectedN2 {
+			t.Errorf("incorrect n2 :\nresult: \n%f. \nexpected: \n%f", test.computations.N2(), test.expectedN2)
+		}
+	}
+}
+
 func TestHit(t *testing.T) {
 	shape := shapes.Shape(shapes.NewSphere())
 	var tests = []struct {
@@ -228,7 +299,7 @@ func TestPrepareComputations(t *testing.T) {
 	r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	s := shapes.NewSphere()
 	i := Intersection{4, s}
-	comps := PrepareComputations(i, r)
+	comps := PrepareComputations(i, r, Intersections{i})
 	point := tuple.NewPoint(0, 0, -1)
 	eyeV := tuple.NewVector(0, 0, -1)
 	normalV := tuple.NewVector(0, 0, -1)
@@ -238,7 +309,7 @@ func TestPrepareComputations(t *testing.T) {
 
 	r = New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
 	i = Intersection{1, s}
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, Intersections{i})
 	point = tuple.NewPoint(0, 0, 1)
 	eyeV = tuple.NewVector(0, 0, -1)
 	normalV = tuple.NewVector(0, 0, -1)
@@ -250,7 +321,7 @@ func TestPrepareComputations(t *testing.T) {
 	s = shapes.NewSphere()
 	s.SetTransform(matrix.Translation(0, 0, 1))
 	i = Intersection{5, s}
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, Intersections{i})
 	point = tuple.NewPoint(0, 0, 0)
 	eyeV = tuple.NewVector(0, 0, -1)
 	normalV = tuple.NewVector(0, 0, -1)
@@ -270,7 +341,7 @@ func TestPrepareComputations(t *testing.T) {
 	r = New(tuple.NewPoint(0, 1, -1), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	p := shapes.NewPlane()
 	i = Intersection{math.Sqrt(2), p}
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, Intersections{i})
 	reflectV := tuple.NewVector(0, math.Sqrt(2)/2, math.Sqrt(2)/2)
 
 	if comps.ReflectV() != reflectV {
