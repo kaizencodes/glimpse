@@ -172,15 +172,11 @@ func NewIntersection(t float64, obj shapes.Shape) Intersection {
 }
 
 type Computations struct {
-	t, n1, n2   float64
-	shape       shapes.Shape
-	point       tuple.Tuple
-	eyeV        tuple.Tuple
-	normalV     tuple.Tuple
-	reflectV    tuple.Tuple
-	overPoint   tuple.Tuple
-	bounceLimit int
-	inside      bool
+	t, n1, n2                                             float64
+	shape                                                 shapes.Shape
+	point, eyeV, normalV, reflectV, overPoint, underPoint tuple.Tuple
+	bounceLimit                                           int
+	inside                                                bool
 }
 
 func (c Computations) T() float64 {
@@ -223,6 +219,10 @@ func (c Computations) OverPoint() tuple.Tuple {
 	return c.overPoint
 }
 
+func (c Computations) UnderPoint() tuple.Tuple {
+	return c.underPoint
+}
+
 func (c Computations) Inside() bool {
 	return c.inside
 }
@@ -238,6 +238,7 @@ func PrepareComputations(hit Intersection, r *Ray, xs Intersections) Computation
 		normalV = normalV.Negate()
 	}
 	overPoint := tuple.Add(point, normalV.Scalar(calc.EPSILON))
+	underPoint := tuple.Subtract(point, normalV.Scalar(calc.EPSILON))
 
 	container := []shapes.Shape{}
 	n1, n2 := 1.0, 1.0
@@ -275,6 +276,7 @@ func PrepareComputations(hit Intersection, r *Ray, xs Intersections) Computation
 		reflectV:    tuple.Reflect(r.Direction(), normalV),
 		inside:      inside,
 		overPoint:   overPoint,
+		underPoint:  underPoint,
 		bounceLimit: r.BounceLimit(),
 		n1:          n1,
 		n2:          n2,
