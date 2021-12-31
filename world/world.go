@@ -55,7 +55,7 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 	c := ray.Lighting(
 		comps.Shape(),
 		w.Lights()[0],
-		comps.Point(),
+		comps.OverPoint(),
 		comps.EyeV(),
 		comps.NormalV(),
 		isShadowed,
