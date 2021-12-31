@@ -16,6 +16,7 @@ const (
 	Gradient
 	Ring
 	Checker
+	Test
 )
 
 type Pattern struct {
@@ -35,6 +36,8 @@ func NewPattern(pattern PatternType, colors ...color.Color) *Pattern {
 		return newRingPattern(colors[0], colors[1])
 	case Checker:
 		return newCheckerPattern(colors[0], colors[1])
+	case Test:
+		return newTestPattern()
 	default:
 		panic(fmt.Errorf("Not supported pattern: %T", pattern))
 	}
@@ -92,6 +95,15 @@ func newCheckerPattern(a, b color.Color) *Pattern {
 				return a
 			}
 			return b
+		},
+	}
+}
+
+func newTestPattern() *Pattern {
+	return &Pattern{
+		transform: matrix.DefaultTransform(),
+		colorAt: func(point tuple.Tuple) color.Color {
+			return color.New(point.X(), point.Y(), point.Z())
 		},
 	}
 }

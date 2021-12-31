@@ -389,3 +389,49 @@ func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i Int
 		t.Errorf("incorrect inside, expected %t, got: %t", inside, comps.Inside())
 	}
 }
+
+func TestSchlick(t *testing.T) {
+	// The Schlick approximation under total internal reflection
+	sphere := shapes.NewGlassSphere()
+	r := New(tuple.NewPoint(0, 0, math.Sqrt(2)/2), tuple.NewVector(0, 1, 0))
+	xs := Intersections{
+		Intersection{-math.Sqrt(2) / 2, sphere},
+		Intersection{math.Sqrt(2) / 2, sphere},
+	}
+	comps := PrepareComputations(xs[1], r, xs)
+	result := comps.Schlick()
+	expected := 1.0
+
+	if !calc.FloatEquals(result, expected) {
+		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
+	}
+
+	// The Schlick approximation with a perpendicular viewing angle
+	sphere = shapes.NewGlassSphere()
+	r = New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
+	xs = Intersections{
+		Intersection{-1, sphere},
+		Intersection{1, sphere},
+	}
+	comps = PrepareComputations(xs[1], r, xs)
+	result = comps.Schlick()
+	expected = 0.04
+
+	if !calc.FloatEquals(result, expected) {
+		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
+	}
+
+	// The Schlick approximation with small angle and n2 > n1
+	sphere = shapes.NewGlassSphere()
+	r = New(tuple.NewPoint(0, 0.99, -2), tuple.NewVector(0, 0, 1))
+	xs = Intersections{
+		Intersection{1.8589, sphere},
+	}
+	comps = PrepareComputations(xs[0], r, xs)
+	result = comps.Schlick()
+	expected = 0.48873
+
+	if !calc.FloatEquals(result, expected) {
+		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
+	}
+}

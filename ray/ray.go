@@ -87,7 +87,7 @@ func (r *Ray) Intersect(s shapes.Shape) Intersections {
 }
 
 func (r *Ray) intersectSphere(s *shapes.Sphere) Intersections {
-	sphere_to_ray := tuple.Subtract(r.origin, tuple.NewPoint(0, 0, 0))
+	sphere_to_ray := r.origin.ToVector()
 
 	a := tuple.Dot(r.direction, r.direction)
 	b := 2 * tuple.Dot(r.direction, sphere_to_ray)
@@ -296,4 +296,26 @@ func contains(collection []shapes.Shape, shape shapes.Shape) (bool, int) {
 func remove(collection []shapes.Shape, i int) []shapes.Shape {
 	collection[i] = collection[len(collection)-1]
 	return collection[:len(collection)-1]
+}
+
+func (comps Computations) Schlick() float64 {
+	// find the cosine of the angle between the eye and normal vectors
+	cos := tuple.Dot(comps.eyeV, comps.normalV)
+	// total internal reflection can only occur if n1 > n2
+	if comps.n1 > comps.n2 {
+		n := comps.n1 / comps.n2
+		sin2T := math.Pow(n, 2) * (1.0 - math.Pow(cos, 2))
+		if sin2T > 1.0 {
+			return 1.0
+		}
+
+		// compute cosine of theta_t using trigonometric identity
+		cosT := math.Sqrt(1.0 - sin2T)
+		// when n1 > n2, use cos(theta_t) instead
+		cos = cosT
+	}
+
+	r0 := math.Pow(((comps.n1 - comps.n2) / (comps.n1 + comps.n2)), 2)
+
+	return r0 + (1-r0)*math.Pow(1-cos, 5)
 }

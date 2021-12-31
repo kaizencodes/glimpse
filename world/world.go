@@ -7,6 +7,7 @@ import (
 	"glimpse/ray"
 	"glimpse/shapes"
 	"glimpse/tuple"
+	"math"
 )
 
 type World struct {
@@ -60,7 +61,16 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 		comps.NormalV(),
 		isShadowed,
 	)
-	c = color.Add(c, w.reflectedColor(comps))
+	reflected := w.reflectedColor(comps)
+	refracted := w.refractedColor(comps)
+	mat := comps.Shape().Material()
+	if mat.Reflective() > 0 && mat.Transparency() > 0 {
+		reflectance := comps.Schlick()
+		reflected = reflected.Scalar(reflectance)
+		refracted = refracted.Scalar(1 - reflectance)
+	}
+	c = color.Add(c, reflected)
+	c = color.Add(c, refracted)
 
 	for i, l := range w.Lights() {
 		if i == 0 {
@@ -69,7 +79,7 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 		c = color.Add(c, ray.Lighting(
 			comps.Shape(),
 			l,
-			comps.Point(),
+			comps.OverPoint(),
 			comps.EyeV(),
 			comps.NormalV(),
 			isShadowed))
@@ -102,6 +112,34 @@ func (w *World) reflectedColor(comps ray.Computations) color.Color {
 	c := w.ColorAt(r)
 
 	return c.Scalar(comps.Shape().Material().Reflective())
+}
+
+func (w *World) refractedColor(comps ray.Computations) color.Color {
+	if comps.Shape().Material().Transparency() == 0 || comps.BounceLimit() < 1 {
+		return color.Black()
+	}
+
+	// Find the ration of first index of refraction to the second.
+	nRatio := comps.N1() / comps.N2()
+	// cos(theta i) is the same as the dot product of the two vectors.
+	cosI := tuple.Dot(comps.EyeV(), comps.NormalV())
+	// Find sin(theta t)^2 via trigonometric identity
+	sin2T := math.Pow(nRatio, 2) * (1 - math.Pow(cosI, 2))
+	if sin2T > 1 {
+		return color.Black()
+	}
+
+	// Find cos(theta t) via trigonometric identity
+	cosT := math.Sqrt(1.0 - sin2T)
+
+	// Compute the direction of the refracted ray.
+	direction := tuple.Subtract(comps.NormalV().Scalar((nRatio*cosI)-cosT), comps.EyeV().Scalar(nRatio))
+	refactedRay := ray.New(comps.UnderPoint(), direction)
+	refactedRay.SetBounceLimit(comps.BounceLimit() - 1)
+
+	// Find the color of the refracted ray, making sure to multiply by the transparency
+	// value to account for any opacity.
+	return w.ColorAt(refactedRay).Scalar(comps.Shape().Material().Transparency())
 }
 
 func Default() *World {

@@ -1,6 +1,7 @@
 package camera
 
 import (
+	"glimpse/calc"
 	"glimpse/color"
 	"glimpse/matrix"
 	"glimpse/ray"
@@ -32,7 +33,7 @@ func TestPixelSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := New(test.width, test.height, test.fov).PixelSize(); result != test.expected {
+		if result := New(test.width, test.height, test.fov).PixelSize(); !calc.FloatEquals(result, test.expected) {
 			t.Errorf("camera PixelSize expected %f, got %f", test.expected, result)
 		}
 	}
@@ -59,7 +60,7 @@ func TestRayForPixel(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := test.c.RayForPixel(test.x, test.y); *result != *test.expected {
+		if result := test.c.RayForPixel(test.x, test.y); !result.Equal(test.expected) {
 			t.Errorf("RayForPixel expected %s, got %s", test.expected, result)
 		}
 	}
@@ -69,7 +70,7 @@ func TestRayForPixel(t *testing.T) {
 	c.SetTransform(transform)
 	expected := ray.New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0.7071067811865474, 0, -0.7071067811865478))
 
-	if result := c.RayForPixel(100, 50); *result != *expected {
+	if result := c.RayForPixel(100, 50); !result.Equal(expected) {
 		t.Errorf("RayForPixel expected %s, got %s", expected, result)
 	}
 }
@@ -132,7 +133,7 @@ func TestRender(t *testing.T) {
 	img := c.Render(w)
 	result := img[5][5]
 	expected := color.New(0.38066119308103435, 0.47582649135129296, 0.28549589481077575)
-	if result != expected {
+	if !result.Equal(expected) {
 		t.Errorf("Render, expected %s, got %s", expected, result)
 	}
 }
