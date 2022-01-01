@@ -8,14 +8,12 @@ import (
 )
 
 type Sphere struct {
-	center    tuple.Tuple
-	radius    float64
 	transform matrix.Matrix
 	material  *materials.Material
 }
 
 func (s *Sphere) String() string {
-	return fmt.Sprintf("Sphere(center: %s, radius: %f, transform: %s)", s.center, s.radius, s.transform)
+	return fmt.Sprintf("Sphere(transform: %s, material: %s)", s.transform, s.material)
 }
 
 func (s *Sphere) SetTransform(transform matrix.Matrix) {
@@ -35,13 +33,11 @@ func (s *Sphere) Transform() matrix.Matrix {
 }
 
 func (s *Sphere) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
-	return tuple.Subtract(point, s.center)
+	return tuple.Subtract(point, tuple.NewPoint(0, 0, 0))
 }
 
 func NewSphere() *Sphere {
 	return &Sphere{
-		center:    tuple.NewPoint(0, 0, 0),
-		radius:    1,
 		transform: matrix.DefaultTransform(),
 		material:  materials.DefaultMaterial(),
 	}
@@ -52,8 +48,6 @@ func NewGlassSphere() *Sphere {
 	mat.SetTransparency(1)
 	mat.SetRefractiveIndex(1.5)
 	return &Sphere{
-		center:    tuple.NewPoint(0, 0, 0),
-		radius:    1,
 		transform: matrix.DefaultTransform(),
 		material:  mat,
 	}

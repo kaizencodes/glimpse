@@ -147,6 +147,10 @@ func checkAxis(origin, direction float64) (min, max float64) {
 		max = maxNumerator * math.MaxFloat64
 	}
 
+	if min > max {
+		min, max = max, min
+	}
+
 	return min, max
 }
 

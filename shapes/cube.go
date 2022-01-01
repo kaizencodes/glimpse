@@ -5,6 +5,7 @@ import (
 	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/tuple"
+	"math"
 )
 
 type Cube struct {
@@ -33,7 +34,15 @@ func (s *Cube) Transform() matrix.Matrix {
 }
 
 func (s *Cube) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
-	return tuple.NewVector(0, 1, 0)
+	x, y, z := math.Abs(point.X()), math.Abs(point.Y()), math.Abs(point.Z())
+	max := math.Max(x, math.Max(y, z))
+
+	if max == x {
+		return tuple.NewVector(point.X(), 0, 0)
+	} else if max == y {
+		return tuple.NewVector(0, point.Y(), 0)
+	}
+	return tuple.NewVector(0, 0, point.Z())
 }
 
 func NewCube() *Cube {
