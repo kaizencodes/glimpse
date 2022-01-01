@@ -81,6 +81,8 @@ func (r *Ray) Intersect(s shapes.Shape) Intersections {
 		return localRay.intersectSphere(s)
 	case *shapes.Plane:
 		return localRay.intersectPlane(s)
+	case *shapes.Cube:
+		return localRay.intersectCube(s)
 	default:
 		panic(fmt.Errorf("Not supported shape %T", s))
 	}
@@ -114,6 +116,38 @@ func (r *Ray) intersectPlane(s *shapes.Plane) Intersections {
 	return Intersections{
 		Intersection{t: t, shape: s},
 	}
+}
+
+func (r *Ray) intersectCube(s *shapes.Cube) Intersections {
+	xMin, xMax := checkAxis(r.origin.X(), r.direction.X())
+	yMin, yMax := checkAxis(r.origin.Y(), r.direction.Y())
+	zMin, zMax := checkAxis(r.origin.Z(), r.direction.Z())
+
+	min := math.Max(xMin, math.Max(yMin, zMin))
+	max := math.Min(xMax, math.Min(yMax, zMax))
+
+	if min > max {
+		return Intersections{}
+	}
+
+	return Intersections{
+		Intersection{t: min, shape: s},
+		Intersection{t: max, shape: s},
+	}
+}
+
+func checkAxis(origin, direction float64) (min, max float64) {
+	minNumerator := -1 - origin
+	maxNumerator := 1 - origin
+	if math.Abs(direction) >= calc.EPSILON {
+		min = minNumerator / direction
+		max = maxNumerator / direction
+	} else {
+		min = minNumerator * math.MaxFloat64
+		max = maxNumerator * math.MaxFloat64
+	}
+
+	return min, max
 }
 
 func New(origin, direction tuple.Tuple) *Ray {
