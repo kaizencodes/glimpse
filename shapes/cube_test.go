@@ -55,7 +55,7 @@ func TestCubeLocalNormalAt(t *testing.T) {
 
 	for _, test := range tests {
 		if got := test.shape.LocalNormalAt(test.point); !got.Equal(test.expected) {
-			t.Errorf("Sphere normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.shape, test.point, got, test.expected)
+			t.Errorf("Cube normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.shape, test.point, got, test.expected)
 		}
 	}
 }

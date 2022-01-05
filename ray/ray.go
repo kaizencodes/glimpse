@@ -79,6 +79,8 @@ func (r *Ray) Intersect(s shapes.Shape) Intersections {
 	switch s := s.(type) {
 	case *shapes.Sphere:
 		return localRay.intersectSphere(s)
+	case *shapes.Cylinder:
+		return localRay.intersectCylinder(s)
 	case *shapes.Plane:
 		return localRay.intersectPlane(s)
 	case *shapes.Cube:
@@ -105,6 +107,70 @@ func (r *Ray) intersectSphere(s *shapes.Sphere) Intersections {
 	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
 	return Intersections{Intersection{t: t1, shape: s}, Intersection{t: t2, shape: s}}
+}
+
+func (r *Ray) intersectCylinder(s *shapes.Cylinder) Intersections {
+	a := math.Pow(r.direction.X(), 2) + math.Pow(r.direction.Z(), 2)
+	if calc.FloatEquals(a, 0.0) {
+		return intersectionsForCaps(Intersections{}, s, r)
+	}
+
+	b := 2*r.origin.X()*r.direction.X() + 2*r.origin.Z()*r.direction.Z()
+	c := math.Pow(r.origin.X(), 2) + math.Pow(r.origin.Z(), 2) - 1
+
+	discriminant := math.Pow(b, 2) - 4*a*c
+
+	if discriminant < 0 {
+		return Intersections{}
+	}
+
+	t0 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t1 := (-b + math.Sqrt(discriminant)) / (2 * a)
+
+	xs := Intersections{}
+
+	if t0 > t1 {
+		t0, t1 = t1, t0
+	}
+
+	y0 := r.Origin().Y() + t0*r.direction.Y()
+	if s.Minimum() < y0 && y0 < s.Maximum() {
+		xs = append(xs, Intersection{t: t0, shape: s})
+	}
+
+	y1 := r.Origin().Y() + t1*r.direction.Y()
+	if s.Minimum() < y1 && y1 < s.Maximum() {
+		xs = append(xs, Intersection{t: t1, shape: s})
+	}
+
+	return intersectionsForCaps(xs, s, r)
+}
+
+func intersectionsForCaps(xs Intersections, s *shapes.Cylinder, r *Ray) Intersections {
+	// caps only matter if the cylinder is closed, and might possibly be intersected by the ray.
+	if !s.Closed() && calc.FloatEquals(r.Direction().Y(), 0) {
+		return xs
+	}
+	// check for an intersection with the lower end cap by intersecting the ray with the plane at y=s.minimum
+	t := (s.Minimum() - r.origin.Y()) / r.direction.Y()
+	if checkCap(r, t) {
+		xs = append(xs, Intersection{t: t, shape: s})
+	}
+
+	// check for an intersection with the upper end cap by intersecting the ray with the plane at y=cyl.maximum
+	t = (s.Maximum() - r.origin.Y()) / r.direction.Y()
+	if checkCap(r, t) {
+		xs = append(xs, Intersection{t: t, shape: s})
+	}
+	return xs
+}
+
+// checks to see if the intersection at `t` is within a radius
+//  of 1 (the radius of your cylinders) from the y axis.
+func checkCap(r *Ray, t float64) bool {
+	x := r.Origin().X() + t*r.Direction().X()
+	z := r.Origin().Z() + t*r.Direction().Z()
+	return math.Pow(x, 2)+math.Pow(z, 2) <= 1
 }
 
 func (r *Ray) intersectPlane(s *shapes.Plane) Intersections {

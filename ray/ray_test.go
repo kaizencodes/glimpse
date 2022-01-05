@@ -215,13 +215,174 @@ func TestIntersect(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		testIntersection(t, test.s, test.ray, test.expected)
+	}
+}
+
+func TestCylinderIntersect(t *testing.T) {
+	cylinder := shapes.NewCylinder()
+	var tests = []struct {
+		ray      *Ray
+		s        shapes.Shape
+		expected Intersections
+	}{
+		// cylinder misses
+		{
+			ray:      New(tuple.NewPoint(1, 0, 0), tuple.NewVector(0, 1, 0).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 0, -5), tuple.NewVector(1, 1, 1).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		// A ray strikes a cylinder
+		{
+			ray: New(tuple.NewPoint(1, 0, -5), tuple.NewVector(0, 0, 1).Normalize()),
+			s:   cylinder,
+			expected: Intersections{
+				Intersection{t: 5, shape: cylinder},
+				Intersection{t: 5, shape: cylinder},
+			},
+		},
+		{
+			ray: New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1).Normalize()),
+			s:   cylinder,
+			expected: Intersections{
+				Intersection{t: 4, shape: cylinder},
+				Intersection{t: 6, shape: cylinder},
+			},
+		},
+		{
+			ray: New(tuple.NewPoint(0.5, 0, -5), tuple.NewVector(0.1, 1, 1).Normalize()),
+			s:   cylinder,
+			expected: Intersections{
+				Intersection{t: 6.80798, shape: cylinder},
+				Intersection{t: 7.08872, shape: cylinder},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		testIntersection(t, test.s, test.ray, test.expected)
+	}
+}
+
+func TestTruncatedCylinderIntersect(t *testing.T) {
+	cylinder := shapes.NewCylinder()
+	cylinder.SetMinimum(1)
+	cylinder.SetMaximum(2)
+
+	var tests = []struct {
+		ray      *Ray
+		s        shapes.Shape
+		expected Intersections
+	}{
+		// cylinder misses
+		{
+			ray:      New(tuple.NewPoint(0, 1.5, 0), tuple.NewVector(0.1, 1, 0).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 3, -5), tuple.NewVector(0, 0, 1).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1).Normalize()),
+			s:        cylinder,
+			expected: Intersections{},
+		},
+		// A ray strikes a cylinder
+		{
+			ray: New(tuple.NewPoint(0, 1.5, -2), tuple.NewVector(0, 0, 1).Normalize()),
+			s:   cylinder,
+			expected: Intersections{
+				Intersection{t: 1, shape: cylinder},
+				Intersection{t: 3, shape: cylinder},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		testIntersection(t, test.s, test.ray, test.expected)
+	}
+}
+
+func TestClosedCylinderIntersect(t *testing.T) {
+	cylinder := shapes.NewCylinder()
+	cylinder.SetMinimum(1)
+	cylinder.SetMaximum(2)
+	cylinder.SetClosed(true)
+
+	var tests = []struct {
+		ray      *Ray
+		s        shapes.Shape
+		expected int
+	}{
+		{
+			ray:      New(tuple.NewPoint(0, 3, 0), tuple.NewVector(0, -1, 0).Normalize()),
+			s:        cylinder,
+			expected: 2,
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 3, -2), tuple.NewVector(0, -1, 2).Normalize()),
+			s:        cylinder,
+			expected: 2,
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 4, -2), tuple.NewVector(0, -1, 1).Normalize()),
+			s:        cylinder,
+			expected: 2,
+		},
+		{
+			ray:      New(tuple.NewPoint(0, 0, -2), tuple.NewVector(0, 1, 2).Normalize()),
+			s:        cylinder,
+			expected: 2,
+		},
+		{
+			ray:      New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 1, 1).Normalize()),
+			s:        cylinder,
+			expected: 2,
+		},
+	}
+
+	for _, test := range tests {
 		result := test.ray.Intersect(test.s)
+		if len(result) != test.expected {
+			t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), test.expected)
+		}
+	}
+}
+
+func testIntersection(t *testing.T, s shapes.Shape, r *Ray, expected Intersections) {
+	result := r.Intersect(s)
+	if len(result) != len(expected) {
+		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
+	} else {
 		for i := range result {
-			if !calc.FloatEquals(result[i].t, test.expected[i].t) {
-				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", test.ray, result[i].t, test.expected[i].t)
+			if !calc.FloatEquals(result[i].t, expected[i].t) {
+				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
 			}
-			if result[i].shape != test.expected[i].shape {
-				t.Errorf("incorrect Shape of intersect:\n%s \n \nresult: \n%s. \nexpected: \n%s", test.ray, result[i].shape, test.expected[i].shape)
+			if result[i].shape != expected[i].shape {
+				t.Errorf("incorrect Shape of intersect:\n%s \n \nresult: \n%s. \nexpected: \n%s", r, result[i].shape, expected[i].shape)
 			}
 		}
 	}
