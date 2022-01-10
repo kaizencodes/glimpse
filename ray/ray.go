@@ -148,7 +148,7 @@ func (r *Ray) intersectCylinder(s *shapes.Cylinder) Intersections {
 
 func intersectionsForCaps(xs Intersections, s *shapes.Cylinder, r *Ray) Intersections {
 	// caps only matter if the cylinder is closed, and might possibly be intersected by the ray.
-	if !s.Closed() && calc.FloatEquals(r.Direction().Y(), 0) {
+	if !(s.Closed() || calc.FloatEquals(r.Direction().Y(), 0)) {
 		return xs
 	}
 	// check for an intersection with the lower end cap by intersecting the ray with the plane at y=s.minimum
