@@ -143,9 +143,9 @@ func TestSchlick(t *testing.T) {
 	}
 	comps = PrepareComputations(xs[0], r, xs)
 	result = comps.Schlick()
-	expected = 0.48873
+	expected = 0.4887308101221217
 
-	if !calc.FloatEquals(result, expected) {
+	if result != expected {
 		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
 	}
 }

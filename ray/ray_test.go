@@ -263,8 +263,8 @@ func TestCylinderIntersect(t *testing.T) {
 			ray: New(tuple.NewPoint(0.5, 0, -5), tuple.NewVector(0.1, 1, 1).Normalize()),
 			s:   cylinder,
 			expected: Intersections{
-				Intersection{t: 6.80798, shape: cylinder},
-				Intersection{t: 7.08872, shape: cylinder},
+				Intersection{t: 6.807981917027314, shape: cylinder},
+				Intersection{t: 7.088723439378867, shape: cylinder},
 			},
 		},
 	}
