@@ -119,7 +119,7 @@ func TestShadeHit(t *testing.T) {
 	mat = materials.DefaultMaterial()
 	mat.SetPattern(materials.NewPattern(materials.Base, color.Red()))
 	mat.SetAmbient(0.5)
-	mat.SetTransform(matrix.Translation(0, -3.5, -0.5))
+	ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
 	ball.SetMaterial(mat)
 	w.SetShapes([]shapes.Shape{w.shapes[0], w.shapes[1], floor, ball})
 
@@ -127,7 +127,7 @@ func TestShadeHit(t *testing.T) {
 	i = ray.NewIntersection(math.Sqrt(2), floor)
 	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 	result = w.shadeHit(comps)
-	expected = color.New(0.93642, 0.68642, 0.68642)
+	expected = color.New(0.936425388674727, 0.686425388674727, 0.686425388674727)
 
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
@@ -146,15 +146,15 @@ func TestShadeHit(t *testing.T) {
 	mat = materials.DefaultMaterial()
 	mat.SetPattern(materials.NewPattern(materials.Base, color.Red()))
 	mat.SetAmbient(0.5)
-	mat.SetTransform(matrix.Translation(0, -3.5, -0.5))
 	ball.SetMaterial(mat)
+	ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
 	w.SetShapes([]shapes.Shape{w.shapes[0], w.shapes[1], floor, ball})
 
 	r = ray.New(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	i = ray.NewIntersection(math.Sqrt(2), floor)
 	comps = ray.PrepareComputations(i, r, ray.Intersections{i})
 	result = w.shadeHit(comps)
-	expected = color.New(0.93391, 0.69643, 0.69243)
+	expected = color.New(0.9339151403109409, 0.6964342260713607, 0.6924306911127073)
 
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
