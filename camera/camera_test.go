@@ -115,7 +115,7 @@ func TestViewTransformation(t *testing.T) {
 
 	for _, test := range tests {
 		result := ViewTransformation(test.from, test.to, test.up)
-		if result.String() != test.expected.String() {
+		if !result.Equal(test.expected) {
 			t.Errorf("ViewTransformation,\nto:\n%s\nfrom:\n%s\nup:\n%s\nresult:\n%s\nexpected: \n%s", test.to, test.from, test.up, result, test.expected)
 		}
 	}
