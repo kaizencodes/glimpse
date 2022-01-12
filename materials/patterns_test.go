@@ -189,3 +189,26 @@ func TestCheckerPattern(t *testing.T) {
 		}
 	}
 }
+
+func TestTestPattern(t *testing.T) {
+	pattern := newTestPattern()
+	var tests = []struct {
+		point    tuple.Tuple
+		expected color.Color
+	}{
+		{
+			point:    tuple.NewPoint(0, 0, 0),
+			expected: color.Black(),
+		},
+		{
+			point:    tuple.NewPoint(0.99, 0.01, 0.5),
+			expected: color.New(0.99, 0.01, 0.5),
+		},
+	}
+
+	for _, test := range tests {
+		if result := pattern.colorAt(test.point); !test.expected.Equal(result) {
+			t.Errorf("ColorAt:%s, result: \n%s. \nexpected: \n%s", test.point, result, test.expected)
+		}
+	}
+}

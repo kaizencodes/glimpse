@@ -8,13 +8,12 @@ import (
 )
 
 type Plane struct {
-	center    tuple.Tuple
 	transform matrix.Matrix
 	material  *materials.Material
 }
 
 func (s *Plane) String() string {
-	return fmt.Sprintf("Plane(center: %s, material: %s, transform: %s)", s.center, s.material, s.transform)
+	return fmt.Sprintf("Plane(material: %s, transform: %s)", s.material, s.transform)
 }
 
 func (s *Plane) SetTransform(transform matrix.Matrix) {
@@ -39,7 +38,6 @@ func (s *Plane) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 
 func NewPlane() *Plane {
 	return &Plane{
-		center:    tuple.NewPoint(0, 0, 0),
 		transform: matrix.DefaultTransform(),
 		material:  materials.DefaultMaterial(),
 	}

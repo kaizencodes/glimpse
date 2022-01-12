@@ -50,7 +50,7 @@ func (c *Camera) SetTransform(m matrix.Matrix) {
 	c.transform = m
 }
 
-func (c *Camera) RayForPixel(x, y int) ray.Ray {
+func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	xOffset := (float64(x) + 0.5) * c.pixelSize
 	yOffset := (float64(y) + 0.5) * c.pixelSize
 

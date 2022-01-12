@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"fmt"
+	"glimpse/calc"
 	"strconv"
 )
 
@@ -90,6 +91,21 @@ func (m Matrix) String() string {
 		result += string('\n')
 	}
 	return result
+}
+
+func (m Matrix) Equal(other Matrix) bool {
+	if len(m) != len(other) || len(m[0]) != len(other[0]) {
+		return false
+	}
+
+	for i, row := range m {
+		for j, val := range row {
+			if !calc.FloatEquals(val, other[i][j]) {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func NewIdentity(size int) Matrix {

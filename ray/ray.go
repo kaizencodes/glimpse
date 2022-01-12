@@ -11,32 +11,35 @@ import (
 	"strconv"
 )
 
+const BounceLimit = 5
+
 type Ray struct {
-	origin    tuple.Tuple
-	direction tuple.Tuple
+	origin      tuple.Tuple
+	direction   tuple.Tuple
+	bounceLimit int
 }
 
-func (r Ray) Position(dist float64) tuple.Tuple {
+func (r *Ray) Position(dist float64) tuple.Tuple {
 	return tuple.Add(r.origin, r.direction.Scalar(dist))
 }
 
-func (r Ray) String() string {
+func (r *Ray) String() string {
 	return fmt.Sprintf("Ray(origin: %s, direction: %s)", r.origin, r.direction)
 }
 
-func (r Ray) Equal(other Ray) bool {
+func (r *Ray) Equal(other *Ray) bool {
 	return r.origin.Equal(other.origin) && r.direction.Equal(other.direction)
 }
 
-func (r Ray) Translate(x, y, z float64) Ray {
+func (r *Ray) Translate(x, y, z float64) *Ray {
 	origin, err := tuple.Multiply(matrix.Translation(x, y, z), r.origin)
 	if err != nil {
 		panic(err)
 	}
-	return Ray{origin: origin, direction: r.direction}
+	return &Ray{origin: origin, direction: r.direction}
 }
 
-func (r Ray) Scale(x, y, z float64) Ray {
+func (r *Ray) Scale(x, y, z float64) *Ray {
 	origin, err := tuple.Multiply(matrix.Scaling(x, y, z), r.origin)
 	if err != nil {
 		panic(err)
@@ -45,56 +48,132 @@ func (r Ray) Scale(x, y, z float64) Ray {
 	if err != nil {
 		panic(err)
 	}
-	return Ray{origin: origin, direction: direction}
+	return &Ray{origin: origin, direction: direction}
 }
 
-func (r Ray) Origin() tuple.Tuple {
+func (r *Ray) Origin() tuple.Tuple {
 	return r.origin
 }
 
-func (r Ray) Direction() tuple.Tuple {
+func (r *Ray) Direction() tuple.Tuple {
 	return r.direction
 }
 
-func (r Ray) Intersect(s shapes.Shape) Intersections {
+func (r *Ray) BounceLimit() int {
+	return r.bounceLimit
+}
+
+func (r *Ray) SetBounceLimit(bounceLimit int) {
+	r.bounceLimit = bounceLimit
+}
+
+func (r *Ray) Intersect(s shapes.Shape) Intersections {
 	transform, err := s.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
 	origin, _ := tuple.Multiply(transform, r.origin)
 	direction, _ := tuple.Multiply(transform, r.direction)
-	localRay := Ray{origin, direction}
+	localRay := &Ray{origin, direction, BounceLimit}
 
 	switch s := s.(type) {
 	case *shapes.Sphere:
 		return localRay.intersectSphere(s)
+	case *shapes.Cylinder:
+		return localRay.intersectCylinder(s)
 	case *shapes.Plane:
 		return localRay.intersectPlane(s)
+	case *shapes.Cube:
+		return localRay.intersectCube(s)
 	default:
 		panic(fmt.Errorf("Not supported shape %T", s))
 	}
 }
 
-func (r Ray) intersectSphere(s *shapes.Sphere) Intersections {
-	sphere_to_ray := tuple.Subtract(r.origin, tuple.NewPoint(0, 0, 0))
+func (r *Ray) intersectSphere(s *shapes.Sphere) Intersections {
+	sphere_to_ray := r.origin.ToVector()
 
 	a := tuple.Dot(r.direction, r.direction)
 	b := 2 * tuple.Dot(r.direction, sphere_to_ray)
 	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
 
-	disciminant := math.Pow(b, 2) - 4*a*c
+	discriminant := math.Pow(b, 2) - 4*a*c
 
-	if disciminant < 0 {
+	if discriminant < 0 {
 		return Intersections{}
 	}
 
-	t1 := (-b - math.Sqrt(disciminant)) / (2 * a)
-	t2 := (-b + math.Sqrt(disciminant)) / (2 * a)
+	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
 	return Intersections{Intersection{t: t1, shape: s}, Intersection{t: t2, shape: s}}
 }
 
-func (r Ray) intersectPlane(s *shapes.Plane) Intersections {
+func (r *Ray) intersectCylinder(s *shapes.Cylinder) Intersections {
+	a := math.Pow(r.direction.X(), 2) + math.Pow(r.direction.Z(), 2)
+	if calc.FloatEquals(a, 0.0) {
+		return intersectionsForCaps(Intersections{}, s, r)
+	}
+
+	b := 2*r.origin.X()*r.direction.X() + 2*r.origin.Z()*r.direction.Z()
+	c := math.Pow(r.origin.X(), 2) + math.Pow(r.origin.Z(), 2) - 1
+
+	discriminant := math.Pow(b, 2) - 4*a*c
+
+	if discriminant < 0 {
+		return Intersections{}
+	}
+
+	t0 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t1 := (-b + math.Sqrt(discriminant)) / (2 * a)
+
+	xs := Intersections{}
+
+	if t0 > t1 {
+		t0, t1 = t1, t0
+	}
+
+	y0 := r.Origin().Y() + t0*r.direction.Y()
+	if s.Minimum() < y0 && y0 < s.Maximum() {
+		xs = append(xs, Intersection{t: t0, shape: s})
+	}
+
+	y1 := r.Origin().Y() + t1*r.direction.Y()
+	if s.Minimum() < y1 && y1 < s.Maximum() {
+		xs = append(xs, Intersection{t: t1, shape: s})
+	}
+
+	return intersectionsForCaps(xs, s, r)
+}
+
+func intersectionsForCaps(xs Intersections, s *shapes.Cylinder, r *Ray) Intersections {
+	// caps only matter if the cylinder is closed, and might possibly be intersected by the ray.
+	if !(s.Closed() || calc.FloatEquals(r.Direction().Y(), 0)) {
+		return xs
+	}
+	// check for an intersection with the lower end cap by intersecting the ray with the plane at y=s.minimum
+	t := (s.Minimum() - r.origin.Y()) / r.direction.Y()
+	if checkCap(r, t) {
+		xs = append(xs, Intersection{t: t, shape: s})
+	}
+
+	// check for an intersection with the upper end cap by intersecting the ray with the plane at y=cyl.maximum
+	t = (s.Maximum() - r.origin.Y()) / r.direction.Y()
+	if checkCap(r, t) {
+		xs = append(xs, Intersection{t: t, shape: s})
+	}
+	return xs
+}
+
+// checks to see if the intersection at `t` is within a radius
+//  of 1 (the radius of your cylinders) from the y axis.
+func checkCap(r *Ray, t float64) bool {
+	x := r.Origin().X() + t*r.Direction().X()
+	z := r.Origin().Z() + t*r.Direction().Z()
+	return math.Pow(x, 2)+math.Pow(z, 2) <= 1
+}
+
+func (r *Ray) intersectPlane(s *shapes.Plane) Intersections {
 	if math.Abs(r.Direction().Y()) < calc.EPSILON {
 		return Intersections{}
 	}
@@ -105,8 +184,44 @@ func (r Ray) intersectPlane(s *shapes.Plane) Intersections {
 	}
 }
 
-func New(origin, direction tuple.Tuple) Ray {
-	return Ray{origin, direction}
+func (r *Ray) intersectCube(s *shapes.Cube) Intersections {
+	xMin, xMax := checkAxis(r.origin.X(), r.direction.X())
+	yMin, yMax := checkAxis(r.origin.Y(), r.direction.Y())
+	zMin, zMax := checkAxis(r.origin.Z(), r.direction.Z())
+
+	min := math.Max(xMin, math.Max(yMin, zMin))
+	max := math.Min(xMax, math.Min(yMax, zMax))
+
+	if min > max {
+		return Intersections{}
+	}
+
+	return Intersections{
+		Intersection{t: min, shape: s},
+		Intersection{t: max, shape: s},
+	}
+}
+
+func checkAxis(origin, direction float64) (min, max float64) {
+	minNumerator := -1 - origin
+	maxNumerator := 1 - origin
+	if math.Abs(direction) >= calc.EPSILON {
+		min = minNumerator / direction
+		max = maxNumerator / direction
+	} else {
+		min = minNumerator * math.MaxFloat64
+		max = maxNumerator * math.MaxFloat64
+	}
+
+	if min > max {
+		min, max = max, min
+	}
+
+	return min, max
+}
+
+func New(origin, direction tuple.Tuple) *Ray {
+	return &Ray{origin, direction, BounceLimit}
 }
 
 type Intersection struct {
@@ -158,67 +273,4 @@ func (c Intersections) Hit() Intersection {
 
 func NewIntersection(t float64, obj shapes.Shape) Intersection {
 	return Intersection{t, obj}
-}
-
-type Computations struct {
-	t         float64
-	shape     shapes.Shape
-	point     tuple.Tuple
-	eyeV      tuple.Tuple
-	normalV   tuple.Tuple
-	overPoint tuple.Tuple
-	inside    bool
-}
-
-func (c Computations) T() float64 {
-	return c.t
-}
-
-func (c Computations) Shape() shapes.Shape {
-	return c.shape
-}
-
-func (c Computations) Point() tuple.Tuple {
-	return c.point
-}
-
-func (c Computations) EyeV() tuple.Tuple {
-	return c.eyeV
-}
-
-func (c Computations) NormalV() tuple.Tuple {
-	return c.normalV
-}
-
-func (c Computations) OverPoint() tuple.Tuple {
-	return c.overPoint
-}
-
-func (c Computations) Inside() bool {
-	return c.inside
-}
-
-func PrepareComputations(i Intersection, r Ray) Computations {
-	point := r.Position(i.t)
-	normalV := shapes.NormalAt(point, i.shape)
-	eyeV := r.Direction().Negate()
-
-	var inside bool
-	if tuple.Dot(normalV, eyeV) < 0 {
-		inside = true
-		normalV = normalV.Negate()
-	} else {
-		inside = false
-	}
-	overPoint := tuple.Add(point, normalV.Scalar(calc.EPSILON))
-
-	return Computations{
-		t:         i.T(),
-		shape:     i.Shape(),
-		point:     point,
-		eyeV:      eyeV,
-		normalV:   normalV,
-		inside:    inside,
-		overPoint: overPoint,
-	}
 }

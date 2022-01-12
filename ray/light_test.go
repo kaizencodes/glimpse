@@ -75,7 +75,7 @@ func TestLighting(t *testing.T) {
 	normalV := tuple.NewVector(0, 0, -1)
 	light := NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1))
 	inShadow := false
-	ambientMat := materials.NewMaterial(color.White(), 1, 0, 0, 0)
+	ambientMat := materials.NewMaterial(color.White(), 1, 0, 0, 0, 0, 0, 1)
 	ambientMat.SetPattern(materials.NewPattern(materials.Stripe, color.White(), color.Black()))
 	shape.SetMaterial(ambientMat)
 	pos1 := tuple.NewPoint(0.9, 0, 0)
