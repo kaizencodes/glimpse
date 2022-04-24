@@ -7,6 +7,7 @@ import (
 	"glimpse/tuple"
 	"glimpse/world"
 	"math"
+	"sync"
 )
 
 type Camera struct {
@@ -71,13 +72,23 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 
 func (c *Camera) Render(w *world.World) canvas.Canvas {
 	img := canvas.New(c.width, c.height)
+	var wg sync.WaitGroup
+
 	for y := 0; y < c.height-1; y++ {
 		for x := 0; x < c.width-1; x++ {
-			r := c.RayForPixel(x, y)
-			col := w.ColorAt(r)
-			img[x][y] = col
+			wg.Add(1)
+
+			go func(x, y int) {
+				defer wg.Done()
+
+				r := c.RayForPixel(x, y)
+				col := w.ColorAt(r)
+				img[x][y] = col
+			}(x, y)
 		}
 	}
+	wg.Wait()
+
 	return img
 }
 
