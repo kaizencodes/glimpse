@@ -86,7 +86,7 @@ func (r *Ray) Intersect(s shapes.Shape) Intersections {
 	case *shapes.Cube:
 		return localRay.intersectCube(s)
 	default:
-		panic(fmt.Errorf("Not supported shape %T", s))
+		panic(fmt.Errorf("not supported shape %T", s))
 	}
 }
 

@@ -39,7 +39,7 @@ func NewPattern(pattern PatternType, colors ...color.Color) *Pattern {
 	case Test:
 		return newTestPattern()
 	default:
-		panic(fmt.Errorf("Not supported pattern: %T", pattern))
+		panic(fmt.Errorf("not supported pattern: %T", pattern))
 	}
 }
 

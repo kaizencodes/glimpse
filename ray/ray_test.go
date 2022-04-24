@@ -470,7 +470,7 @@ func TestSphereTransformations(t *testing.T) {
 	}
 
 	got := r.Intersect(sphere)
-	for i, _ := range got {
+	for i := range got {
 		if got[i].t != want[i].t {
 			t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, got[i].t, want[i].t)
 		}
