@@ -85,6 +85,8 @@ func (r *Ray) Intersect(s shapes.Shape) Intersections {
 		return localRay.intersectPlane(s)
 	case *shapes.Cube:
 		return localRay.intersectCube(s)
+	case *shapes.Group:
+		return localRay.intersectGroup(s)
 	default:
 		panic(fmt.Errorf("not supported shape %T", s))
 	}
@@ -107,6 +109,15 @@ func (r *Ray) intersectSphere(s *shapes.Sphere) Intersections {
 	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
 	return Intersections{Intersection{t: t1, shape: s}, Intersection{t: t2, shape: s}}
+}
+
+func (r *Ray) intersectGroup(s *shapes.Group) Intersections {
+	xs := Intersections{}
+	for _, child := range s.Children() {
+		xs = append(xs, r.Intersect(child)...)
+	}
+	xs.Sort()
+	return xs
 }
 
 func (r *Ray) intersectCylinder(s *shapes.Cylinder) Intersections {
