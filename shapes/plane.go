@@ -10,6 +10,7 @@ import (
 type Plane struct {
 	transform matrix.Matrix
 	material  *materials.Material
+	parent    Shape
 }
 
 func (s *Plane) String() string {

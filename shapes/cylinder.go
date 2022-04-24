@@ -14,6 +14,7 @@ type Cylinder struct {
 	material         *materials.Material
 	minimum, maximum float64
 	closed           bool
+	parent           Shape
 }
 
 func (s *Cylinder) String() string {

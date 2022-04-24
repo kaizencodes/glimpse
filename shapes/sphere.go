@@ -10,6 +10,7 @@ import (
 type Sphere struct {
 	transform matrix.Matrix
 	material  *materials.Material
+	parent    Shape
 }
 
 func (s *Sphere) String() string {
