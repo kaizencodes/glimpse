@@ -401,6 +401,18 @@ func TestGroupIntersect(t *testing.T) {
 	testIntersection(t, g, r, expected)
 }
 
+func TestGroupTransformation(t *testing.T) {
+	g := shapes.NewGroup()
+	g.SetTransform(matrix.Scaling(2, 2, 2))
+	s := shapes.NewSphere()
+	s.SetTransform(matrix.Translation(5, 0, 0))
+	g.AddChild(s)
+	r := New(tuple.NewPoint(10, 0, -10), tuple.NewVector(0, 0, 1))
+	if len(r.Intersect(g)) != 2 {
+		t.Errorf("incorrect transformation")
+	}
+}
+
 func testIntersection(t *testing.T, s shapes.Shape, r *Ray, expected Intersections) {
 	result := r.Intersect(s)
 	if len(result) != len(expected) {
