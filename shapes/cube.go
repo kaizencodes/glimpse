@@ -46,6 +46,14 @@ func (s *Cube) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.NewVector(0, 0, point.Z())
 }
 
+func (s *Cube) Parent() Shape {
+	return s.parent
+}
+
+func (s *Cube) SetParent(other Shape) {
+	s.parent = other
+}
+
 func NewCube() *Cube {
 	return &Cube{
 		transform: matrix.DefaultTransform(),

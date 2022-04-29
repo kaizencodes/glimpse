@@ -37,6 +37,14 @@ func (s *Sphere) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.Subtract(point, tuple.NewPoint(0, 0, 0))
 }
 
+func (s *Sphere) Parent() Shape {
+	return s.parent
+}
+
+func (s *Sphere) SetParent(other Shape) {
+	s.parent = other
+}
+
 func NewSphere() *Sphere {
 	return &Sphere{
 		transform: matrix.DefaultTransform(),

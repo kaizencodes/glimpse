@@ -13,6 +13,8 @@ type Shape interface {
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
 	LocalNormalAt(point tuple.Tuple) tuple.Tuple
+	Parent() Shape
+	SetParent(Shape)
 }
 
 func NormalAt(worldPoint tuple.Tuple, shape Shape) tuple.Tuple {
@@ -48,4 +50,14 @@ func ColorAt(worldPoint tuple.Tuple, shape Shape) color.Color {
 	}
 
 	return shape.Material().ColorAt(patternPoint)
+}
+
+func WorldToObject(s Shape, p tuple.Tuple) tuple.Tuple {
+	if s.Parent() != nil {
+		p = WorldToObject(s.Parent(), p)
+	}
+
+	inverse, _ := s.Transform().Inverse()
+	result, _ := tuple.Multiply(inverse, p)
+	return result
 }

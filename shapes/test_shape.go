@@ -10,6 +10,7 @@ import (
 type TestShape struct {
 	transform matrix.Matrix
 	material  *materials.Material
+	parent    Shape
 }
 
 func (s *TestShape) String() string {
@@ -30,6 +31,14 @@ func (s *TestShape) Material() *materials.Material {
 
 func (s *TestShape) Transform() matrix.Matrix {
 	return s.transform
+}
+
+func (s *TestShape) Parent() Shape {
+	return s.parent
+}
+
+func (s *TestShape) SetParent(other Shape) {
+	s.parent = other
 }
 
 func (s *TestShape) LocalNormalAt(point tuple.Tuple) tuple.Tuple {

@@ -50,7 +50,12 @@ func (g *Group) Parent() Shape {
 	return g.parent
 }
 
+func (s *Group) SetParent(other Shape) {
+	s.parent = other
+}
+
 func (g *Group) AddChild(s Shape) {
+	s.SetParent(g)
 	g.children = append(g.children, s)
 }
 

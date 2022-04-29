@@ -21,6 +21,14 @@ func (s *Cylinder) String() string {
 	return fmt.Sprintf("Cylinder(min: %f, max: %f, transform: %s, material: %s)", s.minimum, s.maximum, s.transform, s.material)
 }
 
+func (s *Cylinder) Parent() Shape {
+	return s.parent
+}
+
+func (s *Cylinder) SetParent(other Shape) {
+	s.parent = other
+}
+
 func (s *Cylinder) SetTransform(transform matrix.Matrix) {
 	s.transform = transform
 }

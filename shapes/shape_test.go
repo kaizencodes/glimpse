@@ -117,3 +117,19 @@ func TestColorAt(t *testing.T) {
 		t.Errorf("test color for:\n%s \n at point: %s. \nresult: \n%s. \nexpected: \n%s", shape, point, result, expected)
 	}
 }
+
+func TestWorldToObject(t *testing.T) {
+	g1 := NewGroup()
+	g1.SetTransform(matrix.RotationY(math.Pi / 2))
+	g2 := NewGroup()
+	g2.SetTransform(matrix.Scaling(2, 2, 2))
+	g1.AddChild(g2)
+	s := NewSphere()
+	s.SetTransform(matrix.Translation(5, 0, 0))
+	g2.AddChild(s)
+	result := WorldToObject(s, tuple.NewPoint(-2, 0, -10))
+	expected := tuple.NewPoint(0, 0, -1)
+	if !result.Equal(expected) {
+		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
+	}
+}

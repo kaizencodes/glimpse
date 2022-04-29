@@ -37,6 +37,14 @@ func (s *Plane) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.NewVector(0, 1, 0)
 }
 
+func (s *Plane) Parent() Shape {
+	return s.parent
+}
+
+func (s *Plane) SetParent(other Shape) {
+	s.parent = other
+}
+
 func NewPlane() *Plane {
 	return &Plane{
 		transform: matrix.DefaultTransform(),
