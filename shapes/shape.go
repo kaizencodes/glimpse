@@ -61,3 +61,15 @@ func WorldToObject(s Shape, p tuple.Tuple) tuple.Tuple {
 	result, _ := tuple.Multiply(inverse, p)
 	return result
 }
+
+func NormalToWorld(s Shape, v tuple.Tuple) tuple.Tuple {
+	inv, _ := s.Transform().Inverse()
+	normal, _ := tuple.Multiply(inv.Transpose(), v)
+	normal = normal.ToVector().Normalize()
+
+	if s.Parent() != nil {
+		normal = NormalToWorld(s.Parent(), normal)
+	}
+
+	return normal
+}

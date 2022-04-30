@@ -133,3 +133,19 @@ func TestWorldToObject(t *testing.T) {
 		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
 	}
 }
+
+func TestNormalToWorld(t *testing.T) {
+	g1 := NewGroup()
+	g1.SetTransform(matrix.RotationY(math.Pi / 2))
+	g2 := NewGroup()
+	g2.SetTransform(matrix.Scaling(1, 2, 3))
+	g1.AddChild(g2)
+	s := NewSphere()
+	s.SetTransform(matrix.Translation(5, 0, 0))
+	g2.AddChild(s)
+	result := NormalToWorld(s, tuple.NewVector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	expected := tuple.NewVector(0.28571428571428575, 0.42857142857142855, -0.8571428571428571)
+	if !result.Equal(expected) {
+		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
+	}
+}
