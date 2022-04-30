@@ -10,6 +10,7 @@ import (
 type Plane struct {
 	transform matrix.Matrix
 	material  *materials.Material
+	parent    Shape
 }
 
 func (s *Plane) String() string {
@@ -34,6 +35,14 @@ func (s *Plane) Transform() matrix.Matrix {
 
 func (s *Plane) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.NewVector(0, 1, 0)
+}
+
+func (s *Plane) Parent() Shape {
+	return s.parent
+}
+
+func (s *Plane) SetParent(other Shape) {
+	s.parent = other
 }
 
 func NewPlane() *Plane {

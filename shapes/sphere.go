@@ -10,6 +10,7 @@ import (
 type Sphere struct {
 	transform matrix.Matrix
 	material  *materials.Material
+	parent    Shape
 }
 
 func (s *Sphere) String() string {
@@ -34,6 +35,14 @@ func (s *Sphere) Transform() matrix.Matrix {
 
 func (s *Sphere) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.Subtract(point, tuple.NewPoint(0, 0, 0))
+}
+
+func (s *Sphere) Parent() Shape {
+	return s.parent
+}
+
+func (s *Sphere) SetParent(other Shape) {
+	s.parent = other
 }
 
 func NewSphere() *Sphere {

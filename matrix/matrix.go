@@ -65,7 +65,7 @@ func (a Matrix) Inverse() (Matrix, error) {
 
 	inverse := New(len(a), len(a[0]))
 	for n, col := range inverse {
-		for m, _ := range col {
+		for m := range col {
 			inverse[m][n] = a.Cofactor(n, m) / det
 		}
 	}
@@ -110,7 +110,7 @@ func (m Matrix) Equal(other Matrix) bool {
 
 func NewIdentity(size int) Matrix {
 	identity := New(size, size)
-	for n, _ := range identity {
+	for n := range identity {
 		identity[n][n] = 1
 	}
 	return identity
@@ -118,12 +118,12 @@ func NewIdentity(size int) Matrix {
 
 func Multiply(a, b Matrix) (Matrix, error) {
 	if len(a[0]) != len(b) {
-		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d.", len(a[0]), len(b))
+		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d", len(a[0]), len(b))
 	}
 
 	new_mat := New(len(a), len(b[0]))
 	for n, row := range new_mat {
-		for m, _ := range row {
+		for m := range row {
 			new_mat[n][m] = dot(a, b, n, m)
 		}
 	}
@@ -132,7 +132,7 @@ func Multiply(a, b Matrix) (Matrix, error) {
 
 func dot(a, b Matrix, row, col int) float64 {
 	var sum float64
-	for i, _ := range a[0] {
+	for i := range a[0] {
 		sum += a[row][i] * b[i][col]
 	}
 

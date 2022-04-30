@@ -11,6 +11,7 @@ import (
 type Cube struct {
 	transform matrix.Matrix
 	material  *materials.Material
+	parent    Shape
 }
 
 func (s *Cube) String() string {
@@ -43,6 +44,14 @@ func (s *Cube) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 		return tuple.NewVector(0, point.Y(), 0)
 	}
 	return tuple.NewVector(0, 0, point.Z())
+}
+
+func (s *Cube) Parent() Shape {
+	return s.parent
+}
+
+func (s *Cube) SetParent(other Shape) {
+	s.parent = other
 }
 
 func NewCube() *Cube {

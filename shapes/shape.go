@@ -13,17 +13,14 @@ type Shape interface {
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
 	LocalNormalAt(point tuple.Tuple) tuple.Tuple
+	Parent() Shape
+	SetParent(Shape)
 }
 
 func NormalAt(worldPoint tuple.Tuple, shape Shape) tuple.Tuple {
-	inv_mat, err := shape.Transform().Inverse()
-	if err != nil {
-		panic(err)
-	}
-	localPoint, _ := tuple.Multiply(inv_mat, worldPoint)
+	localPoint := worldToObject(worldPoint, shape)
 	localNormal := shape.LocalNormalAt(localPoint)
-	worldNormal, _ := tuple.Multiply(inv_mat.Transpose(), localNormal)
-	return worldNormal.ToVector().Normalize()
+	return normalToWorld(localNormal, shape)
 }
 
 func ColorAt(worldPoint tuple.Tuple, shape Shape) color.Color {
@@ -48,4 +45,26 @@ func ColorAt(worldPoint tuple.Tuple, shape Shape) color.Color {
 	}
 
 	return shape.Material().ColorAt(patternPoint)
+}
+
+func worldToObject(p tuple.Tuple, s Shape) tuple.Tuple {
+	if s.Parent() != nil {
+		p = worldToObject(p, s.Parent())
+	}
+
+	inverse, _ := s.Transform().Inverse()
+	result, _ := tuple.Multiply(inverse, p)
+	return result
+}
+
+func normalToWorld(v tuple.Tuple, s Shape) tuple.Tuple {
+	inv, _ := s.Transform().Inverse()
+	normal, _ := tuple.Multiply(inv.Transpose(), v)
+	normal = normal.ToVector().Normalize()
+
+	if s.Parent() != nil {
+		normal = normalToWorld(normal, s.Parent())
+	}
+
+	return normal
 }

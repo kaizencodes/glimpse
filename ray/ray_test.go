@@ -372,6 +372,47 @@ func TestClosedCylinderIntersect(t *testing.T) {
 	}
 }
 
+func TestEmptyGroupIntersect(t *testing.T) {
+	g := shapes.NewGroup()
+	r := New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+	expected := Intersections{}
+
+	testIntersection(t, g, r, expected)
+}
+
+func TestGroupIntersect(t *testing.T) {
+	g := shapes.NewGroup()
+	s1 := shapes.NewSphere()
+	s2 := shapes.NewSphere()
+	s2.SetTransform(matrix.Translation(0, 0, -3))
+	s3 := shapes.NewSphere()
+	s3.SetTransform(matrix.Translation(5, 0, 0))
+	g.AddChild(s1)
+	g.AddChild(s2)
+	g.AddChild(s3)
+	r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	expected := Intersections{
+		Intersection{t: 1, shape: s2},
+		Intersection{t: 3, shape: s2},
+		Intersection{t: 4, shape: s1},
+		Intersection{t: 6, shape: s1},
+	}
+
+	testIntersection(t, g, r, expected)
+}
+
+func TestGroupTransformation(t *testing.T) {
+	g := shapes.NewGroup()
+	g.SetTransform(matrix.Scaling(2, 2, 2))
+	s := shapes.NewSphere()
+	s.SetTransform(matrix.Translation(5, 0, 0))
+	g.AddChild(s)
+	r := New(tuple.NewPoint(10, 0, -10), tuple.NewVector(0, 0, 1))
+	if len(r.Intersect(g)) != 2 {
+		t.Errorf("incorrect transformation")
+	}
+}
+
 func testIntersection(t *testing.T, s shapes.Shape, r *Ray, expected Intersections) {
 	result := r.Intersect(s)
 	if len(result) != len(expected) {
@@ -470,7 +511,7 @@ func TestSphereTransformations(t *testing.T) {
 	}
 
 	got := r.Intersect(sphere)
-	for i, _ := range got {
+	for i := range got {
 		if got[i].t != want[i].t {
 			t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, got[i].t, want[i].t)
 		}
