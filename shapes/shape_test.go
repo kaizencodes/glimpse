@@ -73,6 +73,21 @@ func TestNormalAt(t *testing.T) {
 	if got := NormalAt(point, shape); !got.Equal(want) {
 		t.Errorf("test normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", shape, point, got, want)
 	}
+
+	// Finding the normal on a child object
+	g1 := NewGroup()
+	g1.SetTransform(matrix.RotationY(math.Pi / 2))
+	g2 := NewGroup()
+	g2.SetTransform(matrix.Scaling(1, 2, 3))
+	g1.AddChild(g2)
+	s := NewSphere()
+	s.SetTransform(matrix.Translation(5, 0, 0))
+	g2.AddChild(s)
+	result := NormalAt(tuple.NewPoint(1.7321, 1.1547, -5.5774), s)
+	expected := tuple.NewVector(0.28570368184140726, 0.42854315178114105, -0.8571605294481017)
+	if !result.Equal(expected) {
+		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
+	}
 }
 
 func TestColorAt(t *testing.T) {
@@ -127,7 +142,7 @@ func TestWorldToObject(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	g2.AddChild(s)
-	result := WorldToObject(s, tuple.NewPoint(-2, 0, -10))
+	result := worldToObject(tuple.NewPoint(-2, 0, -10), s)
 	expected := tuple.NewPoint(0, 0, -1)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
@@ -143,7 +158,7 @@ func TestNormalToWorld(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	g2.AddChild(s)
-	result := NormalToWorld(s, tuple.NewVector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	result := normalToWorld(tuple.NewVector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3), s)
 	expected := tuple.NewVector(0.28571428571428575, 0.42857142857142855, -0.8571428571428571)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
