@@ -78,6 +78,10 @@ func (t *Triangle) SetC(point tuple.Tuple) {
 	t.c = point
 }
 
+func (t *Triangle) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+	return t.normal
+}
+
 func NewTriangle(a, b, c tuple.Tuple) *Triangle {
 	e1 := tuple.Subtract(b, a)
 	e2 := tuple.Subtract(c, a)

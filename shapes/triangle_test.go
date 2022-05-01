@@ -34,3 +34,31 @@ func TestNewTriangle(t *testing.T) {
 		t.Errorf("Triangle normal\ngot: \n%s. \nexpected: \n%s", triangle.Normal(), normal)
 	}
 }
+
+func TestLocalNormalAt(t *testing.T) {
+	triangle := NewTriangle(
+		tuple.NewPoint(0, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+	)
+
+	var tests = []struct {
+		point tuple.Tuple
+	}{
+		{
+			point: tuple.NewPoint(0, 0.5, 0),
+		},
+		{
+			point: tuple.NewPoint(-0.5, 0.75, 0),
+		},
+		{
+			point: tuple.NewPoint(0.5, 0.25, 0),
+		},
+	}
+
+	for _, test := range tests {
+		if result := triangle.LocalNormalAt(test.point); !result.Equal(triangle.normal) {
+			t.Errorf("Triangle normal:\n point: %s. \nresult: \n%s. \nexpected: \n%s", test.point, result, triangle.normal)
+		}
+	}
+}
