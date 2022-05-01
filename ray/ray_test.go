@@ -401,6 +401,50 @@ func TestGroupIntersect(t *testing.T) {
 	testIntersection(t, g, r, expected)
 }
 
+func TestTriangleIntersect(t *testing.T) {
+	triangle := shapes.NewTriangle(
+		tuple.NewPoint(0, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+	)
+
+	var tests = []struct {
+		ray      *Ray
+		expected Intersections
+	}{
+		// Intersecting a ray parallel to the triangle
+		{
+			ray:      New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 1, 0)),
+			expected: Intersections{},
+		},
+		// ray misses the a-c edge
+		{
+			ray:      New(tuple.NewPoint(1, 1, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{},
+		},
+		// ray misses the a-b edge
+		{
+			ray:      New(tuple.NewPoint(-1, 1, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{},
+		},
+		// ray misses the b-c edge
+		{
+			ray:      New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{},
+		},
+		// ray strikes the triangle
+		{
+			ray: New(tuple.NewPoint(0, 0.5, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{
+				Intersection{t: 2, shape: triangle},
+			},
+		},
+	}
+	for _, test := range tests {
+		testIntersection(t, triangle, test.ray, test.expected)
+	}
+}
+
 func TestGroupTransformation(t *testing.T) {
 	g := shapes.NewGroup()
 	g.SetTransform(matrix.Scaling(2, 2, 2))

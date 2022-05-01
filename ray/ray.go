@@ -87,6 +87,8 @@ func (r *Ray) Intersect(s shapes.Shape) Intersections {
 		return localRay.intersectCube(s)
 	case *shapes.Group:
 		return localRay.intersectGroup(s)
+	case *shapes.Triangle:
+		return localRay.intersectTriangle(s)
 	default:
 		panic(fmt.Errorf("not supported shape %T", s))
 	}
@@ -118,6 +120,32 @@ func (r *Ray) intersectGroup(s *shapes.Group) Intersections {
 	}
 	xs.Sort()
 	return xs
+}
+
+func (r *Ray) intersectTriangle(s *shapes.Triangle) Intersections {
+	// Möller–Trumbore algorithm
+	directionCrossE2 := tuple.Cross(r.Direction(), s.E2())
+	determinant := tuple.Dot(s.E1(), directionCrossE2)
+	xs := Intersections{}
+	if math.Abs(determinant) < calc.EPSILON {
+		return xs
+	}
+
+	f := 1.0 / determinant
+	aToOrigin := tuple.Subtract(r.Origin(), s.A())
+	u := f * tuple.Dot(aToOrigin, directionCrossE2)
+	if u < 0.0 || u > 1.0 {
+		return xs
+	}
+
+	originCrossE1 := tuple.Cross(aToOrigin, s.E1())
+	v := f * tuple.Dot(r.Direction(), originCrossE1)
+	if v < 0.0 || (u+v) > 1.0 {
+		return xs
+	}
+
+	t := f * tuple.Dot(s.E2(), originCrossE1)
+	return Intersections{Intersection{t, s}}
 }
 
 func (r *Ray) intersectCylinder(s *shapes.Cylinder) Intersections {
