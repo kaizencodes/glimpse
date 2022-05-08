@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"glimpse/shapes"
 	"glimpse/tuple"
 	"testing"
 )
@@ -44,22 +45,42 @@ f 1 3 4
 		tuple.NewPoint(1, 1, 0),
 	}
 	vertices := parseFaces(input, points)
-	if !vertices[0].A().Equal(points[1]) {
-		t.Errorf("Incorrect parsing. expected vertice point A to be \n%s \n got %s", points[1], vertices[0].A())
+
+	assertFace(vertices[0], points[1], points[2], points[3], t)
+	assertFace(vertices[1], points[1], points[3], points[4], t)
+}
+
+func TestTriangulatingPolygons(t *testing.T) {
+	input := `v -1 1 0
+v -1 0 0
+v 1 0 0
+v 1 1 0
+v 0 2 0
+f 1 2 3 4 5
+`
+
+	points := []tuple.Tuple{
+		tuple.NewPoint(0, 0, 0), // index is 1 based
+		tuple.NewPoint(-1, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+		tuple.NewPoint(1, 1, 0),
+		tuple.NewPoint(0, 2, 0),
 	}
-	if !vertices[0].B().Equal(points[2]) {
-		t.Errorf("Incorrect parsing. expected vertice point B to be \n%s \n got %s", points[2], vertices[0].B())
+	vertices := parseFaces(input, points)
+	assertFace(vertices[0], points[1], points[2], points[3], t)
+	assertFace(vertices[1], points[1], points[3], points[4], t)
+	assertFace(vertices[2], points[1], points[4], points[5], t)
+}
+
+func assertFace(face *shapes.Triangle, a, b, c tuple.Tuple, t *testing.T) {
+	if !face.A().Equal(a) {
+		t.Errorf("Incorrect parsing. expected vertice point A to be \n%s \n got %s", a, face.A())
 	}
-	if !vertices[0].C().Equal(points[3]) {
-		t.Errorf("Incorrect parsing. expected vertice point C to be \n%s \n got %s", points[3], vertices[0].C())
+	if !face.B().Equal(b) {
+		t.Errorf("Incorrect parsing. expected vertice point B to be \n%s \n got %s", b, face.B())
 	}
-	if !vertices[1].A().Equal(points[1]) {
-		t.Errorf("Incorrect parsing. expected vertice point A to be \n%s \n got %s", points[1], vertices[1].A())
-	}
-	if !vertices[1].B().Equal(points[3]) {
-		t.Errorf("Incorrect parsing. expected vertice point B to be \n%s \n got %s", points[3], vertices[1].B())
-	}
-	if !vertices[1].C().Equal(points[4]) {
-		t.Errorf("Incorrect parsing. expected vertice point C to be \n%s \n got %s", points[4], vertices[1].C())
+	if !face.C().Equal(c) {
+		t.Errorf("Incorrect parsing. expected vertice point C to be \n%s \n got %s", c, face.C())
 	}
 }

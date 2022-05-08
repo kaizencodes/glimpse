@@ -45,18 +45,24 @@ func parseFaces(input string, points []tuple.Tuple) []*shapes.Triangle {
 	faces := r.FindAllString(input, -1)
 	triangles := []*shapes.Triangle{}
 	for _, line := range faces {
-		a, b, c := splitFaceLine(line)
-		triangle := shapes.NewTriangle(points[a], points[b], points[c])
-		triangles = append(triangles, triangle)
+		indexes := convertLinesToIndexes(line)
+		// fan triangulation
+		for i := 0; i < len(indexes)-2; i++ {
+			triangle := shapes.NewTriangle(points[indexes[0]], points[indexes[i+1]], points[indexes[i+2]])
+			triangles = append(triangles, triangle)
+		}
 	}
 	return triangles
 }
 
-func splitFaceLine(line string) (int, int, int) {
+func convertLinesToIndexes(line string) (indexes []int) {
 	stripNewline := strings.Replace(line, "\n", "", 1)
 	split := strings.Split(stripNewline, " ")
-	a, _ := strconv.Atoi(split[1])
-	b, _ := strconv.Atoi(split[2])
-	c, _ := strconv.Atoi(split[3])
-	return a, b, c
+
+	// skipping the first element as it's the type char e.g. f
+	for i := 1; i < len(split); i++ {
+		n, _ := strconv.Atoi(split[i])
+		indexes = append(indexes, n)
+	}
+	return indexes
 }
