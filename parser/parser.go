@@ -34,10 +34,10 @@ func parseVertices(input string) []tuple.Tuple {
 func splitVerticeLine(line string) (float64, float64, float64) {
 	stripNewline := strings.Replace(line, "\n", "", 1)
 	split := strings.Split(stripNewline, " ")
-	a, _ := strconv.ParseFloat(split[1], 64)
-	b, _ := strconv.ParseFloat(split[2], 64)
-	c, _ := strconv.ParseFloat(split[3], 64)
-	return a, b, c
+	p1, _ := strconv.ParseFloat(split[1], 64)
+	p2, _ := strconv.ParseFloat(split[2], 64)
+	p3, _ := strconv.ParseFloat(split[3], 64)
+	return p1, p2, p3
 }
 
 func parseFaces(input string, points []tuple.Tuple) []*shapes.Triangle {

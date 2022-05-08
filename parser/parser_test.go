@@ -73,14 +73,14 @@ f 1 2 3 4 5
 	assertFace(vertices[2], points[1], points[4], points[5], t)
 }
 
-func assertFace(face *shapes.Triangle, a, b, c tuple.Tuple, t *testing.T) {
-	if !face.A().Equal(a) {
-		t.Errorf("Incorrect parsing. expected vertice point A to be \n%s \n got %s", a, face.A())
+func assertFace(face *shapes.Triangle, p1, p2, p3 tuple.Tuple, t *testing.T) {
+	if !face.P1().Equal(p1) {
+		t.Errorf("Incorrect parsing. expected vertice point P1 to be \n%s \n got %s", p1, face.P1())
 	}
-	if !face.B().Equal(b) {
-		t.Errorf("Incorrect parsing. expected vertice point B to be \n%s \n got %s", b, face.B())
+	if !face.P2().Equal(p2) {
+		t.Errorf("Incorrect parsing. expected vertice point P2 to be \n%s \n got %s", p2, face.P2())
 	}
-	if !face.C().Equal(c) {
-		t.Errorf("Incorrect parsing. expected vertice point C to be \n%s \n got %s", c, face.C())
+	if !face.P3().Equal(p3) {
+		t.Errorf("Incorrect parsing. expected vertice point P3 to be \n%s \n got %s", p3, face.P3())
 	}
 }

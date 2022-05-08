@@ -132,13 +132,13 @@ func (r *Ray) intersectTriangle(s *shapes.Triangle) Intersections {
 	}
 
 	f := 1.0 / determinant
-	aToOrigin := tuple.Subtract(r.Origin(), s.A())
-	u := f * tuple.Dot(aToOrigin, directionCrossE2)
+	p1ToOrigin := tuple.Subtract(r.Origin(), s.P1())
+	u := f * tuple.Dot(p1ToOrigin, directionCrossE2)
 	if u < 0.0 || u > 1.0 {
 		return xs
 	}
 
-	originCrossE1 := tuple.Cross(aToOrigin, s.E1())
+	originCrossE1 := tuple.Cross(p1ToOrigin, s.E1())
 	v := f * tuple.Dot(r.Direction(), originCrossE1)
 	if v < 0.0 || (u+v) > 1.0 {
 		return xs

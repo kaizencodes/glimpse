@@ -417,17 +417,17 @@ func TestTriangleIntersect(t *testing.T) {
 			ray:      New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 1, 0)),
 			expected: Intersections{},
 		},
-		// ray misses the a-c edge
+		// ray misses the p1-p3 edge
 		{
 			ray:      New(tuple.NewPoint(1, 1, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{},
 		},
-		// ray misses the a-b edge
+		// ray misses the p1-p2 edge
 		{
 			ray:      New(tuple.NewPoint(-1, 1, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{},
 		},
-		// ray misses the b-c edge
+		// ray misses the p2-p3 edge
 		{
 			ray:      New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{},
