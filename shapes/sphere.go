@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
+	"math"
 )
 
 type Sphere struct {
@@ -35,6 +37,25 @@ func (s *Sphere) Transform() matrix.Matrix {
 
 func (s *Sphere) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.Subtract(point, tuple.NewPoint(0, 0, 0))
+}
+
+func (s *Sphere) LocalIntersect(r *ray.Ray) Intersections {
+	sphere_to_ray := r.Origin().ToVector()
+
+	a := tuple.Dot(r.Direction(), r.Direction())
+	b := 2 * tuple.Dot(r.Direction(), sphere_to_ray)
+	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
+
+	discriminant := math.Pow(b, 2) - 4*a*c
+
+	if discriminant < 0 {
+		return Intersections{}
+	}
+
+	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
+
+	return Intersections{NewIntersection(t1, s), NewIntersection(t2, s)}
 }
 
 func (s *Sphere) Parent() Shape {

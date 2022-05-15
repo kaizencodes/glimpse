@@ -49,13 +49,13 @@ func TestRayForPixel(t *testing.T) {
 			c:        New(201, 101, math.Pi/2),
 			x:        100,
 			y:        50,
-			expected: ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, -1)),
+			expected: ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, -1)),
 		},
 		{
 			c:        New(201, 101, math.Pi/2),
 			x:        0,
 			y:        0,
-			expected: ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0.6651864261194509, 0.33259321305972545, -0.6685123582500481)),
+			expected: ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0.6651864261194509, 0.33259321305972545, -0.6685123582500481)),
 		},
 	}
 
@@ -68,7 +68,7 @@ func TestRayForPixel(t *testing.T) {
 	c := New(201, 101, math.Pi/2)
 	transform, _ := matrix.Multiply(matrix.RotationY(math.Pi/4), matrix.Translation(0, -2, 5))
 	c.SetTransform(transform)
-	expected := ray.New(tuple.NewPoint(0, 2, -5), tuple.NewVector(0.7071067811865474, 0, -0.7071067811865478))
+	expected := ray.NewRay(tuple.NewPoint(0, 2, -5), tuple.NewVector(0.7071067811865474, 0, -0.7071067811865478))
 
 	if result := c.RayForPixel(100, 50); !result.Equal(expected) {
 		t.Errorf("RayForPixel expected %s, got %s", expected, result)

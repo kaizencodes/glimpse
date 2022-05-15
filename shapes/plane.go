@@ -2,9 +2,12 @@ package shapes
 
 import (
 	"fmt"
+	"glimpse/calc"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
+	"math"
 )
 
 type Plane struct {
@@ -35,6 +38,17 @@ func (s *Plane) Transform() matrix.Matrix {
 
 func (s *Plane) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.NewVector(0, 1, 0)
+}
+
+func (s *Plane) LocalIntersect(r *ray.Ray) Intersections {
+	if math.Abs(r.Direction().Y()) < calc.EPSILON {
+		return Intersections{}
+	}
+
+	t := -r.Origin().Y() / r.Direction().Y()
+	return Intersections{
+		NewIntersection(t, s),
+	}
 }
 
 func (s *Plane) Parent() Shape {

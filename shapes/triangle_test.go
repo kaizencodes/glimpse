@@ -1,6 +1,7 @@
 package shapes
 
 import (
+	"glimpse/ray"
 	"glimpse/tuple"
 	"testing"
 )
@@ -62,3 +63,63 @@ func TestLocalNormalAt(t *testing.T) {
 		}
 	}
 }
+
+func TestTriangleIntersect(t *testing.T) {
+	triangle := NewTriangle(
+		tuple.NewPoint(0, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+	)
+
+	var tests = []struct {
+		ray      *ray.Ray
+		expected Intersections
+	}{
+		// Intersecting a ray parallel to the triangle
+		{
+			ray:      ray.NewRay(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 1, 0)),
+			expected: Intersections{},
+		},
+		// ray misses the p1-p3 edge
+		{
+			ray:      ray.NewRay(tuple.NewPoint(1, 1, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{},
+		},
+		// ray misses the p1-p2 edge
+		{
+			ray:      ray.NewRay(tuple.NewPoint(-1, 1, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{},
+		},
+		// ray misses the p2-p3 edge
+		{
+			ray:      ray.NewRay(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{},
+		},
+		// ray strikes the triangle
+		{
+			ray: ray.NewRay(tuple.NewPoint(0, 0.5, -2), tuple.NewVector(0, 0, 1)),
+			expected: Intersections{
+				NewIntersection(2, triangle),
+			},
+		},
+	}
+	for _, test := range tests {
+		testIntersection(t, triangle, test.ray, test.expected)
+	}
+}
+
+// func testIntersection(t *testing.T, s shapes.Shape, r *Ray, expected Intersections) {
+// 	result := r.Intersect(s)
+// 	if len(result) != len(expected) {
+// 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
+// 	} else {
+// 		for i := range result {
+// 			if !calc.FloatEquals(result[i].t, expected[i].t) {
+// 				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
+// 			}
+// 			if result[i].shape != expected[i].shape {
+// 				t.Errorf("incorrect Shape of intersect:\n%s \n \nresult: \n%s. \nexpected: \n%s", r, result[i].shape, expected[i].shape)
+// 			}
+// 		}
+// 	}
+// }

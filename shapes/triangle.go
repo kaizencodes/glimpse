@@ -2,9 +2,12 @@ package shapes
 
 import (
 	"fmt"
+	"glimpse/calc"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
+	"math"
 )
 
 type Triangle struct {
@@ -14,24 +17,24 @@ type Triangle struct {
 	p1, p2, p3, e1, e2, n1, n2, n3, normal tuple.Tuple
 }
 
-func (t *Triangle) String() string {
-	return fmt.Sprintf("Triangle(material: %s, transform: %s)", t.material, t.transform)
+func (s *Triangle) String() string {
+	return fmt.Sprintf("Triangle(material: %s, transform: %s)", s.material, s.transform)
 }
 
-func (t *Triangle) SetTransform(transform matrix.Matrix) {
-	t.transform = transform
+func (s *Triangle) SetTransform(transform matrix.Matrix) {
+	s.transform = transform
 }
 
-func (t *Triangle) SetMaterial(mat *materials.Material) {
-	t.material = mat
+func (s *Triangle) SetMaterial(mat *materials.Material) {
+	s.material = mat
 }
 
-func (t *Triangle) Material() *materials.Material {
-	return t.material
+func (s *Triangle) Material() *materials.Material {
+	return s.material
 }
 
-func (t *Triangle) Transform() matrix.Matrix {
-	return t.transform
+func (s *Triangle) Transform() matrix.Matrix {
+	return s.transform
 }
 
 func (s *Triangle) Parent() Shape {
@@ -42,44 +45,70 @@ func (s *Triangle) SetParent(other Shape) {
 	s.parent = other
 }
 
-func (t *Triangle) P1() tuple.Tuple {
-	return t.p1
+func (s *Triangle) P1() tuple.Tuple {
+	return s.p1
 }
 
-func (t *Triangle) P2() tuple.Tuple {
-	return t.p2
+func (s *Triangle) P2() tuple.Tuple {
+	return s.p2
 }
 
-func (t *Triangle) P3() tuple.Tuple {
-	return t.p3
+func (s *Triangle) P3() tuple.Tuple {
+	return s.p3
 }
 
-func (t *Triangle) E1() tuple.Tuple {
-	return t.e1
+func (s *Triangle) E1() tuple.Tuple {
+	return s.e1
 }
 
-func (t *Triangle) E2() tuple.Tuple {
-	return t.e2
+func (s *Triangle) E2() tuple.Tuple {
+	return s.e2
 }
 
-func (t *Triangle) Normal() tuple.Tuple {
-	return t.normal
+func (s *Triangle) Normal() tuple.Tuple {
+	return s.normal
 }
 
-func (t *Triangle) SetP1(point tuple.Tuple) {
-	t.p1 = point
+func (s *Triangle) SetP1(point tuple.Tuple) {
+	s.p1 = point
 }
 
-func (t *Triangle) SetP2(point tuple.Tuple) {
-	t.p2 = point
+func (s *Triangle) SetP2(point tuple.Tuple) {
+	s.p2 = point
 }
 
-func (t *Triangle) SetP3(point tuple.Tuple) {
-	t.p3 = point
+func (s *Triangle) SetP3(point tuple.Tuple) {
+	s.p3 = point
 }
 
-func (t *Triangle) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
-	return t.normal
+func (s *Triangle) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+	return s.normal
+}
+
+func (s *Triangle) LocalIntersect(r *ray.Ray) Intersections {
+	// Möller–Trumbore algorithm
+	directionCrossE2 := tuple.Cross(r.Direction(), s.E2())
+	determinant := tuple.Dot(s.E1(), directionCrossE2)
+	xs := Intersections{}
+	if math.Abs(determinant) < calc.EPSILON {
+		return xs
+	}
+
+	f := 1.0 / determinant
+	p1ToOrigin := tuple.Subtract(r.Origin(), s.P1())
+	u := f * tuple.Dot(p1ToOrigin, directionCrossE2)
+	if u < 0.0 || u > 1.0 {
+		return xs
+	}
+
+	originCrossE1 := tuple.Cross(p1ToOrigin, s.E1())
+	v := f * tuple.Dot(r.Direction(), originCrossE1)
+	if v < 0.0 || (u+v) > 1.0 {
+		return xs
+	}
+
+	t := f * tuple.Dot(s.E2(), originCrossE1)
+	return Intersections{NewIntersection(t, s)}
 }
 
 func NewTriangle(p1, p2, p3 tuple.Tuple) *Triangle {

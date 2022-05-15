@@ -4,6 +4,7 @@ import (
 	"glimpse/color"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
 )
 
@@ -13,14 +14,9 @@ type Shape interface {
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
 	LocalNormalAt(point tuple.Tuple) tuple.Tuple
+	LocalIntersect(r *ray.Ray) Intersections
 	Parent() Shape
 	SetParent(Shape)
-}
-
-func NormalAt(worldPoint tuple.Tuple, shape Shape) tuple.Tuple {
-	localPoint := worldToObject(worldPoint, shape)
-	localNormal := shape.LocalNormalAt(localPoint)
-	return normalToWorld(localNormal, shape)
 }
 
 func ColorAt(worldPoint tuple.Tuple, shape Shape) color.Color {
@@ -45,6 +41,41 @@ func ColorAt(worldPoint tuple.Tuple, shape Shape) color.Color {
 	}
 
 	return shape.Material().ColorAt(patternPoint)
+}
+
+func Intersect(s Shape, r *ray.Ray) Intersections {
+	transform, err := s.Transform().Inverse()
+	if err != nil {
+		panic(err)
+	}
+	origin, _ := tuple.Multiply(transform, r.Origin())
+	direction, _ := tuple.Multiply(transform, r.Direction())
+	localRay := ray.NewRay(origin, direction)
+
+	return s.LocalIntersect(localRay)
+
+	// switch s := s.(type) {
+	// case *shapes.Sphere:
+	// 	return localRay.intersectSphere(s)
+	// case *shapes.Cylinder:
+	// 	return localRay.intersectCylinder(s)
+	// case *shapes.Plane:
+	// 	return localRay.intersectPlane(s)
+	// case *shapes.Cube:
+	// 	return localRay.intersectCube(s)
+	// case *shapes.Group:
+	// 	return localRay.intersectGroup(s)
+	// case *shapes.Triangle:
+	// 	return localRay.intersectTriangle(s)
+	// default:
+	// 	panic(fmt.Errorf("not supported shape %T", s))
+	// }
+}
+
+func NormalAt(worldPoint tuple.Tuple, shape Shape) tuple.Tuple {
+	localPoint := worldToObject(worldPoint, shape)
+	localNormal := shape.LocalNormalAt(localPoint)
+	return normalToWorld(localNormal, shape)
 }
 
 func worldToObject(p tuple.Tuple, s Shape) tuple.Tuple {

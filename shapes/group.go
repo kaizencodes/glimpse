@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
 )
 
@@ -36,6 +37,15 @@ func (s *Group) Transform() matrix.Matrix {
 
 func (s *Group) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	return tuple.Tuple{}
+}
+
+func (s *Group) LocalIntersect(r *ray.Ray) Intersections {
+	xs := Intersections{}
+	for _, child := range s.Children() {
+		xs = append(xs, Intersect(child, r)...)
+	}
+	xs.Sort()
+	return xs
 }
 
 func NewGroup() *Group {

@@ -67,7 +67,7 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	origin, _ := tuple.Multiply(invTransform, tuple.NewPoint(0, 0, 0))
 	direction := tuple.Subtract(pixel, origin).Normalize()
 
-	return ray.New(origin, direction)
+	return ray.NewRay(origin, direction)
 }
 
 func (c *Camera) Render(w *world.World) canvas.Canvas {

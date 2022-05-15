@@ -1,7 +1,8 @@
-package ray
+package renderer
 
 import (
 	"glimpse/calc"
+	"glimpse/ray"
 	"glimpse/shapes"
 	"glimpse/tuple"
 	"math"
@@ -85,9 +86,9 @@ func (comps Computations) Schlick() float64 {
 	return r0 + (1-r0)*math.Pow(1-cos, 5)
 }
 
-func PrepareComputations(hit Intersection, r *Ray, xs Intersections) Computations {
-	point := r.Position(hit.t)
-	normalV := shapes.NormalAt(point, hit.shape)
+func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersections) Computations {
+	point := r.Position(hit.T())
+	normalV := shapes.NormalAt(point, hit.Shape())
 	eyeV := r.Direction().Negate()
 
 	inside := false
@@ -109,11 +110,11 @@ func PrepareComputations(hit Intersection, r *Ray, xs Intersections) Computation
 			}
 		}
 
-		ok, at := contains(container, val.shape)
+		ok, at := contains(container, val.Shape())
 		if ok {
 			container = remove(container, at)
 		} else {
-			container = append(container, val.shape)
+			container = append(container, val.Shape())
 		}
 
 		if val == hit {

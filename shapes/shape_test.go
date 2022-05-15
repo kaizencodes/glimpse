@@ -1,9 +1,11 @@
 package shapes
 
 import (
+	"glimpse/calc"
 	"glimpse/color"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
 	"math"
 	"testing"
@@ -162,5 +164,196 @@ func TestNormalToWorld(t *testing.T) {
 	expected := tuple.NewVector(0.28571428571428575, 0.42857142857142855, -0.8571428571428571)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
+	}
+}
+
+func TestIntersect(t *testing.T) {
+	sphere := NewSphere()
+	plane := NewPlane()
+	cube := NewCube()
+	var tests = []struct {
+		ray      *ray.Ray
+		s        Shape
+		expected Intersections
+	}{
+		{
+			ray: ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1)),
+			s:   sphere,
+			expected: Intersections{
+				NewIntersection(4.0, sphere),
+				NewIntersection(6.0, sphere),
+			},
+		},
+		{
+			ray: ray.NewRay(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1)),
+			s:   sphere,
+			expected: Intersections{
+				NewIntersection(5.0, sphere),
+				NewIntersection(5.0, sphere),
+			},
+		},
+		{
+			ray:      ray.NewRay(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1)),
+			s:        sphere,
+			expected: Intersections{},
+		},
+		{
+			ray: ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
+			s:   sphere,
+			expected: Intersections{
+				NewIntersection(-1.0, sphere),
+				NewIntersection(1.0, sphere),
+			},
+		},
+		{
+			ray: ray.NewRay(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1)),
+			s:   sphere,
+			expected: Intersections{
+				NewIntersection(-6.0, sphere),
+				NewIntersection(-4.0, sphere),
+			},
+		},
+		{
+			// Intersect with a ray parallel to the plane
+			ray:      ray.NewRay(tuple.NewPoint(0, 10, 0), tuple.NewVector(0, 0, 1)),
+			s:        plane,
+			expected: Intersections{},
+		},
+		{
+			// Intersect with a coplanar ray
+			ray:      ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
+			s:        plane,
+			expected: Intersections{},
+		},
+		{
+			// A ray intersecting a plane from above
+			ray: ray.NewRay(tuple.NewPoint(0, 1, 0), tuple.NewVector(0, -1, 0)),
+			s:   plane,
+			expected: Intersections{
+				NewIntersection(1, plane),
+			},
+		},
+		{
+			// A ray intersecting a plane from below
+			ray: ray.NewRay(tuple.NewPoint(0, -1, 0), tuple.NewVector(0, 1, 0)),
+			s:   plane,
+			expected: Intersections{
+				NewIntersection(1, plane),
+			},
+		},
+		{
+			// +x
+			ray: ray.NewRay(tuple.NewPoint(5, 0.5, 0), tuple.NewVector(-1, 0, 0)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(4, cube),
+				NewIntersection(6, cube),
+			},
+		},
+		{
+			// -x
+			ray: ray.NewRay(tuple.NewPoint(-5, 0.5, 0), tuple.NewVector(1, 0, 0)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(4, cube),
+				NewIntersection(6, cube),
+			},
+		},
+		{
+			// +y
+			ray: ray.NewRay(tuple.NewPoint(0.5, 5, 0), tuple.NewVector(0, -1, 0)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(4, cube),
+				NewIntersection(6, cube),
+			},
+		},
+		{
+			// -y
+			ray: ray.NewRay(tuple.NewPoint(0.5, -5, 0), tuple.NewVector(0, 1, 0)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(4, cube),
+				NewIntersection(6, cube),
+			},
+		},
+		{
+			// +z
+			ray: ray.NewRay(tuple.NewPoint(0.5, 0, 5), tuple.NewVector(0, 0, -1)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(4, cube),
+				NewIntersection(6, cube),
+			},
+		},
+		{
+			// -z
+			ray: ray.NewRay(tuple.NewPoint(0.5, 0, -5), tuple.NewVector(0, 0, 1)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(4, cube),
+				NewIntersection(6, cube),
+			},
+		},
+		{
+			// inside
+			ray: ray.NewRay(tuple.NewPoint(0, 0.5, 0), tuple.NewVector(0, 0, 1)),
+			s:   cube,
+			expected: Intersections{
+				NewIntersection(-1, cube),
+				NewIntersection(1, cube),
+			},
+		},
+		// cube misses
+		{
+			ray:      ray.NewRay(tuple.NewPoint(-2, 0, 0), tuple.NewVector(0.2673, 0.5345, 0.8018)),
+			s:        cube,
+			expected: Intersections{},
+		},
+		{
+			ray:      ray.NewRay(tuple.NewPoint(0, -2, 0), tuple.NewVector(0.8018, 0.2673, 0.5345)),
+			s:        cube,
+			expected: Intersections{},
+		},
+		{
+			ray:      ray.NewRay(tuple.NewPoint(0, 0, -2), tuple.NewVector(0.5345, 0.8018, 0.2673)),
+			s:        cube,
+			expected: Intersections{},
+		},
+		{
+			ray:      ray.NewRay(tuple.NewPoint(2, 0, 2), tuple.NewVector(0, 0, -1)),
+			s:        cube,
+			expected: Intersections{},
+		},
+		{
+			ray:      ray.NewRay(tuple.NewPoint(0, 2, 2), tuple.NewVector(0, -1, 0)),
+			s:        cube,
+			expected: Intersections{},
+		},
+		{
+			ray:      ray.NewRay(tuple.NewPoint(2, 2, 0), tuple.NewVector(-1, 0, 0)),
+			s:        cube,
+			expected: Intersections{},
+		},
+	}
+
+	for _, test := range tests {
+		testIntersection(t, test.s, test.ray, test.expected)
+	}
+}
+
+func testIntersection(t *testing.T, s Shape, r *ray.Ray, expected Intersections) {
+	result := Intersect(s, r)
+	if len(result) != len(expected) {
+		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
+	} else {
+		for i := range result {
+			if !calc.FloatEquals(result[i].t, expected[i].t) {
+				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
+			}
+			if result[i].shape != expected[i].shape {
+				t.Errorf("incorrect Shape of intersect:\n%s \n \nresult: \n%s. \nexpected: \n%s", r, result[i].shape, expected[i].shape)
+			}
+		}
 	}
 }

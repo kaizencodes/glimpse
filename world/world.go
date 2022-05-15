@@ -2,9 +2,11 @@ package world
 
 import (
 	"glimpse/color"
+	"glimpse/light"
 	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/ray"
+	"glimpse/renderer"
 	"glimpse/shapes"
 	"glimpse/tuple"
 	"math"
@@ -12,14 +14,14 @@ import (
 
 type World struct {
 	shapes []shapes.Shape
-	lights []ray.Light
+	lights []light.Light
 }
 
 func (w *World) Shapes() []shapes.Shape {
 	return w.shapes
 }
 
-func (w *World) Lights() []ray.Light {
+func (w *World) Lights() []light.Light {
 	return w.lights
 }
 
@@ -27,7 +29,7 @@ func (w *World) SetShapes(shapes []shapes.Shape) {
 	w.shapes = shapes
 }
 
-func (w *World) SetLights(lights []ray.Light) {
+func (w *World) SetLights(lights []light.Light) {
 	w.lights = lights
 }
 
@@ -38,22 +40,22 @@ func (w *World) ColorAt(r *ray.Ray) color.Color {
 		return color.Black()
 	}
 
-	return w.shadeHit(ray.PrepareComputations(hit, r, intersections))
+	return w.shadeHit(renderer.PrepareComputations(hit, r, intersections))
 }
 
-func (w *World) intersect(r *ray.Ray) ray.Intersections {
-	coll := ray.Intersections{}
+func (w *World) intersect(r *ray.Ray) shapes.Intersections {
+	coll := shapes.Intersections{}
 	for _, o := range w.shapes {
-		coll = append(coll, r.Intersect(o)...)
+		coll = append(coll, shapes.Intersect(o, r)...)
 	}
 	coll.Sort()
 
 	return coll
 }
 
-func (w *World) shadeHit(comps ray.Computations) color.Color {
+func (w *World) shadeHit(comps renderer.Computations) color.Color {
 	isShadowed := w.shadowAt(comps.OverPoint())
-	c := ray.Lighting(
+	c := light.Lighting(
 		comps.Shape(),
 		w.Lights()[0],
 		comps.OverPoint(),
@@ -76,7 +78,7 @@ func (w *World) shadeHit(comps ray.Computations) color.Color {
 		if i == 0 {
 			continue
 		}
-		c = color.Add(c, ray.Lighting(
+		c = color.Add(c, light.Lighting(
 			comps.Shape(),
 			l,
 			comps.OverPoint(),
@@ -92,7 +94,7 @@ func (w *World) shadowAt(point tuple.Tuple) bool {
 	for _, l := range w.lights {
 		v := tuple.Subtract(l.Position(), point)
 		dist := v.Magnitude()
-		r := ray.New(point, v.Normalize())
+		r := ray.NewRay(point, v.Normalize())
 		hit := w.intersect(r).Hit()
 
 		if !hit.Empty() && hit.T() < dist {
@@ -102,19 +104,19 @@ func (w *World) shadowAt(point tuple.Tuple) bool {
 	return false
 }
 
-func (w *World) reflectedColor(comps ray.Computations) color.Color {
+func (w *World) reflectedColor(comps renderer.Computations) color.Color {
 	if comps.Shape().Material().Reflective() == 0 || comps.BounceLimit() < 1 {
 		return color.Black()
 	}
 
-	r := ray.New(comps.OverPoint(), comps.ReflectV())
+	r := ray.NewRay(comps.OverPoint(), comps.ReflectV())
 	r.SetBounceLimit(comps.BounceLimit() - 1)
 	c := w.ColorAt(r)
 
 	return c.Scalar(comps.Shape().Material().Reflective())
 }
 
-func (w *World) refractedColor(comps ray.Computations) color.Color {
+func (w *World) refractedColor(comps renderer.Computations) color.Color {
 	if comps.Shape().Material().Transparency() == 0 || comps.BounceLimit() < 1 {
 		return color.Black()
 	}
@@ -134,7 +136,7 @@ func (w *World) refractedColor(comps ray.Computations) color.Color {
 
 	// Compute the direction of the refracted ray.
 	direction := tuple.Subtract(comps.NormalV().Scalar((nRatio*cosI)-cosT), comps.EyeV().Scalar(nRatio))
-	refactedRay := ray.New(comps.UnderPoint(), direction)
+	refactedRay := ray.NewRay(comps.UnderPoint(), direction)
 	refactedRay.SetBounceLimit(comps.BounceLimit() - 1)
 
 	// Find the color of the refracted ray, making sure to multiply by the transparency
@@ -152,12 +154,12 @@ func Default() *World {
 		shapes: []shapes.Shape{
 			shapes.Shape(o1), shapes.Shape(o2),
 		},
-		lights: []ray.Light{
-			ray.NewLight(tuple.NewPoint(-10, 10, -10), color.New(1, 1, 1)),
+		lights: []light.Light{
+			light.NewLight(tuple.NewPoint(-10, 10, -10), color.New(1, 1, 1)),
 		},
 	}
 }
 
-func New(shapes []shapes.Shape, lights []ray.Light) *World {
+func New(shapes []shapes.Shape, lights []light.Light) *World {
 	return &World{shapes, lights}
 }
