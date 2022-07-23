@@ -29,7 +29,7 @@ func TestPlaneLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.plane.LocalNormalAt(test.point); !got.Equal(test.expected) {
+		if got := test.plane.LocalNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
 			t.Errorf("Plane normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.plane, test.point, got, test.expected)
 		}
 	}

@@ -5,6 +5,7 @@ import (
 	"glimpse/calc"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
 	"math"
 )
@@ -69,7 +70,7 @@ func (s *Cylinder) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Cylinder) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+func (s *Cylinder) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	// compute the square of the distance from the y axis.
 	dist := math.Pow(point.X(), 2) + math.Pow(point.Z(), 2)
 
@@ -80,6 +81,70 @@ func (s *Cylinder) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
 	}
 
 	return tuple.NewVector(point.X(), 0, point.Z())
+}
+
+func (s *Cylinder) LocalIntersect(r *ray.Ray) Intersections {
+	a := math.Pow(r.Direction().X(), 2) + math.Pow(r.Direction().Z(), 2)
+	if calc.FloatEquals(a, 0.0) {
+		return s.intersectionsForCaps(Intersections{}, r)
+	}
+
+	b := 2*r.Origin().X()*r.Direction().X() + 2*r.Origin().Z()*r.Direction().Z()
+	c := math.Pow(r.Origin().X(), 2) + math.Pow(r.Origin().Z(), 2) - 1
+
+	discriminant := math.Pow(b, 2) - 4*a*c
+
+	if discriminant < 0 {
+		return Intersections{}
+	}
+
+	t0 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t1 := (-b + math.Sqrt(discriminant)) / (2 * a)
+
+	xs := Intersections{}
+
+	if t0 > t1 {
+		t0, t1 = t1, t0
+	}
+
+	y0 := r.Origin().Y() + t0*r.Direction().Y()
+	if s.Minimum() < y0 && y0 < s.Maximum() {
+		xs = append(xs, NewIntersection(t0, s))
+	}
+
+	y1 := r.Origin().Y() + t1*r.Direction().Y()
+	if s.Minimum() < y1 && y1 < s.Maximum() {
+		xs = append(xs, NewIntersection(t1, s))
+	}
+
+	return s.intersectionsForCaps(xs, r)
+}
+
+func (s *Cylinder) intersectionsForCaps(xs Intersections, r *ray.Ray) Intersections {
+	// caps only matter if the cylinder is closed, and might possibly be intersected by the ray.
+	if !(s.Closed() || calc.FloatEquals(r.Direction().Y(), 0)) {
+		return xs
+	}
+	// check for an intersection with the lower end cap by intersecting the ray with the plane at y=s.minimum
+	t := (s.Minimum() - r.Origin().Y()) / r.Direction().Y()
+	if checkCap(r, t) {
+		xs = append(xs, NewIntersection(t, s))
+	}
+
+	// check for an intersection with the upper end cap by intersecting the ray with the plane at y=cyl.maximum
+	t = (s.Maximum() - r.Origin().Y()) / r.Direction().Y()
+	if checkCap(r, t) {
+		xs = append(xs, NewIntersection(t, s))
+	}
+	return xs
+}
+
+// checks to see if the intersection at `t` is within a radius
+//  of 1 (the radius of your cylinders) from the y axis.
+func checkCap(r *ray.Ray, t float64) bool {
+	x := r.Origin().X() + t*r.Direction().X()
+	z := r.Origin().Z() + t*r.Direction().Z()
+	return math.Pow(x, 2)+math.Pow(z, 2) <= 1
 }
 
 func NewCylinder() *Cylinder {

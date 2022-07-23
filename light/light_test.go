@@ -1,4 +1,4 @@
-package ray
+package light
 
 import (
 	"glimpse/color"

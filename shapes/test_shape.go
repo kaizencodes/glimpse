@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"glimpse/materials"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/tuple"
 )
 
@@ -41,8 +42,12 @@ func (s *TestShape) SetParent(other Shape) {
 	s.parent = other
 }
 
-func (s *TestShape) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+func (s *TestShape) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return point.ToVector()
+}
+
+func (s *TestShape) LocalIntersect(r *ray.Ray) Intersections {
+	return Intersections{}
 }
 
 func NewTestShape() *TestShape {

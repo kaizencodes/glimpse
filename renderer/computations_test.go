@@ -1,8 +1,9 @@
-package ray
+package renderer
 
 import (
 	"glimpse/calc"
 	"glimpse/matrix"
+	"glimpse/ray"
 	"glimpse/shapes"
 	"glimpse/tuple"
 	"math"
@@ -10,10 +11,10 @@ import (
 )
 
 func TestPrepareComputations(t *testing.T) {
-	r := New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	s := shapes.NewSphere()
-	i := Intersection{4, s}
-	comps := PrepareComputations(i, r, Intersections{i})
+	i := shapes.NewIntersection(4, s)
+	comps := PrepareComputations(i, r, shapes.Intersections{i})
 	point := tuple.NewPoint(0, 0, -1)
 	eyeV := tuple.NewVector(0, 0, -1)
 	normalV := tuple.NewVector(0, 0, -1)
@@ -21,9 +22,9 @@ func TestPrepareComputations(t *testing.T) {
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
 
-	r = New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-	i = Intersection{1, s}
-	comps = PrepareComputations(i, r, Intersections{i})
+	r = ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+	i = shapes.NewIntersection(1, s)
+	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	point = tuple.NewPoint(0, 0, 1)
 	eyeV = tuple.NewVector(0, 0, -1)
 	normalV = tuple.NewVector(0, 0, -1)
@@ -31,11 +32,11 @@ func TestPrepareComputations(t *testing.T) {
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
 
-	r = New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	r = ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	s = shapes.NewSphere()
 	s.SetTransform(matrix.Translation(0, 0, 1))
-	i = Intersection{5, s}
-	comps = PrepareComputations(i, r, Intersections{i})
+	i = shapes.NewIntersection(5, s)
+	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	point = tuple.NewPoint(0, 0, 0)
 	eyeV = tuple.NewVector(0, 0, -1)
 	normalV = tuple.NewVector(0, 0, -1)
@@ -53,8 +54,8 @@ func TestPrepareComputations(t *testing.T) {
 	// The under point is offset below the surface
 	s = shapes.NewGlassSphere()
 	s.SetTransform(matrix.Translation(0, 0, 1))
-	i = Intersection{5, s}
-	comps = PrepareComputations(i, r, Intersections{i})
+	i = shapes.NewIntersection(5, s)
+	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	eps := calc.EPSILON / 2.0
 	if comps.UnderPoint().Z() < eps {
 		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint().Z(), calc.EPSILON/2)
@@ -66,19 +67,36 @@ func TestPrepareComputations(t *testing.T) {
 
 	// Precomputing the reflection vector
 
-	r = New(tuple.NewPoint(0, 1, -1), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
+	r = ray.NewRay(tuple.NewPoint(0, 1, -1), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	p := shapes.NewPlane()
-	i = Intersection{math.Sqrt(2), p}
-	comps = PrepareComputations(i, r, Intersections{i})
+	i = shapes.NewIntersection(math.Sqrt(2), p)
+	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	reflectV := tuple.NewVector(0, math.Sqrt(2)/2, math.Sqrt(2)/2)
 
 	if comps.ReflectV() != reflectV {
 		t.Errorf("incorrect reflection vector, expected %f, got: %f", reflectV, comps.ReflectV())
 	}
 
+	// Preparing the normal on a smooth triangle
+	triangle := shapes.NewSmoothTriangle(
+		tuple.NewPoint(0, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+		tuple.NewVector(0, 1, 0),
+		tuple.NewVector(-1, 0, 0),
+		tuple.NewVector(1, 0, 0),
+	)
+	r = ray.NewRay(tuple.NewPoint(-0.2, 0.3, -2), tuple.NewVector(0, 0, 1))
+	hit := shapes.NewIntersectionWithUV(1, 0.45, 0.25, triangle)
+	xs := shapes.Intersections{hit}
+	result := PrepareComputations(hit, r, xs).NormalV()
+	expected := tuple.NewVector(-0.5547001962252291, 0.8320502943378437, 0)
+	if result != expected {
+		t.Errorf("hit not passed to shape NormalAt")
+	}
 }
 
-func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {
+func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i shapes.Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {
 	if comps.T() != i.T() {
 		t.Errorf("incorrect T, expected %f, got: %f", i.T(), comps.T())
 	}
@@ -107,10 +125,10 @@ func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i Int
 func TestSchlick(t *testing.T) {
 	// The Schlick approximation under total internal reflection
 	sphere := shapes.NewGlassSphere()
-	r := New(tuple.NewPoint(0, 0, math.Sqrt(2)/2), tuple.NewVector(0, 1, 0))
-	xs := Intersections{
-		Intersection{-math.Sqrt(2) / 2, sphere},
-		Intersection{math.Sqrt(2) / 2, sphere},
+	r := ray.NewRay(tuple.NewPoint(0, 0, math.Sqrt(2)/2), tuple.NewVector(0, 1, 0))
+	xs := shapes.Intersections{
+		shapes.NewIntersection(-math.Sqrt(2)/2, sphere),
+		shapes.NewIntersection(math.Sqrt(2)/2, sphere),
 	}
 	comps := PrepareComputations(xs[1], r, xs)
 	result := comps.Schlick()
@@ -122,10 +140,10 @@ func TestSchlick(t *testing.T) {
 
 	// The Schlick approximation with a perpendicular viewing angle
 	sphere = shapes.NewGlassSphere()
-	r = New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
-	xs = Intersections{
-		Intersection{-1, sphere},
-		Intersection{1, sphere},
+	r = ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
+	xs = shapes.Intersections{
+		shapes.NewIntersection(-1, sphere),
+		shapes.NewIntersection(1, sphere),
 	}
 	comps = PrepareComputations(xs[1], r, xs)
 	result = comps.Schlick()
@@ -137,9 +155,9 @@ func TestSchlick(t *testing.T) {
 
 	// The Schlick approximation with small angle and n2 > n1
 	sphere = shapes.NewGlassSphere()
-	r = New(tuple.NewPoint(0, 0.99, -2), tuple.NewVector(0, 0, 1))
-	xs = Intersections{
-		Intersection{1.8589, sphere},
+	r = ray.NewRay(tuple.NewPoint(0, 0.99, -2), tuple.NewVector(0, 0, 1))
+	xs = shapes.Intersections{
+		shapes.NewIntersection(1.8589, sphere),
 	}
 	comps = PrepareComputations(xs[0], r, xs)
 	result = comps.Schlick()
@@ -163,18 +181,18 @@ func TestRefraction(t *testing.T) {
 	c.SetTransform(matrix.Translation(0, 0, 0.25))
 	c.Material().SetRefractiveIndex(2.5)
 
-	r := New(tuple.NewPoint(0, 0, -4), tuple.NewVector(0, 0, 1))
-	xs := Intersections{
-		Intersection{t: 2.0, shape: a},
-		Intersection{t: 2.75, shape: b},
-		Intersection{t: 3.25, shape: c},
-		Intersection{t: 4.75, shape: b},
-		Intersection{t: 5.25, shape: c},
-		Intersection{t: 6.0, shape: a},
+	r := ray.NewRay(tuple.NewPoint(0, 0, -4), tuple.NewVector(0, 0, 1))
+	xs := shapes.Intersections{
+		shapes.NewIntersection(2.0, a),
+		shapes.NewIntersection(2.75, b),
+		shapes.NewIntersection(3.25, c),
+		shapes.NewIntersection(4.75, b),
+		shapes.NewIntersection(5.25, c),
+		shapes.NewIntersection(6.0, a),
 	}
 
 	var tests = []struct {
-		ray                    *Ray
+		ray                    *ray.Ray
 		computations           Computations
 		expectedN1, expectedN2 float64
 	}{
