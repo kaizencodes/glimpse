@@ -47,7 +47,7 @@ func TestSphereLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.sphere.LocalNormalAt(test.point); !got.Equal(test.expected) {
+		if got := test.sphere.LocalNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
 			t.Errorf("Sphere normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.sphere, test.point, got, test.expected)
 		}
 	}

@@ -77,6 +77,23 @@ func TestPrepareComputations(t *testing.T) {
 		t.Errorf("incorrect reflection vector, expected %f, got: %f", reflectV, comps.ReflectV())
 	}
 
+	// Preparing the normal on a smooth triangle
+	triangle := shapes.NewSmoothTriangle(
+		tuple.NewPoint(0, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+		tuple.NewVector(0, 1, 0),
+		tuple.NewVector(-1, 0, 0),
+		tuple.NewVector(1, 0, 0),
+	)
+	r = ray.NewRay(tuple.NewPoint(-0.2, 0.3, -2), tuple.NewVector(0, 0, 1))
+	hit := shapes.NewIntersectionWithUV(1, 0.45, 0.25, triangle)
+	xs := shapes.Intersections{hit}
+	result := PrepareComputations(hit, r, xs).NormalV()
+	expected := tuple.NewVector(-0.5547001962252291, 0.8320502943378437, 0)
+	if result != expected {
+		t.Errorf("hit not passed to shape NormalAt")
+	}
 }
 
 func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i shapes.Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {

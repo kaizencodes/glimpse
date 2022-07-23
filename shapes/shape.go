@@ -13,7 +13,7 @@ type Shape interface {
 	SetMaterial(m *materials.Material)
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
-	LocalNormalAt(point tuple.Tuple) tuple.Tuple
+	LocalNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple
 	LocalIntersect(r *ray.Ray) Intersections
 	Parent() Shape
 	SetParent(Shape)
@@ -53,28 +53,11 @@ func Intersect(s Shape, r *ray.Ray) Intersections {
 	localRay := ray.NewRay(origin, direction)
 
 	return s.LocalIntersect(localRay)
-
-	// switch s := s.(type) {
-	// case *shapes.Sphere:
-	// 	return localRay.intersectSphere(s)
-	// case *shapes.Cylinder:
-	// 	return localRay.intersectCylinder(s)
-	// case *shapes.Plane:
-	// 	return localRay.intersectPlane(s)
-	// case *shapes.Cube:
-	// 	return localRay.intersectCube(s)
-	// case *shapes.Group:
-	// 	return localRay.intersectGroup(s)
-	// case *shapes.Triangle:
-	// 	return localRay.intersectTriangle(s)
-	// default:
-	// 	panic(fmt.Errorf("not supported shape %T", s))
-	// }
 }
 
-func NormalAt(worldPoint tuple.Tuple, shape Shape) tuple.Tuple {
+func NormalAt(worldPoint tuple.Tuple, shape Shape, hit Intersection) tuple.Tuple {
 	localPoint := worldToObject(worldPoint, shape)
-	localNormal := shape.LocalNormalAt(localPoint)
+	localNormal := shape.LocalNormalAt(localPoint, hit)
 	return normalToWorld(localNormal, shape)
 }
 

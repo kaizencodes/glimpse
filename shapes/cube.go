@@ -36,7 +36,7 @@ func (s *Cube) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Cube) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+func (s *Cube) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	x, y, z := math.Abs(point.X()), math.Abs(point.Y()), math.Abs(point.Z())
 	max := math.Max(x, math.Max(y, z))
 

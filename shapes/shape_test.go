@@ -50,7 +50,7 @@ func TestNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := NormalAt(test.point, test.shape); !result.Equal(test.expected) {
+		if result := NormalAt(test.point, test.shape, Intersection{}); !result.Equal(test.expected) {
 			t.Errorf("test normal:\n%s \n point: %s. \nresult: \n%s. \nexpected: \n%s", test.shape, test.point, result, test.expected)
 		}
 	}
@@ -61,7 +61,7 @@ func TestNormalAt(t *testing.T) {
 	point := tuple.NewPoint(0, 1.70711, -0.70711)
 	want := tuple.NewVector(0, 0.7071067811865475, -0.7071067811865476)
 
-	if got := NormalAt(point, shape); !got.Equal(want) {
+	if got := NormalAt(point, shape, Intersection{}); !got.Equal(want) {
 		t.Errorf("test normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", shape, point, got, want)
 	}
 
@@ -72,7 +72,7 @@ func TestNormalAt(t *testing.T) {
 	point = tuple.NewPoint(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0)
 	want = tuple.NewVector(0, 0.9701425001453319, -0.24253562503633294)
 
-	if got := NormalAt(point, shape); !got.Equal(want) {
+	if got := NormalAt(point, shape, Intersection{}); !got.Equal(want) {
 		t.Errorf("test normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", shape, point, got, want)
 	}
 
@@ -85,7 +85,7 @@ func TestNormalAt(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	g2.AddChild(s)
-	result := NormalAt(tuple.NewPoint(1.7321, 1.1547, -5.5774), s)
+	result := NormalAt(tuple.NewPoint(1.7321, 1.1547, -5.5774), s, Intersection{})
 	expected := tuple.NewVector(0.28570368184140726, 0.42854315178114105, -0.8571605294481017)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)

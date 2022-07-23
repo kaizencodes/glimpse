@@ -31,7 +31,7 @@ func TestCylinderLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := cylinder.LocalNormalAt(test.point); !result.Equal(test.expected) {
+		if result := cylinder.LocalNormalAt(test.point, Intersection{}); !result.Equal(test.expected) {
 			t.Errorf("Cylinder normal: \nresult: \n%s. \nexpected: \n%s", result, test.expected)
 		}
 	}
@@ -74,7 +74,7 @@ func TestClosedCylinderLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := cylinder.LocalNormalAt(test.point); !result.Equal(test.expected) {
+		if result := cylinder.LocalNormalAt(test.point, Intersection{}); !result.Equal(test.expected) {
 			t.Errorf("Cylinder normal: \nresult: \n%s. \nexpected: \n%s", result, test.expected)
 		}
 	}

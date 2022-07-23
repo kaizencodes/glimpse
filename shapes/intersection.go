@@ -7,8 +7,8 @@ import (
 )
 
 type Intersection struct {
-	t     float64
-	shape Shape
+	t, u, v float64
+	shape   Shape
 }
 
 type Intersections []Intersection
@@ -53,6 +53,10 @@ func (xs Intersections) Hit() Intersection {
 	return res
 }
 
+func NewIntersectionWithUV(t, u, v float64, obj Shape) Intersection {
+	return Intersection{t, u, v, obj}
+}
+
 func NewIntersection(t float64, obj Shape) Intersection {
-	return Intersection{t, obj}
+	return Intersection{t, -1, -1, obj}
 }

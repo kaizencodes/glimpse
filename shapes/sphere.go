@@ -35,7 +35,7 @@ func (s *Sphere) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Sphere) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+func (s *Sphere) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return tuple.Subtract(point, tuple.NewPoint(0, 0, 0))
 }
 

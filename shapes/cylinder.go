@@ -70,7 +70,7 @@ func (s *Cylinder) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Cylinder) LocalNormalAt(point tuple.Tuple) tuple.Tuple {
+func (s *Cylinder) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	// compute the square of the distance from the y axis.
 	dist := math.Pow(point.X(), 2) + math.Pow(point.Z(), 2)
 

@@ -88,7 +88,7 @@ func (comps Computations) Schlick() float64 {
 
 func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersections) Computations {
 	point := r.Position(hit.T())
-	normalV := shapes.NormalAt(point, hit.Shape())
+	normalV := shapes.NormalAt(point, hit.Shape(), hit)
 	eyeV := r.Direction().Negate()
 
 	inside := false

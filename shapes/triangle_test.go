@@ -58,9 +58,28 @@ func TestLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := triangle.LocalNormalAt(test.point); !result.Equal(triangle.normal) {
+		if result := triangle.LocalNormalAt(test.point, Intersection{}); !result.Equal(triangle.normal) {
 			t.Errorf("Triangle normal:\n point: %s. \nresult: \n%s. \nexpected: \n%s", test.point, result, triangle.normal)
 		}
+	}
+}
+
+func TestLocalNormalAtWithSmoothTriangle(t *testing.T) {
+	triangle := NewSmoothTriangle(
+		tuple.NewPoint(0, 1, 0),
+		tuple.NewPoint(-1, 0, 0),
+		tuple.NewPoint(1, 0, 0),
+		tuple.NewVector(0, 1, 0),
+		tuple.NewVector(-1, 0, 0),
+		tuple.NewVector(1, 0, 0),
+	)
+
+	// A smooth triangle uses u/v to interpolate the normal
+
+	intersection := NewIntersectionWithUV(1, 0.45, 0.25, triangle)
+	expected := tuple.NewVector(-0.5547001962252291, 0.8320502943378437, 0)
+	if result := NormalAt(tuple.NewPoint(0, 0, 0), triangle, intersection); !result.Equal(expected) {
+		t.Errorf("Triangle normal:\n point: %s. \nresult: \n%s. \nexpected: \n%s", tuple.NewPoint(0, 0, 0), result, expected)
 	}
 }
 
@@ -107,19 +126,3 @@ func TestTriangleIntersect(t *testing.T) {
 		testIntersection(t, triangle, test.ray, test.expected)
 	}
 }
-
-// func testIntersection(t *testing.T, s shapes.Shape, r *Ray, expected Intersections) {
-// 	result := r.Intersect(s)
-// 	if len(result) != len(expected) {
-// 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
-// 	} else {
-// 		for i := range result {
-// 			if !calc.FloatEquals(result[i].t, expected[i].t) {
-// 				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
-// 			}
-// 			if result[i].shape != expected[i].shape {
-// 				t.Errorf("incorrect Shape of intersect:\n%s \n \nresult: \n%s. \nexpected: \n%s", r, result[i].shape, expected[i].shape)
-// 			}
-// 		}
-// 	}
-// }
