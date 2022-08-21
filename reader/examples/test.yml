@@ -1,0 +1,21 @@
+camera:
+  width: 250
+  height: 125
+  fov: 1.0471975512
+  view_transformation:
+    from: [0, 2, -7]
+    to: [0, 1, 0]
+    up: [0, 1, 0]
+
+# lights:
+#   light:
+#     position:
+#       x: -10
+#       y: 10
+#       z: -10
+#     color:
+#       r: 1
+#       g: 1
+#       b: 1
+# shapes:
+#   - sphere
