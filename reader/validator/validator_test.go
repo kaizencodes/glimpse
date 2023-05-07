@@ -22,6 +22,12 @@ objects:
         values: [1, 2, 3]
       - type: "translate"
         values: [1, 2, 3]
+      - type: "rotate-x"
+        values: 1
+      - type: "rotate-y"
+        values: 2
+      - type: "rotate-z"
+        values: 3
   - type: cube
     transform:
       - type: "scale"

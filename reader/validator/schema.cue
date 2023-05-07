@@ -22,15 +22,15 @@
   values: [number, number, number]
 }
 #rotateX: {
-  type: "rotateX"
-  values: [number]
+  type: "rotate-x"
+  values: number
 }
 #rotateY: {
-  type: "rotateY"
-  values: [number]
+  type: "rotate-y"
+  values: number
 }
 #rotateZ: {
-  type: "rotateZ"
+  type: "rotate-z"
   values: number
 }
 

@@ -87,6 +87,12 @@ func buildTransform(config cfg.Transform) matrix.Matrix {
 		transform = matrix.Scaling(config.Values[0], config.Values[1], config.Values[2])
 	case "translate":
 		transform = matrix.Translation(config.Values[0], config.Values[1], config.Values[2])
+	case "rotate-x":
+		transform = matrix.RotationX(config.Values[0])
+	case "rotate-y":
+		transform = matrix.RotationY(config.Values[0])
+	case "rotate-z":
+		transform = matrix.RotationZ(config.Values[0])
 	}
 	return transform
 }
