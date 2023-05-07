@@ -4,6 +4,7 @@ import (
 	"glimpse/camera"
 	"glimpse/color"
 	"glimpse/light"
+	"glimpse/materials"
 	"glimpse/matrix"
 	"glimpse/shapes"
 	"glimpse/tuple"
@@ -58,9 +59,8 @@ func buildObject(config cfg.Object) shapes.Shape {
 	case "sphere":
 		shape = shapes.NewSphere()
 	}
-	// shape.SetMaterial(buildMaterial(config.Material))
-	transform := buildTransforms(config.Transform)
-	shape.SetTransform(transform)
+	shape.SetMaterial(buildMaterial(config.Material))
+	shape.SetTransform(buildTransforms(config.Transform))
 
 	return shape
 }
@@ -97,19 +97,19 @@ func buildTransform(config cfg.Transform) matrix.Matrix {
 	return transform
 }
 
-// func buildMaterial(config cfg.Material) *shapes.Material {
-// 	material := shapes.NewMaterial(
-// 		color.FromSlice(config.Color),
-// 		config.Ambient,
-// 		config.Diffuse,
-// 		config.Specular,
-// 		config.Shininess,
-// 		config.Reflective,
-// 		config.Transparency,
-// 		config.RefractiveIndex,
-// 	)
-// 	return material
-// }
+func buildMaterial(config cfg.Material) *materials.Material {
+	material := materials.NewMaterial(
+		color.FromSlice(config.Color),
+		config.Ambient,
+		config.Diffuse,
+		config.Specular,
+		config.Shininess,
+		config.Reflective,
+		config.Transparency,
+		config.RefractiveIndex,
+	)
+	return material
+}
 
 // func buildWorld(config cfg.Config) world.World {
 // 	world := *world.Default()

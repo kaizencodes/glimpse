@@ -37,13 +37,14 @@
 #transform: [...#scale | #translate | #rotateX | #rotateY | #rotateZ]
 
 #material: {
-    ambient: number
-    diffuse: number
-    specular: number
-    shininnes: number
-    reflective: number
-    transparency: number
-    refractiveIndex: number
+  color: #Tuple
+  ambient: number
+  diffuse: number
+  specular: number
+  shininnes: number
+  reflective: number
+  transparency: number
+  refractiveIndex: number
 }
 
 #Sphere: {
