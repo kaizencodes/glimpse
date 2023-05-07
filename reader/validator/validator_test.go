@@ -15,24 +15,27 @@ func TestValidate(t *testing.T) {
 light:
   position: [0, 0, 0]
   intensity: [1, 1, 1]
-shapes:
-  - sphere:
-      transform:
-        - ["scale", 1, 2, 3]
-        - ["translate", 1, 2, 3]
-  - cube:
-      transform:
-        - ["scale", 1, 2, 3]
-      material:
-        ambient: 0.1
-        diffuse: 0.9
-        specular: 0.9
-        shininnes: 200.0
-        reflective: 0.0
-        transparency: 0.0
-        refractiveIndex: 1.0
-  - model:
-      path: foo/bar.yaml
+objects:
+  - type: sphere
+    transform:
+      - type: "scale"
+        values: [1, 2, 3]
+      - type: "translate"
+        values: [1, 2, 3]
+  - type: cube
+    transform:
+      - type: "scale"
+        values: [1, 2, 3]
+    material:
+      ambient: 0.1
+      diffuse: 0.9
+      specular: 0.9
+      shininnes: 200.0
+      reflective: 0.0
+      transparency: 0.0
+      refractiveIndex: 1.0
+  - type: model
+    path: foo/bar.yaml
 `
 	err := Validate([]byte(input))
 
@@ -52,11 +55,13 @@ func TestValidateInvalid(t *testing.T) {
 light:
   position: [0, 0, 0]
   intensity: [1, 1, 1]
-shapes:
-  - foobar:
-      transform:
-        - ["scale", 1, 2, 3]
-        - ["translate", 1, 2, 3]
+objects:
+  - type: "foobar"
+    transform:
+      - type: "scale"
+        values: [1, 2, 3]
+      - type: "translate"
+        values: [1, 2, 3]
 `
 	err := Validate([]byte(input))
 

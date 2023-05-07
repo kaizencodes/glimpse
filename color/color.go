@@ -55,6 +55,10 @@ func HadamardProduct(a, b Color) Color {
 	return Color{a.r * b.r, a.g * b.g, a.b * b.b}
 }
 
+func FromSlice(s []float64) Color {
+	return Color{s[0], s[1], s[2]}
+}
+
 func Black() Color {
 	return Color{}
 }

@@ -13,11 +13,26 @@
   intensity: #Tuple
 }
 
-#scale: ["scale", number, number, number]
-#translate: ["translate", number, number, number]
-#rotateX: ["rotateX", number]
-#rotateY: ["rotateY", number]
-#rotateZ: ["rotateZ", number]
+#scale: {
+  type: "scale" 
+  values: [number, number, number]
+}
+#translate: {
+  type: "translate"
+  values: [number, number, number]
+}
+#rotateX: {
+  type: "rotateX"
+  values: [number]
+}
+#rotateY: {
+  type: "rotateY"
+  values: [number]
+}
+#rotateZ: {
+  type: "rotateZ"
+  values: number
+}
 
 #transform: [...#scale | #translate | #rotateX | #rotateY | #rotateZ]
 
@@ -32,48 +47,42 @@
 }
 
 #Sphere: {
-  sphere: {
-    transform: #transform
-    material?: #material
-  }
+  type: string & "sphere"
+  transform: #transform
+  material?: #material
 }
 
 #Cube: {
-  cube: {
-    transform: #transform
-    material?: #material 
-  }
+  type: "cube"
+  transform: #transform
+  material?: #material 
 }
 
 #Plane: {
-  plane: {
-    transform: #transform
-    material?: #material 
-  }
+  type: "plane"
+  transform: #transform
+  material?: #material 
 }
 
 #Cylinder: {
-  cylinder: {
-    transform: #transform
-    minimum: number
-    maximum: number
-    closed: bool
-    material?: #material
-    
-  }
+  type: "cylinder"
+  transform: #transform
+  minimum: number
+  maximum: number
+  closed: bool
+  material?: #material
 }
 
 #Model: {
-  model: {
-    path: string
-    transform?: #transform
-  }
+  type: "model"
+  path: string
+  transform?: #transform
 }
 
-#Shapes: {
+#Object: {
 [...#Sphere | #Cube | #Plane | #Cylinder | #Model]
 }
 
 camera: #Camera
 light: #Light
-shapes: #Shapes
+objects: #Object
