@@ -41,6 +41,21 @@ objects:
       reflective: 0.0
       transparency: 0.0
       refractiveIndex: 1.0
+  - type: plane
+    transform:
+      - type: "scale"
+        values: [1, 2, 3]
+  - type: cylinder
+    minimum: 1
+    maximum: 2
+    closed: true
+    transform:
+      - type: "scale"
+        values: [1, 2, 3]
+  - type: cube
+    transform:
+      - type: "scale"
+        values: [1, 2, 3]
   - type: model
     path: foo/bar.yaml
 `

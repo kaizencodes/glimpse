@@ -21,9 +21,11 @@ type Light struct {
 }
 
 type Object struct {
-	Type      string
-	Transform []Transform
-	Material  Material
+	Type             string
+	Transform        []Transform
+	Material         Material
+	Minimum, Maximum float64
+	Closed           bool
 }
 
 type Transform struct {

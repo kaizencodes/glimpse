@@ -58,7 +58,22 @@ func buildObject(config cfg.Object) shapes.Shape {
 	switch config.Type {
 	case "sphere":
 		shape = shapes.NewSphere()
+	case "plane":
+		shape = shapes.NewPlane()
+	case "cube":
+		shape = shapes.NewCube()
+	case "cylinder":
+		cylinder := shapes.NewCylinder()
+
+		cylinder.SetMinimum(config.Minimum)
+		cylinder.SetMaximum(config.Maximum)
+		cylinder.SetClosed(config.Closed)
+
+		shape = cylinder
+	default:
+		panic("Unknown shape type")
 	}
+
 	shape.SetMaterial(buildMaterial(config.Material))
 	shape.SetTransform(buildTransforms(config.Transform))
 
@@ -110,9 +125,3 @@ func buildMaterial(config cfg.Material) *materials.Material {
 	)
 	return material
 }
-
-// func buildWorld(config cfg.Config) world.World {
-// 	world := *world.Default()
-// 	// world.SetLights(buildLight(config.Light))
-// 	return world
-// }
