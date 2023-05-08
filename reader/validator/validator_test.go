@@ -23,11 +23,11 @@ objects:
       - type: "translate"
         values: [1, 2, 3]
       - type: "rotate-x"
-        values: 1
+        values: [1]
       - type: "rotate-y"
-        values: 2
+        values: [2]
       - type: "rotate-z"
-        values: 3
+        values: [3]
   - type: cube
     transform:
       - type: "scale"
@@ -37,10 +37,10 @@ objects:
       ambient: 0.1
       diffuse: 0.9
       specular: 0.9
-      shininnes: 200.0
+      shininess: 200.0
       reflective: 0.0
       transparency: 0.0
-      refractiveIndex: 1.0
+      refractive_index: 1.0
   - type: plane
     transform:
       - type: "scale"

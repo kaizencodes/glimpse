@@ -15,23 +15,23 @@
 
 #scale: {
   type: "scale" 
-  values: [number, number, number]
+  values: #Tuple
 }
 #translate: {
   type: "translate"
-  values: [number, number, number]
+  values: #Tuple
 }
 #rotateX: {
   type: "rotate-x"
-  values: number
+  values: [number]
 }
 #rotateY: {
   type: "rotate-y"
-  values: number
+  values: [number]
 }
 #rotateZ: {
   type: "rotate-z"
-  values: number
+  values: [number]
 }
 
 #transform: [...#scale | #translate | #rotateX | #rotateY | #rotateZ]
@@ -41,10 +41,10 @@
   ambient: number
   diffuse: number
   specular: number
-  shininnes: number
+  shininess: number
   reflective: number
   transparency: number
-  refractiveIndex: number
+  refractive_index: number
 }
 
 #Sphere: {
