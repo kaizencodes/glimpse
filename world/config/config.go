@@ -35,6 +35,12 @@ type Transform struct {
 
 type Material struct {
 	Color                                                           []float64
+	Pattern                                                         Pattern
 	Ambient, Diffuse, Specular, Shininess, Reflective, Transparency float64
 	RefractiveIndex                                                 float64 `yaml:"refractive_index"`
+}
+
+type Pattern struct {
+	Type   string
+	Colors [][]float64
 }

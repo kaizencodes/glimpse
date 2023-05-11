@@ -65,6 +65,22 @@ func TestRead(t *testing.T) {
 						Values: []float64{0.4, 0.4, 0.4},
 					},
 				},
+				Material: cfg.Material{
+					Pattern: cfg.Pattern{
+						Type: "stripe",
+						Colors: [][]float64{
+							{0.8, 0.5, 0.3},
+							{0.1, 0.1, 0.1},
+						},
+					},
+					Ambient:         0.1,
+					Diffuse:         0.9,
+					Specular:        0.9,
+					Shininess:       200.0,
+					Reflective:      0.0,
+					Transparency:    0.0,
+					RefractiveIndex: 1.0,
+				},
 			},
 			{
 				Type: "cube",

@@ -36,8 +36,14 @@
 
 #transform: [...#scale | #translate | #rotateX | #rotateY | #rotateZ]
 
+#pattern: {
+  type: string
+  colors: [...#Tuple]
+}
+
 #material: {
-  color: #Tuple
+  color?: #Tuple
+  pattern?: #pattern
   ambient: number
   diffuse: number
   specular: number

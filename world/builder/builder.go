@@ -123,5 +123,47 @@ func buildMaterial(config cfg.Material) *materials.Material {
 		config.Transparency,
 		config.RefractiveIndex,
 	)
+
+	if config.Pattern.Type != "" {
+		material.SetPattern(buildPattern(config.Pattern))
+	}
+
 	return material
+}
+
+func buildPattern(config cfg.Pattern) *materials.Pattern {
+	var pattern *materials.Pattern
+
+	switch config.Type {
+	case "stripe":
+		materials.NewPattern(
+			materials.Stripe,
+			color.FromSlice(config.Colors[0]),
+			color.FromSlice(config.Colors[1]),
+		)
+	case "gradient":
+		materials.NewPattern(
+			materials.Gradient,
+			color.FromSlice(config.Colors[0]),
+			color.FromSlice(config.Colors[1]),
+		)
+	case "ring":
+		materials.NewPattern(
+			materials.Ring,
+			color.FromSlice(config.Colors[0]),
+			color.FromSlice(config.Colors[1]),
+		)
+	case "checkers":
+		materials.NewPattern(
+			materials.Checker,
+			color.FromSlice(config.Colors[0]),
+			color.FromSlice(config.Colors[1]),
+		)
+	default:
+		materials.NewPattern(
+			materials.Base,
+			color.FromSlice(config.Colors[0]),
+		)
+	}
+	return pattern
 }
