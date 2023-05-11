@@ -51,6 +51,9 @@ objects:
         colors:
           - [1, 0, 0]
           - [1, 0, 0]
+        transform:
+          - type: "scale"
+            values: [1, 2, 3]
       ambient: 0.1
       diffuse: 0.9
       specular: 0.9

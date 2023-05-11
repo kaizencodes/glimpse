@@ -39,6 +39,7 @@
 #pattern: {
   type: string
   colors: [...#Tuple]
+  transform?: #transform
 }
 
 #material: {

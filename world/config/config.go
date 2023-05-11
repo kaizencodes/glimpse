@@ -41,6 +41,7 @@ type Material struct {
 }
 
 type Pattern struct {
-	Type   string
-	Colors [][]float64
+	Type      string
+	Colors    [][]float64
+	Transform []Transform
 }

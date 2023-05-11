@@ -72,6 +72,12 @@ func TestRead(t *testing.T) {
 							{0.8, 0.5, 0.3},
 							{0.1, 0.1, 0.1},
 						},
+						Transform: []cfg.Transform{
+							{
+								Type:   "scale",
+								Values: []float64{0.4, 0.4, 0.4},
+							},
+						},
 					},
 					Ambient:         0.1,
 					Diffuse:         0.9,

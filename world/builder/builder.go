@@ -126,6 +126,9 @@ func buildMaterial(config cfg.Material) *materials.Material {
 
 	if config.Pattern.Type != "" {
 		material.SetPattern(buildPattern(config.Pattern))
+		if len(config.Pattern.Transform) > 0 {
+			material.SetTransform(buildTransforms(config.Pattern.Transform))
+		}
 	}
 
 	return material
