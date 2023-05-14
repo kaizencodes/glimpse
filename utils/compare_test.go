@@ -1,98 +1,176 @@
 package utils
 
 import (
-	cfg "glimpse/world/config"
 	"testing"
 )
 
-func TestNestedStructs(t *testing.T) {
-	obj1 := cfg.Scene{
-		Objects: []cfg.Object{
-			{
-				Type: "cylinder",
-				Transform: []cfg.Transform{
-					{
-						Type:   "scale",
-						Values: []float64{0.4, 0.4, 0.4},
-					},
-				},
-				Material: cfg.Material{
-					Color:           []float64{0.8, 0.5, 0.3},
-					Ambient:         0.1,
-					Diffuse:         0.9,
-					Specular:        0.9,
-					Shininess:       200.0,
-					Reflective:      0.0,
-					Transparency:    0.0,
-					RefractiveIndex: 1.0,
-				},
-				Minimum: 0,
-				Maximum: 1,
-				Closed:  true,
-			},
-		},
+// Test that structs with the same values are considered equal.
+func TestStructs(t *testing.T) {
+	type testStruct struct {
+		Foo string
+		Bar int
+	}
+
+	obj1 := testStruct{
+		Foo: "foo",
+		Bar: 1,
 	}
 	obj2 := obj1
 
 	for _, diff := range Compare(obj1, obj2) {
 		t.Errorf("Mismatch: %s", diff)
 	}
+
+	var tests = []struct {
+		obj1 testStruct
+		obj2 testStruct
+	}{
+		{testStruct{"foo", 1}, testStruct{"bar", 1}},
+		{testStruct{"foo", 1}, testStruct{"foo", 2}},
+		{testStruct{"", 2}, testStruct{"foo", 2}},
+		{testStruct{}, testStruct{"foo", 2}},
+	}
+	for _, test := range tests {
+		if diff := Compare(test.obj1, test.obj2); len(diff) == 0 {
+			t.Errorf("Expected mismatch, but got none, for %v and %v", test.obj1, test.obj2)
+		}
+	}
 }
 
-func TestCompareWithEmptySlices(t *testing.T) {
-	// the material slice is empty in both objects, should return no diffs
-	obj1 := cfg.Scene{
-		Objects: []cfg.Object{
-			{
-				Type: "plane",
-				Transform: []cfg.Transform{
-					{
-						Type:   "scale",
-						Values: []float64{0.4, 0.4, 0.4},
-					},
-				},
-			},
-		},
+func TestDifferentSizeOfStructs(t *testing.T) {
+	type testStruct1 struct {
+		Foo string
+		Bar int
+	}
+	type testStruct2 struct {
+		Foo string
 	}
 
-	obj2 := obj1
-
-	for _, diff := range Compare(obj1, obj2) {
-		t.Errorf("Mismatch: %s", diff)
+	obj1 := testStruct1{
+		Foo: "foo",
+		Bar: 1,
 	}
-
-}
-
-func TestMismatchingTypes(t *testing.T) {
-	obj1 := cfg.Scene{
-		Objects: []cfg.Object{
-			{
-				Type: "plane",
-				Transform: []cfg.Transform{
-					{
-						Type:   "scale",
-						Values: []float64{0.4, 0.4, 0.4},
-					},
-				},
-			},
-		},
-	}
-
-	obj2 := cfg.Scene{
-		Objects: []cfg.Object{
-			{
-				Type: "sphere",
-				Transform: []cfg.Transform{
-					{
-						Type:   "scale",
-						Values: []float64{0.4, 0.4, 0.4},
-					},
-				},
-			},
-		},
+	obj2 := testStruct2{
+		Foo: "foo",
 	}
 
 	if len(Compare(obj1, obj2)) == 0 {
-		t.Errorf("Expected mismatching types")
+		t.Errorf("Expected error for mismatching size of fields, but got none")
+	}
+}
+
+// Test that struct with different fields are considered unequal.
+func TestDifferentStructs(t *testing.T) {
+	type testStruct1 struct {
+		Foo string
+		Bar int
+	}
+	type testStruct2 struct {
+		Foo string
+		Baz int
+	}
+
+	obj1 := testStruct1{
+		Foo: "foo",
+		Bar: 1,
+	}
+	obj2 := testStruct2{
+		Foo: "foo",
+		Baz: 1,
+	}
+
+	if len(Compare(obj1, obj2)) == 0 {
+		t.Errorf("Expected error for mismatching fields for Baz and Bar, but got none")
+	}
+}
+
+// Test that slices with the same values are considered equal.
+func TestSlices(t *testing.T) {
+	obj1 := []float64{0.8, 0.5, 0.3}
+	obj2 := obj1
+
+	for _, diff := range Compare(obj1, obj2) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+
+	var tests = []struct {
+		obj1 []float64
+		obj2 []float64
+	}{
+		{[]float64{0.8, 0.5, 0.3}, []float64{0.8, 0.5, 0.4}},
+		{[]float64{0.8, 0.5, 0.3}, []float64{0.8, 0.5}},
+		{[]float64{0.8, 0.5}, []float64{}},
+	}
+	for _, test := range tests {
+		if diff := Compare(test.obj1, test.obj2); len(diff) == 0 {
+			t.Errorf("Expected mismatch, but got none, for %v and %v", test.obj1, test.obj2)
+		}
+	}
+}
+
+func TestDifferentTypeOfSlices(t *testing.T) {
+	obj1 := []float64{0.0, 1.0, 2.0}
+	obj2 := []int{0, 1, 2}
+
+	if len(Compare(obj1, obj2)) == 0 {
+		t.Errorf("Expected error for mismatching type of slices, but got none")
+	}
+}
+
+func TestNestedStructs(t *testing.T) {
+	type nestedStruct struct {
+		Slice []int
+	}
+
+	type testStruct struct {
+		Foo    string
+		Nested nestedStruct
+	}
+
+	obj1 := testStruct{
+		Foo: "foo",
+		Nested: nestedStruct{
+			Slice: []int{1, 2, 3},
+		},
+	}
+	obj2 := obj1
+
+	for _, diff := range Compare(obj1, obj2) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+
+	var tests = []struct {
+		obj1 testStruct
+		obj2 testStruct
+	}{
+		{
+			testStruct{"foo", nestedStruct{[]int{1, 2, 3}}},
+			testStruct{"foo", nestedStruct{[]int{1, 2, 4}}},
+		},
+		{
+			testStruct{"foo", nestedStruct{[]int{1, 2, 3}}},
+			testStruct{"bar", nestedStruct{[]int{1, 2, 3}}},
+		},
+		{
+			testStruct{"foo", nestedStruct{[]int{1, 2, 3}}},
+			testStruct{"foo", nestedStruct{[]int{1, 2}}},
+		},
+		{
+			testStruct{"foo", nestedStruct{[]int{1, 2, 3}}},
+			testStruct{"foo", nestedStruct{[]int{}}},
+		},
+		{
+			testStruct{"foo", nestedStruct{[]int{1, 2, 3}}},
+			testStruct{"foo", nestedStruct{}},
+		},
+		{
+			testStruct{"foo", nestedStruct{[]int{1, 2, 3}}},
+			testStruct{},
+		},
+	}
+	for _, test := range tests {
+		if diff := Compare(test.obj1, test.obj2); len(diff) == 0 {
+			t.Errorf("Expected mismatch, but got none, for %v and %v", test.obj1, test.obj2)
+		}
 	}
 }
