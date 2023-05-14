@@ -83,13 +83,21 @@ func buildObject(config cfg.Object) shapes.Shape {
 func buildTransforms(config []cfg.Transform) matrix.Matrix {
 	var transforms matrix.Matrix
 
-	transforms = buildTransform(config[0])
+	// If there are no transforms, return the identity matrix.
+	if len(config) == 0 {
+		return matrix.NewIdentity(4)
+	}
+
+	// If there is only one transform, just build it and return.
+	// Saves a bit of computation, since we are not multiplying by the identity matrix.
+	transforms = buildTransform(config[len(config)-1])
 	if len(config) == 1 {
 		return transforms
 	}
 
-	for i := 1; i < len(config); i++ {
-		transforms, _ = matrix.Multiply(buildTransform(config[i]), transforms)
+	// Multiply the transforms in reverse order, since the first one is loaded, we start from the second to last.
+	for i := len(config) - 2; i >= 0; i-- {
+		transforms, _ = matrix.Multiply(transforms, buildTransform(config[i]))
 	}
 
 	return transforms
@@ -113,8 +121,16 @@ func buildTransform(config cfg.Transform) matrix.Matrix {
 }
 
 func buildMaterial(config cfg.Material) *materials.Material {
+	var col color.Color
+
+	if len(config.Color) == 0 {
+		col = color.White()
+	} else {
+		col = color.FromSlice(config.Color)
+	}
+
 	material := materials.NewMaterial(
-		color.FromSlice(config.Color),
+		col,
 		config.Ambient,
 		config.Diffuse,
 		config.Specular,
@@ -126,9 +142,7 @@ func buildMaterial(config cfg.Material) *materials.Material {
 
 	if config.Pattern.Type != "" {
 		material.SetPattern(buildPattern(config.Pattern))
-		if len(config.Pattern.Transform) > 0 {
-			material.SetTransform(buildTransforms(config.Pattern.Transform))
-		}
+		material.SetTransform(buildTransforms(config.Pattern.Transform))
 	}
 
 	return material
@@ -139,31 +153,31 @@ func buildPattern(config cfg.Pattern) *materials.Pattern {
 
 	switch config.Type {
 	case "stripe":
-		materials.NewPattern(
+		pattern = materials.NewPattern(
 			materials.Stripe,
 			color.FromSlice(config.Colors[0]),
 			color.FromSlice(config.Colors[1]),
 		)
 	case "gradient":
-		materials.NewPattern(
+		pattern = materials.NewPattern(
 			materials.Gradient,
 			color.FromSlice(config.Colors[0]),
 			color.FromSlice(config.Colors[1]),
 		)
 	case "ring":
-		materials.NewPattern(
+		pattern = materials.NewPattern(
 			materials.Ring,
 			color.FromSlice(config.Colors[0]),
 			color.FromSlice(config.Colors[1]),
 		)
-	case "checkers":
-		materials.NewPattern(
+	case "checker":
+		pattern = materials.NewPattern(
 			materials.Checker,
 			color.FromSlice(config.Colors[0]),
 			color.FromSlice(config.Colors[1]),
 		)
 	default:
-		materials.NewPattern(
+		pattern = materials.NewPattern(
 			materials.Base,
 			color.FromSlice(config.Colors[0]),
 		)
