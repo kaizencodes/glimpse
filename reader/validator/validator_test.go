@@ -69,9 +69,6 @@ objects:
       - type: "scale"
         values: [1, 2, 3]
   - type: cube
-    transform:
-      - type: "scale"
-        values: [1, 2, 3]
   - type: model
     path: foo/bar.yaml
 `

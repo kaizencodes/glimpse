@@ -56,25 +56,25 @@
 
 #Sphere: {
   type: string & "sphere"
-  transform: #transform
+  transform?: #transform
   material?: #material
 }
 
 #Cube: {
   type: "cube"
-  transform: #transform
+  transform?: #transform
   material?: #material 
 }
 
 #Plane: {
   type: "plane"
-  transform: #transform
+  transform?: #transform
   material?: #material 
 }
 
 #Cylinder: {
   type: "cylinder"
-  transform: #transform
+  transform?: #transform
   minimum: number
   maximum: number
   closed: bool
