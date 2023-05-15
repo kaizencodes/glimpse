@@ -3,10 +3,10 @@ package renderer
 import (
 	"math"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/shapes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Computations struct {
@@ -97,8 +97,8 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 		inside = true
 		normalV = normalV.Negate()
 	}
-	overPoint := tuple.Add(point, normalV.Scalar(calc.EPSILON))
-	underPoint := tuple.Subtract(point, normalV.Scalar(calc.EPSILON))
+	overPoint := tuple.Add(point, normalV.Scalar(utils.EPSILON))
+	underPoint := tuple.Subtract(point, normalV.Scalar(utils.EPSILON))
 
 	container := []shapes.Shape{}
 	n1, n2 := 1.0, 1.0

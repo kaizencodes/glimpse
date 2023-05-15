@@ -5,8 +5,8 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Tuple struct {
@@ -39,8 +39,8 @@ func (t Tuple) ToVector() Tuple {
 }
 
 func (t Tuple) Equal(other Tuple) bool {
-	return calc.FloatEquals(t.x, other.x) && calc.FloatEquals(t.y, other.y) &&
-		calc.FloatEquals(t.z, other.z) && calc.FloatEquals(t.w, other.w)
+	return utils.FloatEquals(t.x, other.x) && utils.FloatEquals(t.y, other.y) &&
+		utils.FloatEquals(t.z, other.z) && utils.FloatEquals(t.w, other.w)
 }
 
 func (t Tuple) Magnitude() float64 {

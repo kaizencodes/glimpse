@@ -1,4 +1,4 @@
-package calc
+package utils
 
 const EPSILON float64 = 0.00000001
 

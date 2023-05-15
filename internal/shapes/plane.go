@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Plane struct {
@@ -42,7 +42,7 @@ func (s *Plane) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple 
 }
 
 func (s *Plane) LocalIntersect(r *ray.Ray) Intersections {
-	if math.Abs(r.Direction().Y()) < calc.EPSILON {
+	if math.Abs(r.Direction().Y()) < utils.EPSILON {
 		return Intersections{}
 	}
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Color struct {
@@ -16,8 +16,8 @@ func (c Color) Scalar(s float64) Color {
 }
 
 func (c Color) Equal(other Color) bool {
-	return calc.FloatEquals(c.r, other.r) && calc.FloatEquals(c.g, other.g) &&
-		calc.FloatEquals(c.b, other.b)
+	return utils.FloatEquals(c.r, other.r) && utils.FloatEquals(c.g, other.g) &&
+		utils.FloatEquals(c.b, other.b)
 }
 
 func (c Color) String() string {

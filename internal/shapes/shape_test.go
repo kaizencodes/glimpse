@@ -4,12 +4,12 @@ import (
 	"math"
 	"testing"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestNormalAt(t *testing.T) {
@@ -349,7 +349,7 @@ func testIntersection(t *testing.T, s Shape, r *ray.Ray, expected Intersections)
 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
 	} else {
 		for i := range result {
-			if !calc.FloatEquals(result[i].t, expected[i].t) {
+			if !utils.FloatEquals(result[i].t, expected[i].t) {
 				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
 			}
 			if result[i].shape != expected[i].shape {

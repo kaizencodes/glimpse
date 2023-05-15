@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Triangle struct {
@@ -115,7 +115,7 @@ func (s *Triangle) LocalIntersect(r *ray.Ray) Intersections {
 	directionCrossE2 := tuple.Cross(r.Direction(), s.E2())
 	determinant := tuple.Dot(s.E1(), directionCrossE2)
 	xs := Intersections{}
-	if math.Abs(determinant) < calc.EPSILON {
+	if math.Abs(determinant) < utils.EPSILON {
 		return xs
 	}
 

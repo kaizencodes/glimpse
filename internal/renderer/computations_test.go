@@ -4,11 +4,11 @@ import (
 	"math"
 	"testing"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/shapes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestPrepareComputations(t *testing.T) {
@@ -44,8 +44,8 @@ func TestPrepareComputations(t *testing.T) {
 	inside = false
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
-	if comps.OverPoint().Z() > -calc.EPSILON/2.0 {
-		t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint().Z(), -calc.EPSILON/2)
+	if comps.OverPoint().Z() > -utils.EPSILON/2.0 {
+		t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint().Z(), -utils.EPSILON/2)
 	}
 
 	if comps.Point().Z() < comps.OverPoint().Z() {
@@ -57,9 +57,9 @@ func TestPrepareComputations(t *testing.T) {
 	s.SetTransform(matrix.Translation(0, 0, 1))
 	i = shapes.NewIntersection(5, s)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	eps := calc.EPSILON / 2.0
+	eps := utils.EPSILON / 2.0
 	if comps.UnderPoint().Z() < eps {
-		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint().Z(), calc.EPSILON/2)
+		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint().Z(), utils.EPSILON/2)
 	}
 
 	if comps.Point().Z() > comps.UnderPoint().Z() {
@@ -135,7 +135,7 @@ func TestSchlick(t *testing.T) {
 	result := comps.Schlick()
 	expected := 1.0
 
-	if !calc.FloatEquals(result, expected) {
+	if !utils.FloatEquals(result, expected) {
 		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
 	}
 
@@ -150,7 +150,7 @@ func TestSchlick(t *testing.T) {
 	result = comps.Schlick()
 	expected = 0.04
 
-	if !calc.FloatEquals(result, expected) {
+	if !utils.FloatEquals(result, expected) {
 		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
 	}
 

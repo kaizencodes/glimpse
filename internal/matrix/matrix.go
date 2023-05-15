@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Matrix [][]float64
@@ -101,7 +101,7 @@ func (m Matrix) Equal(other Matrix) bool {
 
 	for i, row := range m {
 		for j, val := range row {
-			if !calc.FloatEquals(val, other[i][j]) {
+			if !utils.FloatEquals(val, other[i][j]) {
 				return false
 			}
 		}

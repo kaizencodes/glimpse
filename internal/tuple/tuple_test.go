@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestTuple(t *testing.T) {
@@ -244,7 +244,7 @@ func TestMagnitude(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.input.Magnitude(); !calc.FloatEquals(got, test.want) {
+		if got := test.input.Magnitude(); !utils.FloatEquals(got, test.want) {
 			t.Errorf("Magnitude of %s \ngot: %f. \nexpected: %f", test.input, got, test.want)
 		}
 	}
@@ -286,7 +286,7 @@ func TestDot(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := Dot(test.left, test.right); !calc.FloatEquals(got, test.want) {
+		if got := Dot(test.left, test.right); !utils.FloatEquals(got, test.want) {
 			t.Errorf("Dot product of %s and %s\ngot: %f. \nexpected: %f", test.left, test.right, got, test.want)
 		}
 	}

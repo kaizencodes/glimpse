@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Cylinder struct {
@@ -75,9 +75,9 @@ func (s *Cylinder) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tup
 	// compute the square of the distance from the y axis.
 	dist := math.Pow(point.X(), 2) + math.Pow(point.Z(), 2)
 
-	if dist < 1 && point.Y() >= s.Maximum()-calc.EPSILON {
+	if dist < 1 && point.Y() >= s.Maximum()-utils.EPSILON {
 		return tuple.NewVector(0, 1, 0)
-	} else if dist < 1 && point.Y() <= s.Minimum()+calc.EPSILON {
+	} else if dist < 1 && point.Y() <= s.Minimum()+utils.EPSILON {
 		return tuple.NewVector(0, -1, 0)
 	}
 
@@ -86,7 +86,7 @@ func (s *Cylinder) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tup
 
 func (s *Cylinder) LocalIntersect(r *ray.Ray) Intersections {
 	a := math.Pow(r.Direction().X(), 2) + math.Pow(r.Direction().Z(), 2)
-	if calc.FloatEquals(a, 0.0) {
+	if utils.FloatEquals(a, 0.0) {
 		return s.intersectionsForCaps(Intersections{}, r)
 	}
 
@@ -123,7 +123,7 @@ func (s *Cylinder) LocalIntersect(r *ray.Ray) Intersections {
 
 func (s *Cylinder) intersectionsForCaps(xs Intersections, r *ray.Ray) Intersections {
 	// caps only matter if the cylinder is closed, and might possibly be intersected by the ray.
-	if !(s.Closed() || calc.FloatEquals(r.Direction().Y(), 0)) {
+	if !(s.Closed() || utils.FloatEquals(r.Direction().Y(), 0)) {
 		return xs
 	}
 	// check for an intersection with the lower end cap by intersecting the ray with the plane at y=s.minimum

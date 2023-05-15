@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 type Cube struct {
@@ -70,7 +70,7 @@ func (s *Cube) LocalIntersect(r *ray.Ray) Intersections {
 func checkAxis(origin, direction float64) (min, max float64) {
 	minNumerator := -1 - origin
 	maxNumerator := 1 - origin
-	if math.Abs(direction) >= calc.EPSILON {
+	if math.Abs(direction) >= utils.EPSILON {
 		min = minNumerator / direction
 		max = maxNumerator / direction
 	} else {

@@ -240,7 +240,7 @@ func TestClosedCylinderIntersect(t *testing.T) {
 // 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
 // 	} else {
 // 		for i := range result {
-// 			if !calc.FloatEquals(result[i].t, expected[i].t) {
+// 			if !utils.FloatEquals(result[i].t, expected[i].t) {
 // 				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
 // 			}
 // 			if result[i].shape != expected[i].shape {

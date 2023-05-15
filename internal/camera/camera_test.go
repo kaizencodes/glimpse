@@ -4,11 +4,11 @@ import (
 	"math"
 	"testing"
 
-	"github.com/kaizencodes/glimpse/internal/calc"
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 	"github.com/kaizencodes/glimpse/internal/world"
 )
 
@@ -34,7 +34,7 @@ func TestPixelSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := New(test.width, test.height, test.fov).PixelSize(); !calc.FloatEquals(result, test.expected) {
+		if result := New(test.width, test.height, test.fov).PixelSize(); !utils.FloatEquals(result, test.expected) {
 			t.Errorf("camera PixelSize expected %f, got %f", test.expected, result)
 		}
 	}
