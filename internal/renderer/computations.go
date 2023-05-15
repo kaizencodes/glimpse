@@ -107,7 +107,7 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 			if len(container) == 0 {
 				n1 = 1.0
 			} else {
-				n1 = container[len(container)-1].Material().RefractiveIndex()
+				n1 = container[len(container)-1].Material().RefractiveIndex
 			}
 		}
 
@@ -122,7 +122,7 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 			if len(container) == 0 {
 				n2 = 1.0
 			} else {
-				n2 = container[len(container)-1].Material().RefractiveIndex()
+				n2 = container[len(container)-1].Material().RefractiveIndex
 			}
 			break
 		}

@@ -67,7 +67,7 @@ func (w *World) shadeHit(comps renderer.Computations) color.Color {
 	reflected := w.reflectedColor(comps)
 	refracted := w.refractedColor(comps)
 	mat := comps.Shape().Material()
-	if mat.Reflective() > 0 && mat.Transparency() > 0 {
+	if mat.Reflective > 0 && mat.Transparency > 0 {
 		reflectance := comps.Schlick()
 		reflected = reflected.Scalar(reflectance)
 		refracted = refracted.Scalar(1 - reflectance)
@@ -106,7 +106,7 @@ func (w *World) shadowAt(point tuple.Tuple) bool {
 }
 
 func (w *World) reflectedColor(comps renderer.Computations) color.Color {
-	if comps.Shape().Material().Reflective() == 0 || comps.BounceLimit() < 1 {
+	if comps.Shape().Material().Reflective == 0 || comps.BounceLimit() < 1 {
 		return color.Black()
 	}
 
@@ -114,11 +114,11 @@ func (w *World) reflectedColor(comps renderer.Computations) color.Color {
 	r.SetBounceLimit(comps.BounceLimit() - 1)
 	c := w.ColorAt(r)
 
-	return c.Scalar(comps.Shape().Material().Reflective())
+	return c.Scalar(comps.Shape().Material().Reflective)
 }
 
 func (w *World) refractedColor(comps renderer.Computations) color.Color {
-	if comps.Shape().Material().Transparency() == 0 || comps.BounceLimit() < 1 {
+	if comps.Shape().Material().Transparency == 0 || comps.BounceLimit() < 1 {
 		return color.Black()
 	}
 
@@ -142,7 +142,7 @@ func (w *World) refractedColor(comps renderer.Computations) color.Color {
 
 	// Find the color of the refracted ray, making sure to multiply by the transparency
 	// value to account for any opacity.
-	return w.ColorAt(refactedRay).Scalar(comps.Shape().Material().Transparency())
+	return w.ColorAt(refactedRay).Scalar(comps.Shape().Material().Transparency)
 }
 
 func Default() *World {

@@ -35,7 +35,7 @@ func Lighting(shape shapes.Shape, light Light, point, eyeV, normalV tuple.Tuple,
 	coloring := shapes.ColorAt(point, shape)
 	effectiveColor := color.HadamardProduct(coloring, light.intensity)
 	lightV := tuple.Subtract(light.position, point).Normalize()
-	ambient := effectiveColor.Scalar(mat.Ambient())
+	ambient := effectiveColor.Scalar(mat.Ambient)
 	if inShadow {
 		return ambient
 	}
@@ -46,14 +46,14 @@ func Lighting(shape shapes.Shape, light Light, point, eyeV, normalV tuple.Tuple,
 		diffuse = color.Black()
 		specular = color.Black()
 	} else {
-		diffuse = effectiveColor.Scalar(mat.Diffuse() * lightDotNormal)
+		diffuse = effectiveColor.Scalar(mat.Diffuse * lightDotNormal)
 		reflectV := tuple.Reflect(lightV.Negate(), normalV)
 		reflectDotEye := tuple.Dot(reflectV, eyeV)
 		if reflectDotEye <= 0 {
 			specular = color.Black()
 		} else {
-			factor := math.Pow(reflectDotEye, mat.Shininess())
-			specular = light.intensity.Scalar(mat.Specular() * factor)
+			factor := math.Pow(reflectDotEye, mat.Shininess)
+			specular = light.intensity.Scalar(mat.Specular * factor)
 		}
 	}
 

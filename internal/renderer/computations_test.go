@@ -172,15 +172,15 @@ func TestSchlick(t *testing.T) {
 func TestRefraction(t *testing.T) {
 	a := shapes.NewGlassSphere()
 	a.SetTransform(matrix.Scaling(2, 2, 2))
-	a.Material().SetRefractiveIndex(1.5)
+	a.Material().RefractiveIndex = 1.5
 
 	b := shapes.NewGlassSphere()
 	b.SetTransform(matrix.Translation(0, 0, -0.25))
-	b.Material().SetRefractiveIndex(2.0)
+	b.Material().RefractiveIndex = 2.0
 
 	c := shapes.NewGlassSphere()
 	c.SetTransform(matrix.Translation(0, 0, 0.25))
-	c.Material().SetRefractiveIndex(2.5)
+	c.Material().RefractiveIndex = 2.5
 
 	r := ray.NewRay(tuple.NewPoint(0, 0, -4), tuple.NewVector(0, 0, 1))
 	xs := shapes.Intersections{

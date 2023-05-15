@@ -97,7 +97,7 @@ func TestShadeHit(t *testing.T) {
 	shape = shapes.NewPlane()
 	shape.SetTransform(matrix.Translation(0, -1, 0))
 	mat := materials.DefaultMaterial()
-	mat.SetReflective(0.5)
+	mat.Reflective = 0.5
 	shape.SetMaterial(mat)
 	i = shapes.NewIntersection(math.Sqrt(2), shape)
 	comps = renderer.PrepareComputations(i, r, shapes.Intersections{i})
@@ -114,14 +114,14 @@ func TestShadeHit(t *testing.T) {
 	floor := shapes.NewPlane()
 	floor.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
-	mat.SetTransparency(0.5)
-	mat.SetRefractiveIndex(1.5)
+	mat.Transparency = 0.5
+	mat.RefractiveIndex = 1.5
 	floor.SetMaterial(mat)
 
 	ball := shapes.NewSphere()
 	mat = materials.DefaultMaterial()
 	mat.SetPattern(materials.NewPattern(materials.Base, color.Red()))
-	mat.SetAmbient(0.5)
+	mat.Ambient = 0.5
 	ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
 	ball.SetMaterial(mat)
 	w.SetShapes([]shapes.Shape{w.shapes[0], w.shapes[1], floor, ball})
@@ -140,15 +140,15 @@ func TestShadeHit(t *testing.T) {
 	floor = shapes.NewPlane()
 	floor.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
-	mat.SetTransparency(0.5)
-	mat.SetReflective(0.5)
-	mat.SetRefractiveIndex(1.5)
+	mat.Transparency = 0.5
+	mat.Reflective = 0.5
+	mat.RefractiveIndex = 1.5
 	floor.SetMaterial(mat)
 
 	ball = shapes.NewSphere()
 	mat = materials.DefaultMaterial()
 	mat.SetPattern(materials.NewPattern(materials.Base, color.Red()))
-	mat.SetAmbient(0.5)
+	mat.Ambient = 0.5
 	ball.SetMaterial(mat)
 	ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
 	w.SetShapes([]shapes.Shape{w.shapes[0], w.shapes[1], floor, ball})
@@ -184,13 +184,13 @@ func TestColorAt(t *testing.T) {
 	w = Default()
 	outer := w.Shapes()[0]
 	m := outer.Material()
-	m.SetAmbient(1)
+	m.Ambient = 1
 	outer.SetMaterial(m)
 	outer.Material().SetPattern(m.Pattern())
 
 	inner := w.Shapes()[1]
 	m = inner.Material()
-	m.SetAmbient(1)
+	m.Ambient = 1
 	inner.SetMaterial(m)
 	inner.Material().SetPattern(m.Pattern())
 
@@ -209,7 +209,7 @@ func TestRecusingReflection(t *testing.T) {
 	})
 
 	mat := materials.DefaultMaterial()
-	mat.SetReflective(1)
+	mat.Reflective = 1
 
 	lower := shapes.NewPlane()
 	lower.SetMaterial(mat)
@@ -271,7 +271,7 @@ func TestReflectedColor(t *testing.T) {
 	r := ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
 	shape := w.Shapes()[1]
 	mat := shape.Material()
-	mat.SetAmbient(1)
+	mat.Ambient = 1
 	i := shapes.NewIntersection(1, shape)
 	comps := renderer.PrepareComputations(i, r, shapes.Intersections{i})
 	result := w.reflectedColor(comps)
@@ -288,7 +288,7 @@ func TestReflectedColor(t *testing.T) {
 	shape = shapes.NewPlane()
 	shape.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
-	mat.SetReflective(0.5)
+	mat.Reflective = 0.5
 	shape.SetMaterial(mat)
 	i = shapes.NewIntersection(math.Sqrt(2), shape)
 	comps = renderer.PrepareComputations(i, r, shapes.Intersections{i})
@@ -307,7 +307,7 @@ func TestReflectedColor(t *testing.T) {
 	shape = shapes.NewPlane()
 	shape.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
-	mat.SetReflective(0.5)
+	mat.Reflective = 0.5
 	shape.SetMaterial(mat)
 	i = shapes.NewIntersection(math.Sqrt(2), shape)
 	comps = renderer.PrepareComputations(i, r, shapes.Intersections{i})
@@ -341,8 +341,8 @@ func TestRefractedColor(t *testing.T) {
 	w = Default()
 	shape = w.Shapes()[0]
 	mat := shape.Material()
-	mat.SetTransparency(1)
-	mat.SetRefractiveIndex(1.5)
+	mat.Transparency = 1
+	mat.RefractiveIndex = 1.5
 	shape.SetMaterial(mat)
 	r = ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	r.SetBounceLimit(0)
@@ -363,8 +363,8 @@ func TestRefractedColor(t *testing.T) {
 	w = Default()
 	shape = w.Shapes()[0]
 	mat = shape.Material()
-	mat.SetTransparency(1)
-	mat.SetRefractiveIndex(1.5)
+	mat.Transparency = 1
+	mat.RefractiveIndex = 1.5
 	shape.SetMaterial(mat)
 	r = ray.NewRay(tuple.NewPoint(0, 0, math.Sqrt(2)/2), tuple.NewVector(0, 1, 0))
 	xs = shapes.Intersections{
@@ -384,13 +384,13 @@ func TestRefractedColor(t *testing.T) {
 	w = Default()
 	a := w.Shapes()[0]
 	mat = a.Material()
-	mat.SetAmbient(1.0)
+	mat.Ambient = 1.0
 	mat.SetPattern(materials.NewPattern(materials.Test))
 	a.SetMaterial(mat)
 	b := w.Shapes()[1]
 	mat = b.Material()
-	mat.SetTransparency(1.0)
-	mat.SetRefractiveIndex(1.5)
+	mat.Transparency = 1.0
+	mat.RefractiveIndex = 1.5
 	mat.SetPattern(materials.NewPattern(materials.Test))
 	b.SetMaterial(mat)
 

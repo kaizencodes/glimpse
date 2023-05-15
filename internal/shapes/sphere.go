@@ -76,8 +76,8 @@ func NewSphere() *Sphere {
 
 func NewGlassSphere() *Sphere {
 	mat := materials.DefaultMaterial()
-	mat.SetTransparency(1)
-	mat.SetRefractiveIndex(1.5)
+	mat.Transparency = 1.0
+	mat.RefractiveIndex = 1.5
 	return &Sphere{
 		transform: matrix.DefaultTransform(),
 		material:  mat,
