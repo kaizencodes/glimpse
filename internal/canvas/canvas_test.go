@@ -8,14 +8,14 @@ import (
 
 func TestNew(t *testing.T) {
 	var tests = []struct {
-		w    int
-		h    int
-		want Canvas
+		w        int
+		h        int
+		expected Canvas
 	}{
 		{
 			w: 2,
 			h: 3,
-			want: Canvas{
+			expected: Canvas{
 				[]color.Color{
 					color.Black(), color.Black(), color.Black(),
 				},
@@ -27,8 +27,8 @@ func TestNew(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := New(test.w, test.h); got.String() != test.want.String() {
-			t.Errorf("canvas width w:%d, h:%d \ngot: \n%s. \nexpected: \n%s", test.w, test.h, got, test.want)
+		if got := New(test.w, test.h); got.String() != test.expected.String() {
+			t.Errorf("canvas width w:%d, h:%d \ngot: \n%s. \nexpected: \n%s", test.w, test.h, got, test.expected)
 		}
 	}
 }

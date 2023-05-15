@@ -9,8 +9,8 @@ import (
 
 func TestExport(t *testing.T) {
 	var tests = []struct {
-		c    canvas.Canvas
-		want string
+		c        canvas.Canvas
+		expected string
 	}{
 		{
 			c: canvas.Canvas{
@@ -21,7 +21,7 @@ func TestExport(t *testing.T) {
 					color.New(0, 0.5, 0), color.New(0, 0, 0), color.New(0, 0, 0),
 				},
 			},
-			want: `P3
+			expected: `P3
 2 3
 255
 255 0 0 0 127 0 
@@ -33,8 +33,8 @@ func TestExport(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := Export(test.c); got != test.want {
-			t.Errorf("canvas \n%s \nexport to ppm \ngot: \n%s. \nexpected: \n%s", test.c, got, test.want)
+		if got := Export(test.c); got != test.expected {
+			t.Errorf("canvas \n%s \nexport to ppm \ngot: \n%s. \nexpected: \n%s", test.c, got, test.expected)
 		}
 	}
 }

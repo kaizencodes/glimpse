@@ -58,18 +58,18 @@ func TestTransformations(t *testing.T) {
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	sphere := NewSphere()
 	sphere.SetTransform(matrix.Scaling(2, 2, 2))
-	want := Intersections{
+	expected := Intersections{
 		NewIntersection(3.0, sphere),
 		NewIntersection(7.0, sphere),
 	}
 
 	got := Intersect(sphere, r)
 	for i := range got {
-		if got[i].t != want[i].t {
-			t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, got[i].t, want[i].t)
+		if got[i].t != expected[i].t {
+			t.Errorf("incorrect t of intersect:\n%s \n \ngot: \n%f. \nexpected: \n%f", r, got[i].t, expected[i].t)
 		}
-		if got[i].shape != want[i].shape {
-			t.Errorf("incorrect Shape of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", r, got[i].shape, want[i].shape)
+		if got[i].shape != expected[i].shape {
+			t.Errorf("incorrect Shape of intersect:\n%s \n \ngot: \n%s. \nexpected: \n%s", r, got[i].shape, expected[i].shape)
 		}
 	}
 }
