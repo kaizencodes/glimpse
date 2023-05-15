@@ -2,11 +2,12 @@ package shapes
 
 import (
 	"fmt"
-	"glimpse/materials"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
 	"math"
+
+	"github.com/kaizencodes/glimpse/materials"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type Sphere struct {

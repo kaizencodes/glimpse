@@ -1,7 +1,7 @@
 package canvas
 
 import (
-	"glimpse/color"
+	"github.com/kaizencodes/glimpse/color"
 )
 
 type Canvas [][]color.Color

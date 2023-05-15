@@ -2,10 +2,11 @@ package light
 
 import (
 	"fmt"
-	"glimpse/color"
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"math"
+
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type Light struct {

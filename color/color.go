@@ -2,8 +2,9 @@ package color
 
 import (
 	"fmt"
-	"glimpse/calc"
 	"strconv"
+
+	"github.com/kaizencodes/glimpse/calc"
 )
 
 type Color struct {

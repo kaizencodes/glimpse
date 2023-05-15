@@ -1,8 +1,9 @@
 package ray
 
 import (
-	"glimpse/tuple"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestPosition(t *testing.T) {

@@ -1,8 +1,9 @@
 package canvas
 
 import (
-	"glimpse/color"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/color"
 )
 
 func TestNew(t *testing.T) {

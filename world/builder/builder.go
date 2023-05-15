@@ -1,15 +1,15 @@
 package builder
 
 import (
-	"glimpse/camera"
-	"glimpse/color"
-	"glimpse/light"
-	"glimpse/materials"
-	"glimpse/matrix"
-	"glimpse/shapes"
-	"glimpse/tuple"
-	"glimpse/world"
-	cfg "glimpse/world/config"
+	"github.com/kaizencodes/glimpse/camera"
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/light"
+	"github.com/kaizencodes/glimpse/materials"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
+	"github.com/kaizencodes/glimpse/world"
+	cfg "github.com/kaizencodes/glimpse/world/config"
 )
 
 func BuildScene(scene cfg.Scene) (*camera.Camera, *world.World) {

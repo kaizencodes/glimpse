@@ -2,10 +2,11 @@ package materials
 
 import (
 	"fmt"
-	"glimpse/color"
-	"glimpse/matrix"
-	"glimpse/tuple"
 	"math"
+
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type PatternType int

@@ -1,11 +1,11 @@
 package shapes
 
 import (
-	"glimpse/color"
-	"glimpse/materials"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/materials"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type Shape interface {

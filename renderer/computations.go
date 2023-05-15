@@ -1,11 +1,12 @@
 package renderer
 
 import (
-	"glimpse/calc"
-	"glimpse/ray"
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"math"
+
+	"github.com/kaizencodes/glimpse/calc"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type Computations struct {

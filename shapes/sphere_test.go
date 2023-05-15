@@ -1,11 +1,12 @@
 package shapes
 
 import (
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
 	"math"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestSphereLocalNormalAt(t *testing.T) {

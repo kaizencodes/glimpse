@@ -2,8 +2,9 @@ package matrix
 
 import (
 	"fmt"
-	"glimpse/calc"
 	"strconv"
+
+	"github.com/kaizencodes/glimpse/calc"
 )
 
 type Matrix [][]float64

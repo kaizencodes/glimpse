@@ -2,8 +2,9 @@ package ray
 
 import (
 	"fmt"
-	"glimpse/matrix"
-	"glimpse/tuple"
+
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 const BounceLimit = 5

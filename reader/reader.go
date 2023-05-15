@@ -1,9 +1,10 @@
 package reader
 
 import (
-	"glimpse/reader/validator"
-	cfg "glimpse/world/config"
 	"os"
+
+	"github.com/kaizencodes/glimpse/reader/validator"
+	cfg "github.com/kaizencodes/glimpse/world/config"
 
 	yaml "github.com/goccy/go-yaml"
 )

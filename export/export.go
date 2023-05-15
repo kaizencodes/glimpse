@@ -2,9 +2,10 @@ package export
 
 import (
 	"fmt"
-	"glimpse/canvas"
-	"glimpse/color"
 	"math"
+
+	"github.com/kaizencodes/glimpse/canvas"
+	"github.com/kaizencodes/glimpse/color"
 )
 
 const (

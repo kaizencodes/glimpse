@@ -1,13 +1,14 @@
 package renderer
 
 import (
-	"glimpse/calc"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"math"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/calc"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestPrepareComputations(t *testing.T) {

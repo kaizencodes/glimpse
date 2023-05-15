@@ -1,9 +1,10 @@
 package parser
 
 import (
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestParseVertices(t *testing.T) {

@@ -2,10 +2,11 @@ package shapes
 
 import (
 	"fmt"
-	"glimpse/materials"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
+
+	"github.com/kaizencodes/glimpse/materials"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type Group struct {

@@ -1,16 +1,17 @@
 package world
 
 import (
-	"glimpse/color"
-	"glimpse/light"
-	"glimpse/materials"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/renderer"
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"math"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/light"
+	"github.com/kaizencodes/glimpse/materials"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/renderer"
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestIntersect(t *testing.T) {

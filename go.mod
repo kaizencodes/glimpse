@@ -1,8 +1,6 @@
-module glimpse
+module github.com/kaizencodes/glimpse
 
 go 1.20
-
-// require golang.org/x/tools v0.1.5 // indirect
 
 require (
 	cuelang.org/go v0.4.3

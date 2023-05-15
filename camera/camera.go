@@ -1,13 +1,14 @@
 package camera
 
 import (
-	"glimpse/canvas"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
-	"glimpse/world"
 	"math"
 	"sync"
+
+	"github.com/kaizencodes/glimpse/canvas"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
+	"github.com/kaizencodes/glimpse/world"
 )
 
 type Camera struct {

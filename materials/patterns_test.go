@@ -1,9 +1,10 @@
 package materials
 
 import (
-	"glimpse/color"
-	"glimpse/tuple"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestStripePattern(t *testing.T) {

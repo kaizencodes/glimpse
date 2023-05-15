@@ -1,9 +1,10 @@
 package reader
 
 import (
-	"glimpse/utils"
-	cfg "glimpse/world/config"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/utils"
+	cfg "github.com/kaizencodes/glimpse/world/config"
 )
 
 func TestRead(t *testing.T) {

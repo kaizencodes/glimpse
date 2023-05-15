@@ -1,10 +1,11 @@
 package shapes
 
 import (
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestAddChild(t *testing.T) {

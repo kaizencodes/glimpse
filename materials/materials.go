@@ -2,9 +2,10 @@ package materials
 
 import (
 	"fmt"
-	"glimpse/color"
-	"glimpse/matrix"
-	"glimpse/tuple"
+
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 type Material struct {

@@ -1,11 +1,12 @@
 package parser
 
 import (
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func Parse(input string) *shapes.Group {

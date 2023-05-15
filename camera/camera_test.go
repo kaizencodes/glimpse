@@ -1,14 +1,15 @@
 package camera
 
 import (
-	"glimpse/calc"
-	"glimpse/color"
-	"glimpse/matrix"
-	"glimpse/ray"
-	"glimpse/tuple"
-	"glimpse/world"
 	"math"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/calc"
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/matrix"
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
+	"github.com/kaizencodes/glimpse/world"
 )
 
 func TestPixelSize(t *testing.T) {

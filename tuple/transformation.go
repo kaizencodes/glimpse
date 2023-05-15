@@ -1,6 +1,6 @@
 package tuple
 
-import "glimpse/matrix"
+import "github.com/kaizencodes/glimpse/matrix"
 
 func (t Tuple) Translate(x, y, z float64) Tuple {
 	result, err := Multiply(matrix.Translation(x, y, z), t)

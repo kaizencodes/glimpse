@@ -1,12 +1,13 @@
 package light
 
 import (
-	"glimpse/color"
-	"glimpse/materials"
-	"glimpse/shapes"
-	"glimpse/tuple"
 	"math"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/color"
+	"github.com/kaizencodes/glimpse/materials"
+	"github.com/kaizencodes/glimpse/shapes"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestLighting(t *testing.T) {

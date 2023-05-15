@@ -1,9 +1,10 @@
 package shapes
 
 import (
-	"glimpse/ray"
-	"glimpse/tuple"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/ray"
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestNewTriangle(t *testing.T) {

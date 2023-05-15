@@ -1,8 +1,9 @@
 package validator
 
 import (
-	"glimpse/projectpath"
 	"os"
+
+	"github.com/kaizencodes/glimpse/projectpath"
 
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/encoding/yaml"

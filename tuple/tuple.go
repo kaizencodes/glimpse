@@ -2,10 +2,11 @@ package tuple
 
 import (
 	"fmt"
-	"glimpse/calc"
-	"glimpse/matrix"
 	"math"
 	"strconv"
+
+	"github.com/kaizencodes/glimpse/calc"
+	"github.com/kaizencodes/glimpse/matrix"
 )
 
 type Tuple struct {

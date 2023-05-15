@@ -1,8 +1,9 @@
 package shapes
 
 import (
-	"glimpse/tuple"
 	"testing"
+
+	"github.com/kaizencodes/glimpse/tuple"
 )
 
 func TestPlaneLocalNormalAt(t *testing.T) {
