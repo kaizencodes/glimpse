@@ -76,8 +76,16 @@ func NewVector(x, y, z float64) Tuple {
 	return Tuple{x, y, z, 0.0}
 }
 
+func NewVectorFromSlice(s []float64) Tuple {
+	return Tuple{s[0], s[1], s[2], 0}
+}
+
 func NewPoint(x, y, z float64) Tuple {
 	return Tuple{x, y, z, 1.0}
+}
+
+func NewPointFromSlice(s []float64) Tuple {
+	return Tuple{s[0], s[1], s[2], 1}
 }
 
 func Add(a, b Tuple) Tuple {

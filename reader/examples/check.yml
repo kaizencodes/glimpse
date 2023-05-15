@@ -1,0 +1,4 @@
+camera:
+  width: 32
+  height: 40
+  fov: 1.4

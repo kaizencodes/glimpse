@@ -1,24 +1,22 @@
-name: CI
+name: Go Test
 
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-go@v2
+    - name: Set up Go 1.20.4
+      uses: actions/setup-go@v2
       with:
-        go-version: '1.16.2'
+        go-version: '1.20.4'
 
     - name: Install dependencies
       run: |
-        go version
+        go mod download
         go get -u golang.org/x/lint/golint
-    # - name: Build
-    #   run: go build .
 
     - name: Test
       run: go test -gcflags=-l -v ./...
-
