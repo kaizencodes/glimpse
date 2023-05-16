@@ -128,25 +128,25 @@ f 1 2 3 4 5
 }
 
 func assertFace(face *shapes.Triangle, p1, p2, p3 tuple.Tuple, t *testing.T) {
-	if !face.P1().Equal(p1) {
-		t.Errorf("Incorrect parsing. expected vertex point P1 to be \n%s \n got %s", p1, face.P1())
+	if !face.P1.Equal(p1) {
+		t.Errorf("Incorrect parsing. expected vertex point P1 to be \n%s \n got %s", p1, face.P1)
 	}
-	if !face.P2().Equal(p2) {
-		t.Errorf("Incorrect parsing. expected vertex point P2 to be \n%s \n got %s", p2, face.P2())
+	if !face.P2.Equal(p2) {
+		t.Errorf("Incorrect parsing. expected vertex point P2 to be \n%s \n got %s", p2, face.P2)
 	}
-	if !face.P3().Equal(p3) {
-		t.Errorf("Incorrect parsing. expected vertex point P3 to be \n%s \n got %s", p3, face.P3())
+	if !face.P3.Equal(p3) {
+		t.Errorf("Incorrect parsing. expected vertex point P3 to be \n%s \n got %s", p3, face.P3)
 	}
 }
 
 func assertFaceNormal(face *shapes.Triangle, n1, n2, n3 tuple.Tuple, t *testing.T) {
-	if !face.N1().Equal(n1) {
-		t.Errorf("Incorrect parsing. expected vertex normal N1 to be \n%s \n got %s", n1, face.N1())
+	if !face.N1.Equal(n1) {
+		t.Errorf("Incorrect parsing. expected vertex normal N1 to be \n%s \n got %s", n1, face.N1)
 	}
-	if !face.N2().Equal(n2) {
-		t.Errorf("Incorrect parsing. expected vertex normal N2 to be \n%s \n got %s", n2, face.N2())
+	if !face.N2.Equal(n2) {
+		t.Errorf("Incorrect parsing. expected vertex normal N2 to be \n%s \n got %s", n2, face.N2)
 	}
-	if !face.N3().Equal(n3) {
-		t.Errorf("Incorrect parsing. expected vertex normal N3 to be \n%s \n got %s", n3, face.N3())
+	if !face.N3.Equal(n3) {
+		t.Errorf("Incorrect parsing. expected vertex normal N3 to be \n%s \n got %s", n3, face.N3)
 	}
 }

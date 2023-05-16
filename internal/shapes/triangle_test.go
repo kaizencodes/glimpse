@@ -17,23 +17,23 @@ func TestNewTriangle(t *testing.T) {
 
 	triangle := NewTriangle(p1, p2, p3)
 
-	if triangle.P1() != p1 {
-		t.Errorf("Triangle P1\ngot: \n%s. \nexpected: \n%s", triangle.P1(), p1)
+	if triangle.P1 != p1 {
+		t.Errorf("Triangle P1\ngot: \n%s. \nexpected: \n%s", triangle.P1, p1)
 	}
-	if triangle.P2() != p2 {
-		t.Errorf("Triangle P2\ngot: \n%s. \nexpected: \n%s", triangle.P2(), p2)
+	if triangle.P2 != p2 {
+		t.Errorf("Triangle P2\ngot: \n%s. \nexpected: \n%s", triangle.P2, p2)
 	}
-	if triangle.P3() != p3 {
-		t.Errorf("Triangle P3\ngot: \n%s. \nexpected: \n%s", triangle.P3(), p3)
+	if triangle.P3 != p3 {
+		t.Errorf("Triangle P3\ngot: \n%s. \nexpected: \n%s", triangle.P3, p3)
 	}
-	if triangle.E1() != e1 {
-		t.Errorf("Triangle E1\ngot: \n%s. \nexpected: \n%s", triangle.E1(), e1)
+	if triangle.E1 != e1 {
+		t.Errorf("Triangle E1\ngot: \n%s. \nexpected: \n%s", triangle.E1, e1)
 	}
-	if triangle.E2() != e2 {
-		t.Errorf("Triangle E2\ngot: \n%s. \nexpected: \n%s", triangle.E2(), e2)
+	if triangle.E2 != e2 {
+		t.Errorf("Triangle E2\ngot: \n%s. \nexpected: \n%s", triangle.E2, e2)
 	}
-	if triangle.Normal() != normal {
-		t.Errorf("Triangle normal\ngot: \n%s. \nexpected: \n%s", triangle.Normal(), normal)
+	if triangle.Normal != normal {
+		t.Errorf("Triangle normal\ngot: \n%s. \nexpected: \n%s", triangle.Normal, normal)
 	}
 }
 
@@ -59,8 +59,8 @@ func TestLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := triangle.LocalNormalAt(test.point, Intersection{}); !result.Equal(triangle.normal) {
-			t.Errorf("Triangle normal:\n point: %s. \nresult: \n%s. \nexpected: \n%s", test.point, result, triangle.normal)
+		if result := triangle.LocalNormalAt(test.point, Intersection{}); !result.Equal(triangle.Normal) {
+			t.Errorf("Triangle normal:\n point: %s. \nresult: \n%s. \nexpected: \n%s", test.point, result, triangle.Normal)
 		}
 	}
 }
