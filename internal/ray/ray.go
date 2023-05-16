@@ -10,59 +10,43 @@ import (
 const BounceLimit = 5
 
 type Ray struct {
-	origin      tuple.Tuple
-	direction   tuple.Tuple
-	bounceLimit int
+	Origin      tuple.Tuple
+	Direction   tuple.Tuple
+	BounceLimit int
 }
 
 func (r *Ray) Position(dist float64) tuple.Tuple {
-	return tuple.Add(r.origin, r.direction.Scalar(dist))
+	return tuple.Add(r.Origin, r.Direction.Scalar(dist))
 }
 
 func (r *Ray) String() string {
-	return fmt.Sprintf("Ray(origin: %s, direction: %s)", r.origin, r.direction)
+	return fmt.Sprintf("Ray(Origin: %s, Direction: %s)", r.Origin, r.Direction)
 }
 
 func (r *Ray) Equal(other *Ray) bool {
-	return r.origin.Equal(other.origin) && r.direction.Equal(other.direction)
+	return r.Origin.Equal(other.Origin) && r.Direction.Equal(other.Direction)
 }
 
 func (r *Ray) Translate(x, y, z float64) *Ray {
-	origin, err := tuple.Multiply(matrix.Translation(x, y, z), r.origin)
+	Origin, err := tuple.Multiply(matrix.Translation(x, y, z), r.Origin)
 	if err != nil {
 		panic(err)
 	}
-	return &Ray{origin: origin, direction: r.direction}
+	return &Ray{Origin: Origin, Direction: r.Direction}
 }
 
 func (r *Ray) Scale(x, y, z float64) *Ray {
-	origin, err := tuple.Multiply(matrix.Scaling(x, y, z), r.origin)
+	Origin, err := tuple.Multiply(matrix.Scaling(x, y, z), r.Origin)
 	if err != nil {
 		panic(err)
 	}
-	direction, err := tuple.Multiply(matrix.Scaling(x, y, z), r.direction)
+	Direction, err := tuple.Multiply(matrix.Scaling(x, y, z), r.Direction)
 	if err != nil {
 		panic(err)
 	}
-	return &Ray{origin: origin, direction: direction}
-}
-
-func (r *Ray) Origin() tuple.Tuple {
-	return r.origin
-}
-
-func (r *Ray) Direction() tuple.Tuple {
-	return r.direction
-}
-
-func (r *Ray) BounceLimit() int {
-	return r.bounceLimit
-}
-
-func (r *Ray) SetBounceLimit(bounceLimit int) {
-	r.bounceLimit = bounceLimit
+	return &Ray{Origin: Origin, Direction: Direction}
 }
 
 func NewRay(origin, direction tuple.Tuple) *Ray {
-	return &Ray{origin, direction, BounceLimit}
+	return &Ray{Origin: origin, Direction: direction, BounceLimit: BounceLimit}
 }

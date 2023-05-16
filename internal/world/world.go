@@ -111,7 +111,7 @@ func (w *World) reflectedColor(comps renderer.Computations) color.Color {
 	}
 
 	r := ray.NewRay(comps.OverPoint, comps.ReflectV)
-	r.SetBounceLimit(comps.BounceLimit - 1)
+	r.BounceLimit = comps.BounceLimit - 1
 	c := w.ColorAt(r)
 
 	return c.Scalar(comps.Shape.Material().Reflective)
@@ -138,7 +138,7 @@ func (w *World) refractedColor(comps renderer.Computations) color.Color {
 	// Compute the direction of the refracted ray.
 	direction := tuple.Subtract(comps.NormalV.Scalar((nRatio*cosI)-cosT), comps.EyeV.Scalar(nRatio))
 	refactedRay := ray.NewRay(comps.UnderPoint, direction)
-	refactedRay.SetBounceLimit(comps.BounceLimit - 1)
+	refactedRay.BounceLimit = comps.BounceLimit - 1
 
 	// Find the color of the refracted ray, making sure to multiply by the transparency
 	// value to account for any opacity.

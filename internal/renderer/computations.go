@@ -42,7 +42,7 @@ func (comps Computations) Schlick() float64 {
 func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersections) Computations {
 	point := r.Position(hit.T())
 	normalV := shapes.NormalAt(point, hit.Shape(), hit)
-	eyeV := r.Direction().Negate()
+	eyeV := r.Direction.Negate()
 
 	inside := false
 	if tuple.Dot(normalV, eyeV) < 0 {
@@ -85,11 +85,11 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 		Point:       point,
 		EyeV:        eyeV,
 		NormalV:     normalV,
-		ReflectV:    tuple.Reflect(r.Direction(), normalV),
+		ReflectV:    tuple.Reflect(r.Direction, normalV),
 		Inside:      inside,
 		OverPoint:   overPoint,
 		UnderPoint:  underPoint,
-		BounceLimit: r.BounceLimit(),
+		BounceLimit: r.BounceLimit,
 		N1:          n1,
 		N2:          n2,
 	}

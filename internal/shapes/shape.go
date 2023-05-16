@@ -48,8 +48,8 @@ func Intersect(s Shape, r *ray.Ray) Intersections {
 	if err != nil {
 		panic(err)
 	}
-	origin, _ := tuple.Multiply(transform, r.Origin())
-	direction, _ := tuple.Multiply(transform, r.Direction())
+	origin, _ := tuple.Multiply(transform, r.Origin)
+	direction, _ := tuple.Multiply(transform, r.Direction)
 	localRay := ray.NewRay(origin, direction)
 
 	return s.LocalIntersect(localRay)

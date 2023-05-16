@@ -196,7 +196,7 @@ func TestColorAt(t *testing.T) {
 
 	r = ray.NewRay(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
 	result = w.ColorAt(r)
-	expected = inner.Material().ColorAt(r.Origin())
+	expected = inner.Material().ColorAt(r.Origin)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
@@ -303,7 +303,7 @@ func TestReflectedColor(t *testing.T) {
 
 	w = Default()
 	r = ray.NewRay(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
-	r.SetBounceLimit(0)
+	r.BounceLimit = 0
 	shape = shapes.NewPlane()
 	shape.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
@@ -345,7 +345,7 @@ func TestRefractedColor(t *testing.T) {
 	mat.RefractiveIndex = 1.5
 	shape.SetMaterial(mat)
 	r = ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-	r.SetBounceLimit(0)
+	r.BounceLimit = 0
 	xs = shapes.Intersections{
 		shapes.NewIntersection(4, shape),
 		shapes.NewIntersection(6, shape),

@@ -41,10 +41,10 @@ func (s *Sphere) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple
 }
 
 func (s *Sphere) LocalIntersect(r *ray.Ray) Intersections {
-	sphere_to_ray := r.Origin().ToVector()
+	sphere_to_ray := r.Origin.ToVector()
 
-	a := tuple.Dot(r.Direction(), r.Direction())
-	b := 2 * tuple.Dot(r.Direction(), sphere_to_ray)
+	a := tuple.Dot(r.Direction, r.Direction)
+	b := 2 * tuple.Dot(r.Direction, sphere_to_ray)
 	c := tuple.Dot(sphere_to_ray, sphere_to_ray) - 1
 
 	discriminant := math.Pow(b, 2) - 4*a*c
