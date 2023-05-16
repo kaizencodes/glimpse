@@ -44,12 +44,12 @@ func TestPrepareComputations(t *testing.T) {
 	inside = false
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
-	if comps.OverPoint().Z() > -utils.EPSILON/2.0 {
-		t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint().Z(), -utils.EPSILON/2)
+	if comps.OverPoint.Z() > -utils.EPSILON/2.0 {
+		t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint.Z(), -utils.EPSILON/2)
 	}
 
-	if comps.Point().Z() < comps.OverPoint().Z() {
-		t.Errorf("incorrect Z %f < OverPoint.Z %f", comps.Point().Z(), comps.OverPoint().Z())
+	if comps.Point.Z() < comps.OverPoint.Z() {
+		t.Errorf("incorrect Z %f < OverPoint.Z %f", comps.Point.Z(), comps.OverPoint.Z())
 	}
 
 	// The under point is offset below the surface
@@ -58,12 +58,12 @@ func TestPrepareComputations(t *testing.T) {
 	i = shapes.NewIntersection(5, s)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	eps := utils.EPSILON / 2.0
-	if comps.UnderPoint().Z() < eps {
-		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint().Z(), utils.EPSILON/2)
+	if comps.UnderPoint.Z() < eps {
+		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint.Z(), utils.EPSILON/2)
 	}
 
-	if comps.Point().Z() > comps.UnderPoint().Z() {
-		t.Errorf("incorrect Z %f > UnderPoint.Z %f", comps.Point().Z(), comps.UnderPoint().Z())
+	if comps.Point.Z() > comps.UnderPoint.Z() {
+		t.Errorf("incorrect Z %f > UnderPoint.Z %f", comps.Point.Z(), comps.UnderPoint.Z())
 	}
 
 	// Precomputing the reflection vector
@@ -74,8 +74,8 @@ func TestPrepareComputations(t *testing.T) {
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	reflectV := tuple.NewVector(0, math.Sqrt(2)/2, math.Sqrt(2)/2)
 
-	if comps.ReflectV() != reflectV {
-		t.Errorf("incorrect reflection vector, expected %f, got: %f", reflectV, comps.ReflectV())
+	if comps.ReflectV != reflectV {
+		t.Errorf("incorrect reflection vector, expected %f, got: %f", reflectV, comps.ReflectV)
 	}
 
 	// Preparing the normal on a smooth triangle
@@ -90,7 +90,7 @@ func TestPrepareComputations(t *testing.T) {
 	r = ray.NewRay(tuple.NewPoint(-0.2, 0.3, -2), tuple.NewVector(0, 0, 1))
 	hit := shapes.NewIntersectionWithUV(1, 0.45, 0.25, triangle)
 	xs := shapes.Intersections{hit}
-	result := PrepareComputations(hit, r, xs).NormalV()
+	result := PrepareComputations(hit, r, xs).NormalV
 	expected := tuple.NewVector(-0.5547001962252291, 0.8320502943378437, 0)
 	if result != expected {
 		t.Errorf("hit not passed to shape NormalAt")
@@ -98,28 +98,28 @@ func TestPrepareComputations(t *testing.T) {
 }
 
 func testComputation(t *testing.T, comps Computations, shape shapes.Shape, i shapes.Intersection, point, eyeV, normalV tuple.Tuple, inside bool) {
-	if comps.T() != i.T() {
-		t.Errorf("incorrect T, expected %f, got: %f", i.T(), comps.T())
+	if comps.T != i.T() {
+		t.Errorf("incorrect T, expected %f, got: %f", i.T(), comps.T)
 	}
 
-	if comps.Shape() != shape {
-		t.Errorf("incorrect T, expected %s, got: %s", shape, comps.Shape())
+	if comps.Shape != shape {
+		t.Errorf("incorrect T, expected %s, got: %s", shape, comps.Shape)
 	}
 
-	if comps.Point() != point {
-		t.Errorf("incorrect point, expected %s, got: %s", point, comps.Point())
+	if comps.Point != point {
+		t.Errorf("incorrect point, expected %s, got: %s", point, comps.Point)
 	}
 
-	if comps.EyeV() != eyeV {
-		t.Errorf("incorrect eyeV, expected %s, got: %s", eyeV, comps.EyeV())
+	if comps.EyeV != eyeV {
+		t.Errorf("incorrect eyeV, expected %s, got: %s", eyeV, comps.EyeV)
 	}
 
-	if comps.NormalV() != normalV {
-		t.Errorf("incorrect normalV, expected %s, got: %s", normalV, comps.NormalV())
+	if comps.NormalV != normalV {
+		t.Errorf("incorrect normalV, expected %s, got: %s", normalV, comps.NormalV)
 	}
 
-	if comps.Inside() != inside {
-		t.Errorf("incorrect inside, expected %t, got: %t", inside, comps.Inside())
+	if comps.Inside != inside {
+		t.Errorf("incorrect inside, expected %t, got: %t", inside, comps.Inside)
 	}
 }
 
@@ -230,12 +230,12 @@ func TestRefraction(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if test.computations.N1() != test.expectedN1 {
-			t.Errorf("incorrect n1 :\nresult: \n%f. \nexpected: \n%f", test.computations.N1(), test.expectedN1)
+		if test.computations.N1 != test.expectedN1 {
+			t.Errorf("incorrect n1 :\nresult: \n%f. \nexpected: \n%f", test.computations.N1, test.expectedN1)
 		}
 
-		if test.computations.N2() != test.expectedN2 {
-			t.Errorf("incorrect n2 :\nresult: \n%f. \nexpected: \n%f", test.computations.N2(), test.expectedN2)
+		if test.computations.N2 != test.expectedN2 {
+			t.Errorf("incorrect n2 :\nresult: \n%f. \nexpected: \n%f", test.computations.N2, test.expectedN2)
 		}
 	}
 }

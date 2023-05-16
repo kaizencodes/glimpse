@@ -55,18 +55,18 @@ func (w *World) intersect(r *ray.Ray) shapes.Intersections {
 }
 
 func (w *World) shadeHit(comps renderer.Computations) color.Color {
-	isShadowed := w.shadowAt(comps.OverPoint())
+	isShadowed := w.shadowAt(comps.OverPoint)
 	c := light.Lighting(
-		comps.Shape(),
+		comps.Shape,
 		w.Lights()[0],
-		comps.OverPoint(),
-		comps.EyeV(),
-		comps.NormalV(),
+		comps.OverPoint,
+		comps.EyeV,
+		comps.NormalV,
 		isShadowed,
 	)
 	reflected := w.reflectedColor(comps)
 	refracted := w.refractedColor(comps)
-	mat := comps.Shape().Material()
+	mat := comps.Shape.Material()
 	if mat.Reflective > 0 && mat.Transparency > 0 {
 		reflectance := comps.Schlick()
 		reflected = reflected.Scalar(reflectance)
@@ -80,11 +80,11 @@ func (w *World) shadeHit(comps renderer.Computations) color.Color {
 			continue
 		}
 		c = color.Add(c, light.Lighting(
-			comps.Shape(),
+			comps.Shape,
 			l,
-			comps.OverPoint(),
-			comps.EyeV(),
-			comps.NormalV(),
+			comps.OverPoint,
+			comps.EyeV,
+			comps.NormalV,
 			isShadowed))
 	}
 
@@ -106,26 +106,26 @@ func (w *World) shadowAt(point tuple.Tuple) bool {
 }
 
 func (w *World) reflectedColor(comps renderer.Computations) color.Color {
-	if comps.Shape().Material().Reflective == 0 || comps.BounceLimit() < 1 {
+	if comps.Shape.Material().Reflective == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
 
-	r := ray.NewRay(comps.OverPoint(), comps.ReflectV())
-	r.SetBounceLimit(comps.BounceLimit() - 1)
+	r := ray.NewRay(comps.OverPoint, comps.ReflectV)
+	r.SetBounceLimit(comps.BounceLimit - 1)
 	c := w.ColorAt(r)
 
-	return c.Scalar(comps.Shape().Material().Reflective)
+	return c.Scalar(comps.Shape.Material().Reflective)
 }
 
 func (w *World) refractedColor(comps renderer.Computations) color.Color {
-	if comps.Shape().Material().Transparency == 0 || comps.BounceLimit() < 1 {
+	if comps.Shape.Material().Transparency == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
 
 	// Find the ration of first index of refraction to the second.
-	nRatio := comps.N1() / comps.N2()
+	nRatio := comps.N1 / comps.N2
 	// cos(theta i) is the same as the dot product of the two vectors.
-	cosI := tuple.Dot(comps.EyeV(), comps.NormalV())
+	cosI := tuple.Dot(comps.EyeV, comps.NormalV)
 	// Find sin(theta t)^2 via trigonometric identity
 	sin2T := math.Pow(nRatio, 2) * (1 - math.Pow(cosI, 2))
 	if sin2T > 1 {
@@ -136,13 +136,13 @@ func (w *World) refractedColor(comps renderer.Computations) color.Color {
 	cosT := math.Sqrt(1.0 - sin2T)
 
 	// Compute the direction of the refracted ray.
-	direction := tuple.Subtract(comps.NormalV().Scalar((nRatio*cosI)-cosT), comps.EyeV().Scalar(nRatio))
-	refactedRay := ray.NewRay(comps.UnderPoint(), direction)
-	refactedRay.SetBounceLimit(comps.BounceLimit() - 1)
+	direction := tuple.Subtract(comps.NormalV.Scalar((nRatio*cosI)-cosT), comps.EyeV.Scalar(nRatio))
+	refactedRay := ray.NewRay(comps.UnderPoint, direction)
+	refactedRay.SetBounceLimit(comps.BounceLimit - 1)
 
 	// Find the color of the refracted ray, making sure to multiply by the transparency
 	// value to account for any opacity.
-	return w.ColorAt(refactedRay).Scalar(comps.Shape().Material().Transparency)
+	return w.ColorAt(refactedRay).Scalar(comps.Shape.Material().Transparency)
 }
 
 func Default() *World {
