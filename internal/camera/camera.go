@@ -7,6 +7,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/canvas"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
+	"github.com/kaizencodes/glimpse/internal/renderer"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 	"github.com/kaizencodes/glimpse/internal/world"
 )
@@ -83,7 +84,7 @@ func (c *Camera) Render(w *world.World) canvas.Canvas {
 				defer wg.Done()
 
 				r := c.RayForPixel(x, y)
-				col := w.ColorAt(r)
+				col := renderer.ColorAt(w, r)
 				img[x][y] = col
 			}(x, y)
 		}

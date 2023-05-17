@@ -15,8 +15,8 @@ import (
 func BuildScene(scene cfg.Scene) (*camera.Camera, *world.World) {
 	cam := buildCamera(scene.Camera)
 	world := world.Default()
-	world.SetLights(buildLight(scene.Light))
-	world.SetShapes(buildObjects(scene.Objects))
+	world.Lights = buildLight(scene.Light)
+	world.Shapes = buildObjects(scene.Objects)
 
 	return cam, world
 }
