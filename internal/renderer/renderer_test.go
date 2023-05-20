@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/kaizencodes/glimpse/internal/camera"
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/materials"
@@ -14,10 +15,27 @@ import (
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
+func TestRender(t *testing.T) {
+	scene := scenes.Default()
+	c := camera.New(11, 11, math.Pi/2)
+	transform := camera.ViewTransformation(
+		tuple.NewPoint(0, 0, -5),
+		tuple.NewPoint(0, 0, 0),
+		tuple.NewVector(0, 1, 0),
+	)
+	c.SetTransform(transform)
+	img := Render(c, scene)
+	result := img[5][5]
+	expected := color.New(0.38066119308103435, 0.47582649135129296, 0.28549589481077575)
+	if !result.Equal(expected) {
+		t.Errorf("Render, expected %s, got %s", expected, result)
+	}
+}
+
 func TestIntersect(t *testing.T) {
-	w := scenes.Default()
+	scene := scenes.Default()
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-	sections := intersect(w, r)
+	sections := intersect(scene, r)
 	expected := []float64{4, 4.5, 5.5, 6}
 	for i, v := range expected {
 		if sections[i].T() != v {
@@ -27,64 +45,64 @@ func TestIntersect(t *testing.T) {
 }
 
 func TestShadeHit(t *testing.T) {
-	w := scenes.Default()
+	scene := scenes.Default()
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-	shape := w.Shapes[0]
+	shape := scene.Shapes[0]
 	i := shapes.NewIntersection(4, shape)
 	comps := PrepareComputations(i, r, shapes.Intersections{i})
 
-	result := shadeHit(w, comps)
+	result := shadeHit(scene, comps)
 	expected := color.New(0.38066119308103435, 0.47582649135129296, 0.28549589481077575)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
-	w = scenes.Default()
-	w.Lights = []light.Light{
+	scene = scenes.Default()
+	scene.Lights = []light.Light{
 		light.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
 	}
 	r = ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-	shape = w.Shapes[1]
+	shape = scene.Shapes[1]
 	i = shapes.NewIntersection(0.5, shape)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
 
-	result = shadeHit(w, comps)
+	result = shadeHit(scene, comps)
 	expected = color.New(0.9049844720832575, 0.9049844720832575, 0.9049844720832575)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
 	// multiple light sources
-	w = scenes.Default()
-	w.Lights = []light.Light{
+	scene = scenes.Default()
+	scene.Lights = []light.Light{
 		light.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
 		light.NewLight(tuple.NewPoint(1, 0, 1), color.New(0.9, 0.7, 0)),
 	}
 	r = ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-	shape = w.Shapes[1]
+	shape = scene.Shapes[1]
 	i = shapes.NewIntersection(0.5, shape)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
 
-	result = shadeHit(w, comps)
+	result = shadeHit(scene, comps)
 	expected = color.New(0.19, 0.16999999999999998, 0.1)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
-	w = scenes.Default()
-	w.Lights = []light.Light{
+	scene = scenes.Default()
+	scene.Lights = []light.Light{
 		light.NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
 	}
 	s1 := shapes.NewSphere()
 	s2 := shapes.NewSphere()
 	s2.SetTransform(matrix.Translation(0, 0, 10))
-	w.Shapes = []shapes.Shape{s1, s2}
+	scene.Shapes = []shapes.Shape{s1, s2}
 
 	r = ray.NewRay(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1))
 	i = shapes.NewIntersection(4, s2)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
 
-	result = shadeHit(w, comps)
+	result = shadeHit(scene, comps)
 	expected = color.New(0.1, 0.1, 0.1)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
@@ -92,7 +110,7 @@ func TestShadeHit(t *testing.T) {
 
 	// with reflective shapes
 
-	w = scenes.Default()
+	scene = scenes.Default()
 	r = ray.NewRay(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	shape = shapes.NewPlane()
 	shape.SetTransform(matrix.Translation(0, -1, 0))
@@ -101,7 +119,7 @@ func TestShadeHit(t *testing.T) {
 	shape.SetMaterial(mat)
 	i = shapes.NewIntersection(math.Sqrt(2), shape)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	result = shadeHit(w, comps)
+	result = shadeHit(scene, comps)
 	expected = color.New(0.876755987245857, 0.924338636811946, 0.8291733376797681)
 
 	if !result.Equal(expected) {
@@ -110,7 +128,7 @@ func TestShadeHit(t *testing.T) {
 
 	// with refractive shapes
 
-	w = scenes.Default()
+	scene = scenes.Default()
 	floor := shapes.NewPlane()
 	floor.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
@@ -124,19 +142,19 @@ func TestShadeHit(t *testing.T) {
 	mat.Ambient = 0.5
 	ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
 	ball.SetMaterial(mat)
-	w.Shapes = []shapes.Shape{w.Shapes[0], w.Shapes[1], floor, ball}
+	scene.Shapes = []shapes.Shape{scene.Shapes[0], scene.Shapes[1], floor, ball}
 
 	r = ray.NewRay(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	i = shapes.NewIntersection(math.Sqrt(2), floor)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	result = shadeHit(w, comps)
+	result = shadeHit(scene, comps)
 	expected = color.New(0.936425388674727, 0.686425388674727, 0.686425388674727)
 
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
-	w = scenes.Default()
+	scene = scenes.Default()
 	floor = shapes.NewPlane()
 	floor.SetTransform(matrix.Translation(0, -1, 0))
 	mat = materials.DefaultMaterial()
@@ -151,12 +169,12 @@ func TestShadeHit(t *testing.T) {
 	mat.Ambient = 0.5
 	ball.SetMaterial(mat)
 	ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
-	w.Shapes = []shapes.Shape{w.Shapes[0], w.Shapes[1], floor, ball}
+	scene.Shapes = []shapes.Shape{scene.Shapes[0], scene.Shapes[1], floor, ball}
 
 	r = ray.NewRay(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	i = shapes.NewIntersection(math.Sqrt(2), floor)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	result = shadeHit(w, comps)
+	result = shadeHit(scene, comps)
 	expected = color.New(0.9339151403109409, 0.6964342260713607, 0.6924306911127073)
 
 	if !result.Equal(expected) {
@@ -165,37 +183,37 @@ func TestShadeHit(t *testing.T) {
 }
 
 func TestColorAt(t *testing.T) {
-	w := scenes.Default()
+	scene := scenes.Default()
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 1, 0))
-	result := ColorAt(w, r)
+	result := colorAt(scene, r)
 	expected := color.Black()
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
-	w = scenes.Default()
+	scene = scenes.Default()
 	r = ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-	result = ColorAt(w, r)
+	result = colorAt(scene, r)
 	expected = color.New(0.38066119308103435, 0.47582649135129296, 0.28549589481077575)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
-	w = scenes.Default()
-	outer := w.Shapes[0]
+	scene = scenes.Default()
+	outer := scene.Shapes[0]
 	m := outer.Material()
 	m.Ambient = 1
 	outer.SetMaterial(m)
 	outer.Material().SetPattern(m.Pattern())
 
-	inner := w.Shapes[1]
+	inner := scene.Shapes[1]
 	m = inner.Material()
 	m.Ambient = 1
 	inner.SetMaterial(m)
 	inner.Material().SetPattern(m.Pattern())
 
 	r = ray.NewRay(tuple.NewPoint(0, 0, 0.75), tuple.NewVector(0, 0, -1))
-	result = ColorAt(w, r)
+	result = colorAt(scene, r)
 	expected = inner.Material().ColorAt(r.Origin)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
@@ -203,8 +221,8 @@ func TestColorAt(t *testing.T) {
 }
 
 func TestRecusingReflection(t *testing.T) {
-	w := scenes.Default()
-	w.Lights = []light.Light{
+	scene := scenes.Default()
+	scene.Lights = []light.Light{
 		light.NewLight(tuple.NewPoint(0, 0, 0), color.New(1, 1, 1)),
 	}
 
@@ -219,46 +237,46 @@ func TestRecusingReflection(t *testing.T) {
 	upper.SetMaterial(mat)
 	upper.SetTransform(matrix.Translation(0, 1, 0))
 
-	w.Shapes = []shapes.Shape{
+	scene.Shapes = []shapes.Shape{
 		lower, upper,
 	}
 
 	r := ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
 	// If the limit would not be in place this would run into an infinite recursion.
-	ColorAt(w, r)
+	colorAt(scene, r)
 }
 
 func TestShadowAt(t *testing.T) {
-	w := scenes.Default()
+	scene := scenes.Default()
 	var tests = []struct {
-		w        *scenes.Scene
+		scene    *scenes.Scene
 		point    tuple.Tuple
 		expected bool
 	}{
 		{
-			w:        w,
+			scene:    scene,
 			point:    tuple.NewPoint(0, 10, 0),
 			expected: false,
 		},
 		{
-			w:        w,
+			scene:    scene,
 			point:    tuple.NewPoint(10, -10, 10),
 			expected: true,
 		},
 		{
-			w:        w,
+			scene:    scene,
 			point:    tuple.NewPoint(-20, 20, -20),
 			expected: false,
 		},
 		{
-			w:        w,
+			scene:    scene,
 			point:    tuple.NewPoint(-2, 2, -2),
 			expected: false,
 		},
 	}
 
 	for _, test := range tests {
-		result := shadowAt(test.w, test.point)
+		result := shadowAt(test.scene, test.point)
 		if result != test.expected {
 			t.Errorf("ShadowAt,\npoint:\n%s\nresult:\n%t\nexpected: \n%t", test.point, result, test.expected)
 		}
@@ -267,14 +285,14 @@ func TestShadowAt(t *testing.T) {
 
 func TestReflectedColor(t *testing.T) {
 	// The reflected color for a nonreflective material
-	w := scenes.Default()
+	scene := scenes.Default()
 	r := ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-	shape := w.Shapes[1]
+	shape := scene.Shapes[1]
 	mat := shape.Material()
 	mat.Ambient = 1
 	i := shapes.NewIntersection(1, shape)
 	comps := PrepareComputations(i, r, shapes.Intersections{i})
-	result := reflectedColor(w, comps)
+	result := reflectedColor(scene, comps)
 	expected := color.Black()
 
 	if !result.Equal(expected) {
@@ -283,7 +301,7 @@ func TestReflectedColor(t *testing.T) {
 
 	// The reflected color for a reflective material
 
-	w = scenes.Default()
+	scene = scenes.Default()
 	r = ray.NewRay(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	shape = shapes.NewPlane()
 	shape.SetTransform(matrix.Translation(0, -1, 0))
@@ -292,7 +310,7 @@ func TestReflectedColor(t *testing.T) {
 	shape.SetMaterial(mat)
 	i = shapes.NewIntersection(math.Sqrt(2), shape)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	result = reflectedColor(w, comps)
+	result = reflectedColor(scene, comps)
 	expected = color.New(0.1903305982643556, 0.23791324783044449, 0.14274794869826668)
 
 	if !result.Equal(expected) {
@@ -301,7 +319,7 @@ func TestReflectedColor(t *testing.T) {
 
 	// Returns when ray has reached the maximum recursive depth.
 
-	w = scenes.Default()
+	scene = scenes.Default()
 	r = ray.NewRay(tuple.NewPoint(0, 0, -3), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	r.BounceLimit = 0
 	shape = shapes.NewPlane()
@@ -311,7 +329,7 @@ func TestReflectedColor(t *testing.T) {
 	shape.SetMaterial(mat)
 	i = shapes.NewIntersection(math.Sqrt(2), shape)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	result = reflectedColor(w, comps)
+	result = reflectedColor(scene, comps)
 	expected = color.Black()
 
 	if !result.Equal(expected) {
@@ -321,15 +339,15 @@ func TestReflectedColor(t *testing.T) {
 
 func TestRefractedColor(t *testing.T) {
 	// The refracted color with an opaque surface
-	w := scenes.Default()
-	shape := w.Shapes[0]
+	scene := scenes.Default()
+	shape := scene.Shapes[0]
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	xs := shapes.Intersections{
 		shapes.NewIntersection(4, shape),
 		shapes.NewIntersection(6, shape),
 	}
 	comps := PrepareComputations(xs[0], r, xs)
-	result := refractedColor(w, comps)
+	result := refractedColor(scene, comps)
 	expected := color.Black()
 
 	if !result.Equal(expected) {
@@ -338,8 +356,8 @@ func TestRefractedColor(t *testing.T) {
 
 	// The refracted color at the maximum recursive depth.
 
-	w = scenes.Default()
-	shape = w.Shapes[0]
+	scene = scenes.Default()
+	shape = scene.Shapes[0]
 	mat := shape.Material()
 	mat.Transparency = 1
 	mat.RefractiveIndex = 1.5
@@ -351,7 +369,7 @@ func TestRefractedColor(t *testing.T) {
 		shapes.NewIntersection(6, shape),
 	}
 	comps = PrepareComputations(xs[0], r, xs)
-	result = refractedColor(w, comps)
+	result = refractedColor(scene, comps)
 	expected = color.Black()
 
 	if !result.Equal(expected) {
@@ -360,8 +378,8 @@ func TestRefractedColor(t *testing.T) {
 
 	// The refracted color under total internal reflection.
 
-	w = scenes.Default()
-	shape = w.Shapes[0]
+	scene = scenes.Default()
+	shape = scene.Shapes[0]
 	mat = shape.Material()
 	mat.Transparency = 1
 	mat.RefractiveIndex = 1.5
@@ -372,7 +390,7 @@ func TestRefractedColor(t *testing.T) {
 		shapes.NewIntersection(math.Sqrt(2)/2, shape),
 	}
 	comps = PrepareComputations(xs[1], r, xs)
-	result = refractedColor(w, comps)
+	result = refractedColor(scene, comps)
 	expected = color.Black()
 
 	if !result.Equal(expected) {
@@ -381,13 +399,13 @@ func TestRefractedColor(t *testing.T) {
 
 	// The refracted color with a refracted ray.
 
-	w = scenes.Default()
-	a := w.Shapes[0]
+	scene = scenes.Default()
+	a := scene.Shapes[0]
 	mat = a.Material()
 	mat.Ambient = 1.0
 	mat.SetPattern(materials.NewPattern(materials.Test))
 	a.SetMaterial(mat)
-	b := w.Shapes[1]
+	b := scene.Shapes[1]
 	mat = b.Material()
 	mat.Transparency = 1.0
 	mat.RefractiveIndex = 1.5
@@ -402,7 +420,7 @@ func TestRefractedColor(t *testing.T) {
 		shapes.NewIntersection(0.9899, a),
 	}
 	comps = PrepareComputations(xs[2], r, xs)
-	result = refractedColor(w, comps)
+	result = refractedColor(scene, comps)
 	expected = color.New(0, 0.9988846826559641, 0.04721642463480325)
 
 	if !result.Equal(expected) {

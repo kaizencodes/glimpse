@@ -2,7 +2,10 @@ package renderer
 
 import (
 	"math"
+	"sync"
 
+	"github.com/kaizencodes/glimpse/internal/camera"
+	"github.com/kaizencodes/glimpse/internal/canvas"
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/ray"
@@ -11,19 +14,41 @@ import (
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
-func ColorAt(w *scenes.Scene, r *ray.Ray) color.Color {
-	intersections := intersect(w, r)
+func Render(c *camera.Camera, w *scenes.Scene) canvas.Canvas {
+	img := canvas.New(c.Width, c.Height)
+	var wg sync.WaitGroup
+
+	for y := 0; y < c.Height-1; y++ {
+		for x := 0; x < c.Width-1; x++ {
+			wg.Add(1)
+
+			go func(x, y int) {
+				defer wg.Done()
+
+				r := c.RayForPixel(x, y)
+				col := colorAt(w, r)
+				img[x][y] = col
+			}(x, y)
+		}
+	}
+	wg.Wait()
+
+	return img
+}
+
+func colorAt(scene *scenes.Scene, r *ray.Ray) color.Color {
+	intersections := intersect(scene, r)
 	hit := intersections.Hit()
 	if hit.Empty() {
 		return color.Black()
 	}
 
-	return shadeHit(w, PrepareComputations(hit, r, intersections))
+	return shadeHit(scene, PrepareComputations(hit, r, intersections))
 }
 
-func intersect(w *scenes.Scene, r *ray.Ray) shapes.Intersections {
+func intersect(scene *scenes.Scene, r *ray.Ray) shapes.Intersections {
 	coll := shapes.Intersections{}
-	for _, o := range w.Shapes {
+	for _, o := range scene.Shapes {
 		coll = append(coll, shapes.Intersect(o, r)...)
 	}
 	coll.Sort()
@@ -31,18 +56,18 @@ func intersect(w *scenes.Scene, r *ray.Ray) shapes.Intersections {
 	return coll
 }
 
-func shadeHit(w *scenes.Scene, comps Computations) color.Color {
-	isShadowed := shadowAt(w, comps.OverPoint)
+func shadeHit(scene *scenes.Scene, comps Computations) color.Color {
+	isShadowed := shadowAt(scene, comps.OverPoint)
 	c := light.Lighting(
 		comps.Shape,
-		w.Lights[0],
+		scene.Lights[0],
 		comps.OverPoint,
 		comps.EyeV,
 		comps.NormalV,
 		isShadowed,
 	)
-	reflected := reflectedColor(w, comps)
-	refracted := refractedColor(w, comps)
+	reflected := reflectedColor(scene, comps)
+	refracted := refractedColor(scene, comps)
 	mat := comps.Shape.Material()
 	if mat.Reflective > 0 && mat.Transparency > 0 {
 		reflectance := comps.Schlick()
@@ -52,7 +77,7 @@ func shadeHit(w *scenes.Scene, comps Computations) color.Color {
 	c = color.Add(c, reflected)
 	c = color.Add(c, refracted)
 
-	for i, l := range w.Lights {
+	for i, l := range scene.Lights {
 		if i == 0 {
 			continue
 		}
@@ -68,12 +93,12 @@ func shadeHit(w *scenes.Scene, comps Computations) color.Color {
 	return c
 }
 
-func shadowAt(w *scenes.Scene, point tuple.Tuple) bool {
-	for _, l := range w.Lights {
+func shadowAt(scene *scenes.Scene, point tuple.Tuple) bool {
+	for _, l := range scene.Lights {
 		v := tuple.Subtract(l.Position(), point)
 		dist := v.Magnitude()
 		r := ray.NewRay(point, v.Normalize())
-		hit := intersect(w, r).Hit()
+		hit := intersect(scene, r).Hit()
 
 		if !hit.Empty() && hit.T() < dist {
 			return true
@@ -82,19 +107,19 @@ func shadowAt(w *scenes.Scene, point tuple.Tuple) bool {
 	return false
 }
 
-func reflectedColor(w *scenes.Scene, comps Computations) color.Color {
+func reflectedColor(scene *scenes.Scene, comps Computations) color.Color {
 	if comps.Shape.Material().Reflective == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
 
 	r := ray.NewRay(comps.OverPoint, comps.ReflectV)
 	r.BounceLimit = comps.BounceLimit - 1
-	c := ColorAt(w, r)
+	c := colorAt(scene, r)
 
 	return c.Scalar(comps.Shape.Material().Reflective)
 }
 
-func refractedColor(w *scenes.Scene, comps Computations) color.Color {
+func refractedColor(scene *scenes.Scene, comps Computations) color.Color {
 	if comps.Shape.Material().Transparency == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
@@ -119,5 +144,5 @@ func refractedColor(w *scenes.Scene, comps Computations) color.Color {
 
 	// Find the color of the refracted ray, making sure to multiply by the transparency
 	// value to account for any opacity.
-	return ColorAt(w, refractedRay).Scalar(comps.Shape.Material().Transparency)
+	return colorAt(scene, refractedRay).Scalar(comps.Shape.Material().Transparency)
 }

@@ -4,10 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
-	"github.com/kaizencodes/glimpse/internal/scenes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
@@ -34,8 +32,8 @@ func TestPixelSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := New(test.width, test.height, test.fov).PixelSize(); !utils.FloatEquals(result, test.expected) {
-			t.Errorf("camera PixelSize expected %f, got %f", test.expected, result)
+		if result := New(test.width, test.height, test.fov).pixelSize; !utils.FloatEquals(result, test.expected) {
+			t.Errorf("camera pixelSize expected %f, got %f", test.expected, result)
 		}
 	}
 }
@@ -119,22 +117,5 @@ func TestViewTransformation(t *testing.T) {
 		if !result.Equal(test.expected) {
 			t.Errorf("ViewTransformation,\nto:\n%s\nfrom:\n%s\nup:\n%s\nresult:\n%s\nexpected: \n%s", test.to, test.from, test.up, result, test.expected)
 		}
-	}
-}
-
-func TestRender(t *testing.T) {
-	w := scenes.Default()
-	c := New(11, 11, math.Pi/2)
-	transform := ViewTransformation(
-		tuple.NewPoint(0, 0, -5),
-		tuple.NewPoint(0, 0, 0),
-		tuple.NewVector(0, 1, 0),
-	)
-	c.SetTransform(transform)
-	img := c.Render(w)
-	result := img[5][5]
-	expected := color.New(0.38066119308103435, 0.47582649135129296, 0.28549589481077575)
-	if !result.Equal(expected) {
-		t.Errorf("Render, expected %s, got %s", expected, result)
 	}
 }

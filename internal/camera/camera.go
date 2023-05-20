@@ -2,27 +2,23 @@ package camera
 
 import (
 	"math"
-	"sync"
 
-	"github.com/kaizencodes/glimpse/internal/canvas"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
-	"github.com/kaizencodes/glimpse/internal/renderer"
-	"github.com/kaizencodes/glimpse/internal/scenes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
 type Camera struct {
-	width, height                         int
-	fov, pixelSize, halfWidth, halfHeight float64
+	Width, Height                         int
+	Fov, pixelSize, halfWidth, halfHeight float64
 	transform                             matrix.Matrix
 }
 
 func New(width, height int, fov float64) *Camera {
 	c := Camera{
-		width:     width,
-		height:    height,
-		fov:       fov,
+		Width:     width,
+		Height:    height,
+		Fov:       fov,
 		transform: matrix.NewIdentity(4),
 	}
 
@@ -36,13 +32,9 @@ func New(width, height int, fov float64) *Camera {
 		c.halfHeight = halfView
 	}
 
-	c.pixelSize = (c.halfWidth * 2.0) / float64(c.width)
+	c.pixelSize = (c.halfWidth * 2.0) / float64(c.Width)
 
 	return &c
-}
-
-func (c *Camera) PixelSize() float64 {
-	return c.pixelSize
 }
 
 func (c *Camera) Transform() matrix.Matrix {
@@ -70,28 +62,6 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	direction := tuple.Subtract(pixel, origin).Normalize()
 
 	return ray.NewRay(origin, direction)
-}
-
-func (c *Camera) Render(w *scenes.Scene) canvas.Canvas {
-	img := canvas.New(c.width, c.height)
-	var wg sync.WaitGroup
-
-	for y := 0; y < c.height-1; y++ {
-		for x := 0; x < c.width-1; x++ {
-			wg.Add(1)
-
-			go func(x, y int) {
-				defer wg.Done()
-
-				r := c.RayForPixel(x, y)
-				col := renderer.ColorAt(w, r)
-				img[x][y] = col
-			}(x, y)
-		}
-	}
-	wg.Wait()
-
-	return img
 }
 
 func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
