@@ -6,19 +6,19 @@ import (
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/scene"
+	cfg "github.com/kaizencodes/glimpse/internal/scene/config"
 	"github.com/kaizencodes/glimpse/internal/shapes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
-	"github.com/kaizencodes/glimpse/internal/world"
-	cfg "github.com/kaizencodes/glimpse/internal/world/config"
 )
 
-func BuildScene(scene cfg.Scene) (*camera.Camera, *world.World) {
+func BuildScene(scene cfg.Scene) (*camera.Camera, *scene.Scene) {
 	cam := buildCamera(scene.Camera)
-	world := world.Default()
-	world.Lights = buildLight(scene.Light)
-	world.Shapes = buildObjects(scene.Objects)
+	scene := scene.Default()
+	scene.Lights = buildLight(scene.Light)
+	scene.Shapes = buildObjects(scene.Objects)
 
-	return cam, world
+	return cam, scene
 }
 
 func buildCamera(config cfg.Camera) *camera.Camera {

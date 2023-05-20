@@ -19,13 +19,13 @@ type Shape interface {
 	SetParent(Shape)
 }
 
-func ColorAt(worldPoint tuple.Tuple, shape Shape) color.Color {
+func ColorAt(scenePoint tuple.Tuple, shape Shape) color.Color {
 	invShapeTransform, err := shape.Transform().Inverse()
 	if err != nil {
 		panic(err)
 	}
 
-	objectPoint, err := tuple.Multiply(invShapeTransform, worldPoint)
+	objectPoint, err := tuple.Multiply(invShapeTransform, scenePoint)
 	if err != nil {
 		panic(err)
 	}
@@ -55,15 +55,15 @@ func Intersect(s Shape, r *ray.Ray) Intersections {
 	return s.LocalIntersect(localRay)
 }
 
-func NormalAt(worldPoint tuple.Tuple, shape Shape, hit Intersection) tuple.Tuple {
-	localPoint := worldToObject(worldPoint, shape)
+func NormalAt(scenePoint tuple.Tuple, shape Shape, hit Intersection) tuple.Tuple {
+	localPoint := sceneToObject(scenePoint, shape)
 	localNormal := shape.LocalNormalAt(localPoint, hit)
-	return normalToWorld(localNormal, shape)
+	return normalToScene(localNormal, shape)
 }
 
-func worldToObject(p tuple.Tuple, s Shape) tuple.Tuple {
+func sceneToObject(p tuple.Tuple, s Shape) tuple.Tuple {
 	if s.Parent() != nil {
-		p = worldToObject(p, s.Parent())
+		p = sceneToObject(p, s.Parent())
 	}
 
 	inverse, _ := s.Transform().Inverse()
@@ -71,13 +71,13 @@ func worldToObject(p tuple.Tuple, s Shape) tuple.Tuple {
 	return result
 }
 
-func normalToWorld(v tuple.Tuple, s Shape) tuple.Tuple {
+func normalToScene(v tuple.Tuple, s Shape) tuple.Tuple {
 	inv, _ := s.Transform().Inverse()
 	normal, _ := tuple.Multiply(inv.Transpose(), v)
 	normal = normal.ToVector().Normalize()
 
 	if s.Parent() != nil {
-		normal = normalToWorld(normal, s.Parent())
+		normal = normalToScene(normal, s.Parent())
 	}
 
 	return normal

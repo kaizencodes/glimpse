@@ -1,4 +1,4 @@
-package world
+package scene
 
 import (
 	"github.com/kaizencodes/glimpse/internal/color"
@@ -9,18 +9,18 @@ import (
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
-type World struct {
+type Scene struct {
 	Shapes []shapes.Shape
 	Lights []light.Light
 }
 
-func Default() *World {
+func Default() *Scene {
 	o1 := shapes.NewSphere()
 	o1.SetMaterial(materials.NewMaterial(color.New(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0, 0, 0, 1))
 	o2 := shapes.NewSphere()
 	o2.SetTransform(matrix.Scaling(0.5, 0.5, 0.5))
 
-	return &World{
+	return &Scene{
 		Shapes: []shapes.Shape{
 			shapes.Shape(o1), shapes.Shape(o2),
 		},
@@ -30,6 +30,6 @@ func Default() *World {
 	}
 }
 
-func New(shapes []shapes.Shape, lights []light.Light) *World {
-	return &World{shapes, lights}
+func New(shapes []shapes.Shape, lights []light.Light) *Scene {
+	return &Scene{shapes, lights}
 }

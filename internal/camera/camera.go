@@ -8,8 +8,8 @@ import (
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/renderer"
+	"github.com/kaizencodes/glimpse/internal/scene"
 	"github.com/kaizencodes/glimpse/internal/tuple"
-	"github.com/kaizencodes/glimpse/internal/world"
 )
 
 type Camera struct {
@@ -57,22 +57,22 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	xOffset := (float64(x) + 0.5) * c.pixelSize
 	yOffset := (float64(y) + 0.5) * c.pixelSize
 
-	worldX := c.halfWidth - xOffset
-	worldY := c.halfHeight - yOffset
+	sceneX := c.halfWidth - xOffset
+	sceneY := c.halfHeight - yOffset
 
 	invTransform, err := c.transform.Inverse()
 	if err != nil {
 		panic(err)
 	}
 
-	pixel, _ := tuple.Multiply(invTransform, tuple.NewPoint(worldX, worldY, -1))
+	pixel, _ := tuple.Multiply(invTransform, tuple.NewPoint(sceneX, sceneY, -1))
 	origin, _ := tuple.Multiply(invTransform, tuple.NewPoint(0, 0, 0))
 	direction := tuple.Subtract(pixel, origin).Normalize()
 
 	return ray.NewRay(origin, direction)
 }
 
-func (c *Camera) Render(w *world.World) canvas.Canvas {
+func (c *Camera) Render(w *scene.Scene) canvas.Canvas {
 	img := canvas.New(c.width, c.height)
 	var wg sync.WaitGroup
 

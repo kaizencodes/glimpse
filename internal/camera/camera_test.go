@@ -7,9 +7,9 @@ import (
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
+	"github.com/kaizencodes/glimpse/internal/scene"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 	"github.com/kaizencodes/glimpse/internal/utils"
-	"github.com/kaizencodes/glimpse/internal/world"
 )
 
 func TestPixelSize(t *testing.T) {
@@ -123,7 +123,7 @@ func TestViewTransformation(t *testing.T) {
 }
 
 func TestRender(t *testing.T) {
-	w := world.Default()
+	w := scene.Default()
 	c := New(11, 11, math.Pi/2)
 	transform := ViewTransformation(
 		tuple.NewPoint(0, 0, -5),

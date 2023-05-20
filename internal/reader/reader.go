@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/kaizencodes/glimpse/internal/reader/validator"
-	cfg "github.com/kaizencodes/glimpse/internal/world/config"
+	cfg "github.com/kaizencodes/glimpse/internal/scene/config"
 
 	yaml "github.com/goccy/go-yaml"
 )

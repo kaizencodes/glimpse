@@ -3,8 +3,8 @@ package reader
 import (
 	"testing"
 
+	cfg "github.com/kaizencodes/glimpse/internal/scene/config"
 	"github.com/kaizencodes/glimpse/internal/utils"
-	cfg "github.com/kaizencodes/glimpse/internal/world/config"
 )
 
 func TestRead(t *testing.T) {
