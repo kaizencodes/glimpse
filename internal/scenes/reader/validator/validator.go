@@ -10,7 +10,7 @@ import (
 )
 
 // relative path to the project root.
-const schemaPath = "/reader/validator/schema.cue"
+const schemaPath = "/scenes/reader/validator/schema.cue"
 
 // Validates the config file against the schema using cue.
 func Validate(config []byte) error {

@@ -3,8 +3,8 @@ package reader
 import (
 	"os"
 
-	"github.com/kaizencodes/glimpse/internal/reader/validator"
 	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
+	"github.com/kaizencodes/glimpse/internal/scenes/reader/validator"
 
 	yaml "github.com/goccy/go-yaml"
 )
