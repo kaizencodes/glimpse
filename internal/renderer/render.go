@@ -6,12 +6,12 @@ import (
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/ray"
-	"github.com/kaizencodes/glimpse/internal/scene"
+	"github.com/kaizencodes/glimpse/internal/scenes"
 	"github.com/kaizencodes/glimpse/internal/shapes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
-func ColorAt(w *scene.Scene, r *ray.Ray) color.Color {
+func ColorAt(w *scenes.Scene, r *ray.Ray) color.Color {
 	intersections := intersect(w, r)
 	hit := intersections.Hit()
 	if hit.Empty() {
@@ -21,7 +21,7 @@ func ColorAt(w *scene.Scene, r *ray.Ray) color.Color {
 	return shadeHit(w, PrepareComputations(hit, r, intersections))
 }
 
-func intersect(w *scene.Scene, r *ray.Ray) shapes.Intersections {
+func intersect(w *scenes.Scene, r *ray.Ray) shapes.Intersections {
 	coll := shapes.Intersections{}
 	for _, o := range w.Shapes {
 		coll = append(coll, shapes.Intersect(o, r)...)
@@ -31,7 +31,7 @@ func intersect(w *scene.Scene, r *ray.Ray) shapes.Intersections {
 	return coll
 }
 
-func shadeHit(w *scene.Scene, comps Computations) color.Color {
+func shadeHit(w *scenes.Scene, comps Computations) color.Color {
 	isShadowed := shadowAt(w, comps.OverPoint)
 	c := light.Lighting(
 		comps.Shape,
@@ -68,7 +68,7 @@ func shadeHit(w *scene.Scene, comps Computations) color.Color {
 	return c
 }
 
-func shadowAt(w *scene.Scene, point tuple.Tuple) bool {
+func shadowAt(w *scenes.Scene, point tuple.Tuple) bool {
 	for _, l := range w.Lights {
 		v := tuple.Subtract(l.Position(), point)
 		dist := v.Magnitude()
@@ -82,7 +82,7 @@ func shadowAt(w *scene.Scene, point tuple.Tuple) bool {
 	return false
 }
 
-func reflectedColor(w *scene.Scene, comps Computations) color.Color {
+func reflectedColor(w *scenes.Scene, comps Computations) color.Color {
 	if comps.Shape.Material().Reflective == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
@@ -94,7 +94,7 @@ func reflectedColor(w *scene.Scene, comps Computations) color.Color {
 	return c.Scalar(comps.Shape.Material().Reflective)
 }
 
-func refractedColor(w *scene.Scene, comps Computations) color.Color {
+func refractedColor(w *scenes.Scene, comps Computations) color.Color {
 	if comps.Shape.Material().Transparency == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}

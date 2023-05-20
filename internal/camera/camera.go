@@ -8,7 +8,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/renderer"
-	"github.com/kaizencodes/glimpse/internal/scene"
+	"github.com/kaizencodes/glimpse/internal/scenes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
@@ -72,7 +72,7 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	return ray.NewRay(origin, direction)
 }
 
-func (c *Camera) Render(w *scene.Scene) canvas.Canvas {
+func (c *Camera) Render(w *scenes.Scene) canvas.Canvas {
 	img := canvas.New(c.width, c.height)
 	var wg sync.WaitGroup
 

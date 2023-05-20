@@ -6,17 +6,17 @@ import (
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
-	"github.com/kaizencodes/glimpse/internal/scene"
-	cfg "github.com/kaizencodes/glimpse/internal/scene/config"
+	"github.com/kaizencodes/glimpse/internal/scenes"
+	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
 	"github.com/kaizencodes/glimpse/internal/shapes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
-func BuildScene(scene cfg.Scene) (*camera.Camera, *scene.Scene) {
-	cam := buildCamera(scene.Camera)
-	scene := scene.Default()
-	scene.Lights = buildLight(scene.Light)
-	scene.Shapes = buildObjects(scene.Objects)
+func BuildScene(config cfg.Scene) (*camera.Camera, *scenes.Scene) {
+	cam := buildCamera(config.Camera)
+	scene := scenes.Default()
+	scene.Lights = buildLight(config.Light)
+	scene.Shapes = buildObjects(config.Objects)
 
 	return cam, scene
 }

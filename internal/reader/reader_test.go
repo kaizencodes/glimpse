@@ -3,7 +3,7 @@ package reader
 import (
 	"testing"
 
-	cfg "github.com/kaizencodes/glimpse/internal/scene/config"
+	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
