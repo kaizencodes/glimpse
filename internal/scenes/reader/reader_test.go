@@ -123,8 +123,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestReadInvalidFile(t *testing.T) {
-	_, err := Read(`./examples/invalid.yml`)
-	if err == nil {
+	if _, err := Read(`./examples/invalid.yml`); err == nil {
 		t.Errorf("%s", "No error was raised for invalid config")
 	}
 }

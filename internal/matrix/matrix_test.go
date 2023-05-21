@@ -89,7 +89,7 @@ func TestMultiply(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, _ := Multiply(test.a, test.b)
+		got := Multiply(test.a, test.b)
 		if got.String() != test.expected.String() {
 			t.Errorf("matrix multiplication,\na:\n%s\nb:\n%s\ngot:\n%s\nexpected: \n%s", test.a, test.b, got, test.expected)
 		}
@@ -97,6 +97,12 @@ func TestMultiply(t *testing.T) {
 }
 
 func TestInvalidMultiply(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic for invalid multiplication")
+		}
+	}()
+
 	var tests = []struct {
 		a Matrix
 		b Matrix
@@ -115,9 +121,7 @@ func TestInvalidMultiply(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if _, err := Multiply(test.a, test.b); err == nil {
-			t.Errorf("should've raised incompatible matrices error")
-		}
+		Multiply(test.a, test.b)
 	}
 }
 
@@ -390,19 +394,23 @@ func TestInverse(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got, _ := test.a.Inverse(); got.String() != test.expected.String() {
+		if got := test.a.Inverse(); got.String() != test.expected.String() {
 			t.Errorf("matrix inverse,\na:\n%s\ngot:\n%s\nexpected: \n%s", test.a, got, test.expected)
 		}
 	}
+}
 
-	non_invertible := Matrix{
+func TestNonInvertibleMatrix(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic for non-invertible matrix")
+		}
+	}()
+
+	Matrix{
 		[]float64{-4, 2, -2, -3},
 		[]float64{9, 6, 2, 6},
 		[]float64{0, -5, 1, -5},
 		[]float64{0, 0, 0, 0},
-	}
-
-	if _, error := non_invertible.Inverse(); error == nil {
-		t.Errorf("Should return non invertible matrix error")
-	}
+	}.Inverse()
 }

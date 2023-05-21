@@ -97,7 +97,7 @@ func buildTransforms(config []cfg.Transform) matrix.Matrix {
 
 	// Multiply the transforms in reverse order, since the first one is loaded, we start from the second to last.
 	for i := len(config) - 2; i >= 0; i-- {
-		transforms, _ = matrix.Multiply(transforms, buildTransform(config[i]))
+		transforms = matrix.Multiply(transforms, buildTransform(config[i]))
 	}
 
 	return transforms

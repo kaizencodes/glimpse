@@ -52,13 +52,10 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	sceneX := c.halfWidth - xOffset
 	sceneY := c.halfHeight - yOffset
 
-	invTransform, err := c.transform.Inverse()
-	if err != nil {
-		panic(err)
-	}
+	invTransform := c.transform.Inverse()
 
-	pixel, _ := tuple.Multiply(invTransform, tuple.NewPoint(sceneX, sceneY, -1))
-	origin, _ := tuple.Multiply(invTransform, tuple.NewPoint(0, 0, 0))
+	pixel := tuple.Multiply(invTransform, tuple.NewPoint(sceneX, sceneY, -1))
+	origin := tuple.Multiply(invTransform, tuple.NewPoint(0, 0, 0))
 	direction := tuple.Subtract(pixel, origin).Normalize()
 
 	return ray.NewRay(origin, direction)
@@ -76,7 +73,7 @@ func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
 		[]float64{0, 0, 0, 1},
 	}
 
-	result, _ := matrix.Multiply(orientation, matrix.Translation(-from.X(), -from.Y(), -from.Z()))
+	result := matrix.Multiply(orientation, matrix.Translation(-from.X(), -from.Y(), -from.Z()))
 
 	return result
 }

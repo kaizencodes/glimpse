@@ -46,54 +46,6 @@ func (s *Triangle) SetParent(other Shape) {
 	s.parent = other
 }
 
-// func (s *Triangle) P1() tuple.Tuple {
-// 	return s.p1
-// }
-
-// func (s *Triangle) P2() tuple.Tuple {
-// 	return s.p2
-// }
-
-// func (s *Triangle) P3() tuple.Tuple {
-// 	return s.p3
-// }
-
-// func (s *Triangle) E1() tuple.Tuple {
-// 	return s.e1
-// }
-
-// func (s *Triangle) E2() tuple.Tuple {
-// 	return s.e2
-// }
-
-// func (s *Triangle) N1() tuple.Tuple {
-// 	return s.n1
-// }
-
-// func (s *Triangle) N2() tuple.Tuple {
-// 	return s.n2
-// }
-
-// func (s *Triangle) N3() tuple.Tuple {
-// 	return s.n3
-// }
-
-// func (s *Triangle) Normal() tuple.Tuple {
-// 	return s.normal
-// }
-
-// func (s *Triangle) SetP1(point tuple.Tuple) {
-// 	s.p1 = point
-// }
-
-// func (s *Triangle) SetP2(point tuple.Tuple) {
-// 	s.p2 = point
-// }
-
-// func (s *Triangle) SetP3(point tuple.Tuple) {
-// 	s.p3 = point
-// }
-
 func (s *Triangle) LocalNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple {
 	if s.smooth() {
 		return s.smoothLocalNormalAt(point, hit)
@@ -135,18 +87,6 @@ func (s *Triangle) LocalIntersect(r *ray.Ray) Intersections {
 	t := f * tuple.Dot(s.E2, originCrossE1)
 	return Intersections{NewIntersectionWithUV(t, u, v, Shape(s))}
 }
-
-// func (t *Triangle) SetN1(point tuple.Tuple) {
-// 	t.n1 = point
-// }
-
-// func (t *Triangle) SetN2(point tuple.Tuple) {
-// 	t.n2 = point
-// }
-
-// func (t *Triangle) SetN3(point tuple.Tuple) {
-// 	t.n3 = point
-// }
 
 func NewTriangle(p1, p2, p3 tuple.Tuple) *Triangle {
 	e1 := tuple.Subtract(p2, p1)

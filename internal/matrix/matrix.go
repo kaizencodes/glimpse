@@ -58,10 +58,10 @@ func (a Matrix) Cofactor(col, row int) float64 {
 	return deter
 }
 
-func (a Matrix) Inverse() (Matrix, error) {
+func (a Matrix) Inverse() Matrix {
 	det := a.Determinant()
 	if det == 0 {
-		return nil, fmt.Errorf("noninvertible matrix, determinant is zero")
+		panic(fmt.Errorf("non-invertible matrix, determinant is zero for \n%s", a.String()))
 	}
 
 	inverse := New(len(a), len(a[0]))
@@ -70,7 +70,7 @@ func (a Matrix) Inverse() (Matrix, error) {
 			inverse[m][n] = a.Cofactor(n, m) / det
 		}
 	}
-	return inverse, nil
+	return inverse
 }
 
 func New(n, m int) Matrix {
@@ -117,9 +117,9 @@ func NewIdentity(size int) Matrix {
 	return identity
 }
 
-func Multiply(a, b Matrix) (Matrix, error) {
+func Multiply(a, b Matrix) Matrix {
 	if len(a[0]) != len(b) {
-		return nil, fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d", len(a[0]), len(b))
+		panic(fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d", len(a[0]), len(b)))
 	}
 
 	new_mat := New(len(a), len(b[0]))
@@ -128,7 +128,7 @@ func Multiply(a, b Matrix) (Matrix, error) {
 			new_mat[n][m] = dot(a, b, n, m)
 		}
 	}
-	return new_mat, nil
+	return new_mat
 }
 
 func dot(a, b Matrix, row, col int) float64 {

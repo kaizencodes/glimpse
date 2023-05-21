@@ -65,7 +65,7 @@ func TestRayForPixel(t *testing.T) {
 	}
 
 	c := New(201, 101, math.Pi/2)
-	transform, _ := matrix.Multiply(matrix.RotationY(math.Pi/4), matrix.Translation(0, -2, 5))
+	transform := matrix.Multiply(matrix.RotationY(math.Pi/4), matrix.Translation(0, -2, 5))
 	c.SetTransform(transform)
 	expected := ray.NewRay(tuple.NewPoint(0, 2, -5), tuple.NewVector(0.7071067811865474, 0, -0.7071067811865478))
 

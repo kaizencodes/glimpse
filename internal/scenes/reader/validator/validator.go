@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/kaizencodes/glimpse/internal/projectpath"
@@ -17,7 +18,8 @@ func Validate(config []byte) error {
 	ctx := cuecontext.New()
 	schema, err := os.ReadFile(projectpath.Root + schemaPath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("Missing schema file: \n%s", err.Error()))
+
 	}
 	s := ctx.CompileBytes(schema)
 	err = yaml.Validate(config, s)

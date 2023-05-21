@@ -165,7 +165,7 @@ func TestMultiply(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, _ := Multiply(test.a, test.b)
+		got := Multiply(test.a, test.b)
 		if got.String() != test.expected.String() {
 			t.Errorf("multiplication,\na:\n%s\nb:\n%s\ngot:\n%s\nexpected: \n%s", test.a, test.b, got, test.expected)
 		}

@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"fmt"
 	"os"
 
 	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
@@ -23,7 +24,7 @@ func Read(path string) (cfg.Scene, error) {
 	scene := cfg.Scene{}
 	err = yaml.Unmarshal(config, &scene)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("Unmarshaling failed: \n%s", err.Error()))
 	}
 
 	return scene, nil

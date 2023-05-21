@@ -16,12 +16,9 @@ func TestTranslate(t *testing.T) {
 		t.Errorf("translation(%f, %f, %f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, point, got, expected)
 	}
 
-	inv, err := matrix.Translation(x, y, z).Inverse()
-	if err != nil {
-		t.Error(err)
-	}
+	inv := matrix.Translation(x, y, z).Inverse()
 	expected = Tuple{-8, 7, 3, 1}
-	if got, _ := Multiply(inv, point); got.String() != expected.String() {
+	if got := Multiply(inv, point); got.String() != expected.String() {
 		t.Errorf("inverse translation(%f, %f, %f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, point, got, expected)
 	}
 
@@ -40,12 +37,10 @@ func TestScale(t *testing.T) {
 		t.Errorf("scaling(%f, %f, %f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, point, got, expected)
 	}
 
-	inv, err := matrix.Scaling(x, y, z).Inverse()
-	if err != nil {
-		t.Error(err)
-	}
+	inv := matrix.Scaling(x, y, z).Inverse()
+
 	expected = Tuple{-2, 2, 2, 1}
-	if got, _ := Multiply(inv, point); got.String() != expected.String() {
+	if got := Multiply(inv, point); got.String() != expected.String() {
 		t.Errorf("inverse scaling(%f, %f, %f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", x, y, z, point, got, expected)
 	}
 
@@ -73,12 +68,9 @@ func TestRotateX(t *testing.T) {
 		t.Errorf("rotatingX(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, expected)
 	}
 
-	inv, err := matrix.RotationX(r).Inverse()
-	if err != nil {
-		t.Error(err)
-	}
+	inv := matrix.RotationX(r).Inverse()
 	expected = Tuple{0, 0.7071067811865476, -0.7071067811865475, 1}
-	if got, _ := Multiply(inv, point); got.String() != expected.String() {
+	if got := Multiply(inv, point); got.String() != expected.String() {
 		t.Errorf("inverse rotatingX(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, expected)
 	}
 
@@ -100,12 +92,9 @@ func TestRotateY(t *testing.T) {
 		t.Errorf("rotatingY(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, expected)
 	}
 
-	inv, err := matrix.RotationY(r).Inverse()
-	if err != nil {
-		t.Error(err)
-	}
+	inv := matrix.RotationY(r).Inverse()
 	expected = Tuple{-0.7071067811865475, 0, 0.7071067811865476, 1}
-	if got, _ := Multiply(inv, point); got.String() != expected.String() {
+	if got := Multiply(inv, point); got.String() != expected.String() {
 		t.Errorf("inverse rotatingY(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, expected)
 	}
 
@@ -127,12 +116,10 @@ func TestRotateZ(t *testing.T) {
 		t.Errorf("rotatingZ(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, expected)
 	}
 
-	inv, err := matrix.RotationZ(r).Inverse()
-	if err != nil {
-		t.Error(err)
-	}
+	inv := matrix.RotationZ(r).Inverse()
+
 	expected = Tuple{0.7071067811865475, 0.7071067811865476, 0, 1}
-	if got, _ := Multiply(inv, point); got.String() != expected.String() {
+	if got := Multiply(inv, point); got.String() != expected.String() {
 		t.Errorf("inverse rotatingZ(%f),\na:\n%s\n\ngot:\n%s\nexpected: \n%s", r, point, got, expected)
 	}
 

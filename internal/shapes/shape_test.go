@@ -68,7 +68,7 @@ func TestNormalAt(t *testing.T) {
 
 	// Computing the normal on a transformed shape
 	shape = NewTestShape()
-	transform, _ := matrix.Multiply(matrix.Scaling(1, 0.5, 1), matrix.RotationZ(math.Pi/5.0))
+	transform := matrix.Multiply(matrix.Scaling(1, 0.5, 1), matrix.RotationZ(math.Pi/5.0))
 	shape.SetTransform(transform)
 	point = tuple.NewPoint(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0)
 	expected = tuple.NewVector(0, 0.9701425001453319, -0.24253562503633294)
@@ -344,8 +344,7 @@ func TestIntersect(t *testing.T) {
 }
 
 func testIntersection(t *testing.T, s Shape, r *ray.Ray, expected Intersections) {
-	result := Intersect(s, r)
-	if len(result) != len(expected) {
+	if result := Intersect(s, r); len(result) != len(expected) {
 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
 	} else {
 		for i := range result {

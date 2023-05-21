@@ -28,23 +28,14 @@ func (r *Ray) Equal(other *Ray) bool {
 }
 
 func (r *Ray) Translate(x, y, z float64) *Ray {
-	Origin, err := tuple.Multiply(matrix.Translation(x, y, z), r.Origin)
-	if err != nil {
-		panic(err)
-	}
-	return &Ray{Origin: Origin, Direction: r.Direction}
+	origin := tuple.Multiply(matrix.Translation(x, y, z), r.Origin)
+	return &Ray{Origin: origin, Direction: r.Direction}
 }
 
 func (r *Ray) Scale(x, y, z float64) *Ray {
-	Origin, err := tuple.Multiply(matrix.Scaling(x, y, z), r.Origin)
-	if err != nil {
-		panic(err)
-	}
-	Direction, err := tuple.Multiply(matrix.Scaling(x, y, z), r.Direction)
-	if err != nil {
-		panic(err)
-	}
-	return &Ray{Origin: Origin, Direction: Direction}
+	origin := tuple.Multiply(matrix.Scaling(x, y, z), r.Origin)
+	direction := tuple.Multiply(matrix.Scaling(x, y, z), r.Direction)
+	return &Ray{Origin: origin, Direction: direction}
 }
 
 func NewRay(origin, direction tuple.Tuple) *Ray {

@@ -20,36 +20,18 @@ type Shape interface {
 }
 
 func ColorAt(scenePoint tuple.Tuple, shape Shape) color.Color {
-	invShapeTransform, err := shape.Transform().Inverse()
-	if err != nil {
-		panic(err)
-	}
-
-	objectPoint, err := tuple.Multiply(invShapeTransform, scenePoint)
-	if err != nil {
-		panic(err)
-	}
-
-	invPatternTransform, err := shape.Material().Transform().Inverse()
-	if err != nil {
-		panic(err)
-	}
-
-	patternPoint, err := tuple.Multiply(invPatternTransform, objectPoint)
-	if err != nil {
-		panic(err)
-	}
+	invShapeTransform := shape.Transform().Inverse()
+	objectPoint := tuple.Multiply(invShapeTransform, scenePoint)
+	invPatternTransform := shape.Material().Transform().Inverse()
+	patternPoint := tuple.Multiply(invPatternTransform, objectPoint)
 
 	return shape.Material().ColorAt(patternPoint)
 }
 
 func Intersect(s Shape, r *ray.Ray) Intersections {
-	transform, err := s.Transform().Inverse()
-	if err != nil {
-		panic(err)
-	}
-	origin, _ := tuple.Multiply(transform, r.Origin)
-	direction, _ := tuple.Multiply(transform, r.Direction)
+	transform := s.Transform().Inverse()
+	origin := tuple.Multiply(transform, r.Origin)
+	direction := tuple.Multiply(transform, r.Direction)
 	localRay := ray.NewRay(origin, direction)
 
 	return s.LocalIntersect(localRay)
@@ -66,15 +48,14 @@ func sceneToObject(p tuple.Tuple, s Shape) tuple.Tuple {
 		p = sceneToObject(p, s.Parent())
 	}
 
-	inverse, _ := s.Transform().Inverse()
-	result, _ := tuple.Multiply(inverse, p)
+	inverse := s.Transform().Inverse()
+	result := tuple.Multiply(inverse, p)
 	return result
 }
 
 func normalToScene(v tuple.Tuple, s Shape) tuple.Tuple {
-	inv, _ := s.Transform().Inverse()
-	normal, _ := tuple.Multiply(inv.Transpose(), v)
-	normal = normal.ToVector().Normalize()
+	transposed := s.Transform().Inverse().Transpose()
+	normal := tuple.Multiply(transposed, v).ToVector().Normalize()
 
 	if s.Parent() != nil {
 		normal = normalToScene(normal, s.Parent())
