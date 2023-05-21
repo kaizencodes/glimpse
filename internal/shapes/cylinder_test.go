@@ -40,9 +40,9 @@ func TestCylinderLocalNormalAt(t *testing.T) {
 
 func TestClosedCylinderLocalNormalAt(t *testing.T) {
 	cylinder := NewCylinder()
-	cylinder.SetMinimum(1)
-	cylinder.SetMaximum(2)
-	cylinder.SetClosed(true)
+	cylinder.Minimum = 1
+	cylinder.Maximum = 2
+	cylinder.Closed = true
 
 	var tests = []struct {
 		point    tuple.Tuple
@@ -138,8 +138,8 @@ func TestLocalIntersect(t *testing.T) {
 
 func TestTruncatedCylinderIntersect(t *testing.T) {
 	cylinder := NewCylinder()
-	cylinder.SetMinimum(1)
-	cylinder.SetMaximum(2)
+	cylinder.Minimum = 1
+	cylinder.Maximum = 2
 
 	var tests = []struct {
 		ray      *ray.Ray
@@ -190,9 +190,9 @@ func TestTruncatedCylinderIntersect(t *testing.T) {
 
 func TestClosedCylinderIntersect(t *testing.T) {
 	cylinder := NewCylinder()
-	cylinder.SetMinimum(1)
-	cylinder.SetMaximum(2)
-	cylinder.SetClosed(true)
+	cylinder.Minimum = 1
+	cylinder.Maximum = 2
+	cylinder.Closed = true
 
 	var tests = []struct {
 		ray      *ray.Ray

@@ -55,7 +55,7 @@ func newStripePattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
-			if math.Mod(math.Floor(point.X()), 2) == 0 {
+			if math.Mod(math.Floor(point.X), 2) == 0 {
 				return a
 			}
 			return b
@@ -68,7 +68,7 @@ func newGradientPattern(a, b color.Color) *Pattern {
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
 			distance := color.Subtract(b, a)
-			fraction := point.X() - math.Floor(point.X())
+			fraction := point.X - math.Floor(point.X)
 			return color.Add(a, distance.Scalar(fraction))
 		},
 	}
@@ -78,7 +78,7 @@ func newRingPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
-			comp := math.Sqrt(math.Pow(point.X(), 2) + math.Pow(point.Z(), 2))
+			comp := math.Sqrt(math.Pow(point.X, 2) + math.Pow(point.Z, 2))
 			if math.Mod(math.Floor(comp), 2) == 0 {
 				return a
 			}
@@ -91,7 +91,7 @@ func newCheckerPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
-			sum := math.Floor(point.X()) + math.Floor(point.Y()) + math.Floor(point.Z())
+			sum := math.Floor(point.X) + math.Floor(point.Y) + math.Floor(point.Z)
 			if math.Mod(sum, 2) == 0 {
 				return a
 			}
@@ -104,7 +104,7 @@ func newTestPattern() *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
 		colorAt: func(point tuple.Tuple) color.Color {
-			return color.New(point.X(), point.Y(), point.Z())
+			return color.New(point.X, point.Y, point.Z)
 		},
 	}
 }

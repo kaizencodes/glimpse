@@ -67,13 +67,13 @@ func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
 	trueUp := tuple.Cross(left, forward)
 
 	orientation := matrix.Matrix{
-		[]float64{left.X(), left.Y(), left.Z(), 0},
-		[]float64{trueUp.X(), trueUp.Y(), trueUp.Z(), 0},
-		[]float64{-forward.X(), -forward.Y(), -forward.Z(), 0},
+		[]float64{left.X, left.Y, left.Z, 0},
+		[]float64{trueUp.X, trueUp.Y, trueUp.Z, 0},
+		[]float64{-forward.X, -forward.Y, -forward.Z, 0},
 		[]float64{0, 0, 0, 1},
 	}
 
-	result := matrix.Multiply(orientation, matrix.Translation(-from.X(), -from.Y(), -from.Z()))
+	result := matrix.Multiply(orientation, matrix.Translation(-from.X, -from.Y, -from.Z))
 
 	return result
 }

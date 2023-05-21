@@ -44,12 +44,12 @@ func TestPrepareComputations(t *testing.T) {
 	inside = false
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
-	if comps.OverPoint.Z() > -utils.EPSILON/2.0 {
-		t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint.Z(), -utils.EPSILON/2)
+	if comps.OverPoint.Z > -utils.EPSILON/2.0 {
+		t.Errorf("incorrect OverPoint.Z %f > %f", comps.OverPoint.Z, -utils.EPSILON/2)
 	}
 
-	if comps.Point.Z() < comps.OverPoint.Z() {
-		t.Errorf("incorrect Z %f < OverPoint.Z %f", comps.Point.Z(), comps.OverPoint.Z())
+	if comps.Point.Z < comps.OverPoint.Z {
+		t.Errorf("incorrect Z %f < OverPoint.Z %f", comps.Point.Z, comps.OverPoint.Z)
 	}
 
 	// The under point is offset below the surface
@@ -58,12 +58,12 @@ func TestPrepareComputations(t *testing.T) {
 	i = shapes.NewIntersection(5, s)
 	comps = PrepareComputations(i, r, shapes.Intersections{i})
 	eps := utils.EPSILON / 2.0
-	if comps.UnderPoint.Z() < eps {
-		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint.Z(), utils.EPSILON/2)
+	if comps.UnderPoint.Z < eps {
+		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint.Z, utils.EPSILON/2)
 	}
 
-	if comps.Point.Z() > comps.UnderPoint.Z() {
-		t.Errorf("incorrect Z %f > UnderPoint.Z %f", comps.Point.Z(), comps.UnderPoint.Z())
+	if comps.Point.Z > comps.UnderPoint.Z {
+		t.Errorf("incorrect Z %f > UnderPoint.Z %f", comps.Point.Z, comps.UnderPoint.Z)
 	}
 
 	// Precomputing the reflection vector

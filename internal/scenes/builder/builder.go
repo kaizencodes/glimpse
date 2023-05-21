@@ -65,9 +65,9 @@ func buildObject(config cfg.Object) shapes.Shape {
 	case "cylinder":
 		cylinder := shapes.NewCylinder()
 
-		cylinder.SetMinimum(config.Minimum)
-		cylinder.SetMaximum(config.Maximum)
-		cylinder.SetClosed(config.Closed)
+		cylinder.Minimum = config.Minimum
+		cylinder.Maximum = config.Maximum
+		cylinder.Closed = config.Closed
 
 		shape = cylinder
 	default:
