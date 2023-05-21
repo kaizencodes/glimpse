@@ -30,9 +30,9 @@ func header(c canvas.Canvas) string {
 }
 
 func convertColor(c color.Color) string {
-	r := rgbScale(c.R())
-	g := rgbScale(c.G())
-	b := rgbScale(c.B())
+	r := rgbScale(c.R)
+	g := rgbScale(c.G)
+	b := rgbScale(c.B)
 
 	return fmt.Sprintf("%d %d %d ", r, g, b)
 }

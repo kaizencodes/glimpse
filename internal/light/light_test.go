@@ -70,7 +70,7 @@ func TestLighting(t *testing.T) {
 		}
 	}
 
-	// Lightning with a pattern applied
+	// Lighting with a pattern applied
 
 	eyeV := tuple.NewVector(0, 0, -1)
 	normalV := tuple.NewVector(0, 0, -1)
