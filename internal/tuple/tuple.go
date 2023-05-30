@@ -21,7 +21,6 @@ func (t Tuple) IsVector() bool {
 	return t.W == 0.0
 }
 
-// this is kind of a hack for getting the surface normal. Not used anywhere else.
 func (t Tuple) ToVector() Tuple {
 	return Tuple{t.X, t.Y, t.Z, 0}
 }

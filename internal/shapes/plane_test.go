@@ -7,6 +7,7 @@ import (
 )
 
 func TestPlaneLocalNormalAt(t *testing.T) {
+	// The normal of a plane is constant everywhere.
 	var tests = []struct {
 		plane    *Plane
 		point    tuple.Tuple

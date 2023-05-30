@@ -70,7 +70,7 @@ func (s *Cylinder) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tup
 	return tuple.NewVector(point.X, 0, point.Z)
 }
 
-func (s *Cylinder) LocalIntersect(r *ray.Ray) Intersections {
+func (s *Cylinder) localIntersect(r *ray.Ray) Intersections {
 	a := math.Pow(r.Direction.X, 2) + math.Pow(r.Direction.Z, 2)
 	if utils.FloatEquals(a, 0.0) {
 		return s.intersectionsForCaps(Intersections{}, r)

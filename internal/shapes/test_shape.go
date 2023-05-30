@@ -47,7 +47,7 @@ func (s *TestShape) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tu
 	return point.ToVector()
 }
 
-func (s *TestShape) LocalIntersect(r *ray.Ray) Intersections {
+func (s *TestShape) localIntersect(r *ray.Ray) Intersections {
 	return Intersections{}
 }
 

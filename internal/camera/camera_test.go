@@ -45,12 +45,14 @@ func TestRayForPixel(t *testing.T) {
 		expected *ray.Ray
 	}{
 		{
+			// Constructing a ray through the center of the canvas
 			c:        New(201, 101, math.Pi/2),
 			x:        100,
 			y:        50,
 			expected: ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, -1)),
 		},
 		{
+			// Constructing a ray through a corner of the canvas
 			c:        New(201, 101, math.Pi/2),
 			x:        0,
 			y:        0,
@@ -64,9 +66,11 @@ func TestRayForPixel(t *testing.T) {
 		}
 	}
 
+	// Constructing a ray when the camera is transformed
 	c := New(201, 101, math.Pi/2)
 	transform := matrix.Multiply(matrix.RotationY(math.Pi/4), matrix.Translation(0, -2, 5))
 	c.SetTransform(transform)
+	// (√2/2, 0, -√2/2)
 	expected := ray.NewRay(tuple.NewPoint(0, 2, -5), tuple.NewVector(0.7071067811865474, 0, -0.7071067811865478))
 
 	if result := c.RayForPixel(100, 50); !result.Equal(expected) {

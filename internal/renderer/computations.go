@@ -49,6 +49,8 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 		inside = true
 		normalV = normalV.Negate()
 	}
+	// after computing and (if appropriate) negating the normal vector we move the point slightly
+	// over and under the surface.
 	overPoint := tuple.Add(point, normalV.Scalar(utils.EPSILON))
 	underPoint := tuple.Subtract(point, normalV.Scalar(utils.EPSILON))
 

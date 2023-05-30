@@ -40,7 +40,7 @@ func (s *Sphere) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple
 	return tuple.Subtract(point, tuple.NewPoint(0, 0, 0))
 }
 
-func (s *Sphere) LocalIntersect(r *ray.Ray) Intersections {
+func (s *Sphere) localIntersect(r *ray.Ray) Intersections {
 	sphere_to_ray := r.Origin.ToVector()
 
 	a := tuple.Dot(r.Direction, r.Direction)
@@ -74,6 +74,7 @@ func NewSphere() *Sphere {
 	}
 }
 
+// A helper for producing a sphere with a glassy material
 func NewGlassSphere() *Sphere {
 	mat := materials.DefaultMaterial()
 	mat.Transparency = 1.0

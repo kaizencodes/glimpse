@@ -41,7 +41,7 @@ func (s *Plane) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple 
 	return tuple.NewVector(0, 1, 0)
 }
 
-func (s *Plane) LocalIntersect(r *ray.Ray) Intersections {
+func (s *Plane) localIntersect(r *ray.Ray) Intersections {
 	if math.Abs(r.Direction.Y) < utils.EPSILON {
 		return Intersections{}
 	}

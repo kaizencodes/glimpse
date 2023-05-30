@@ -55,7 +55,9 @@ func TestNormalAt(t *testing.T) {
 			t.Errorf("test normal:\n%s \n point: %s. \nresult: \n%s. \nexpected: \n%s", test.shape, test.point, result, test.expected)
 		}
 	}
+}
 
+func TestNormalAtOnTranslatedShape(t *testing.T) {
 	// Computing the normal on a translated shape
 	shape := NewTestShape()
 	shape.SetTransform(matrix.Translation(0, 1, 0))
@@ -65,18 +67,22 @@ func TestNormalAt(t *testing.T) {
 	if got := NormalAt(point, shape, Intersection{}); !got.Equal(expected) {
 		t.Errorf("test normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", shape, point, got, expected)
 	}
+}
 
+func TestNormalAtOnTransformedShape(t *testing.T) {
 	// Computing the normal on a transformed shape
-	shape = NewTestShape()
+	shape := NewTestShape()
 	transform := matrix.Multiply(matrix.Scaling(1, 0.5, 1), matrix.RotationZ(math.Pi/5.0))
 	shape.SetTransform(transform)
-	point = tuple.NewPoint(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0)
-	expected = tuple.NewVector(0, 0.9701425001453319, -0.24253562503633294)
+	point := tuple.NewPoint(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0)
+	expected := tuple.NewVector(0, 0.9701425001453319, -0.24253562503633294)
 
 	if got := NormalAt(point, shape, Intersection{}); !got.Equal(expected) {
 		t.Errorf("test normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", shape, point, got, expected)
 	}
+}
 
+func TestNormalAtOnWithGroup(t *testing.T) {
 	// Finding the normal on a child object
 	g1 := NewGroup()
 	g1.SetTransform(matrix.RotationY(math.Pi / 2))
@@ -87,13 +93,13 @@ func TestNormalAt(t *testing.T) {
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	g2.AddChild(s)
 	result := NormalAt(tuple.NewPoint(1.7321, 1.1547, -5.5774), s, Intersection{})
-	expected = tuple.NewVector(0.28570368184140726, 0.42854315178114105, -0.8571605294481017)
+	expected := tuple.NewVector(0.28570368184140726, 0.42854315178114105, -0.8571605294481017)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect point convertion to object space.\nexpected: %s\nresult: %s", expected, result)
 	}
 }
 
-func TestColorAt(t *testing.T) {
+func TestColorAtWithObjectTransformation(t *testing.T) {
 	// Stripes with an object transformation
 	shape := NewTestShape()
 	shape.SetTransform(matrix.Scaling(2, 2, 2))
@@ -107,29 +113,33 @@ func TestColorAt(t *testing.T) {
 	if result := ColorAt(point, shape); !result.Equal(expected) {
 		t.Errorf("test color for:\n%s \n at point: %s. \nresult: \n%s. \nexpected: \n%s", shape, point, result, expected)
 	}
+}
 
+func TestColorAtWithPatternTransformation(t *testing.T) {
 	// Stripes with a pattern transformation
-	shape = NewTestShape()
-	mat = shape.Material()
+	shape := NewTestShape()
+	mat := shape.Material()
 	mat.SetPattern(materials.NewPattern(materials.Stripe, color.White(), color.Black()))
 	mat.SetTransform(matrix.Scaling(2, 2, 2))
 
-	point = tuple.NewPoint(1.5, 0, 0)
-	expected = color.White()
+	point := tuple.NewPoint(1.5, 0, 0)
+	expected := color.White()
 
 	if result := ColorAt(point, shape); !result.Equal(expected) {
 		t.Errorf("test color for:\n%s \n at point: %s. \nresult: \n%s. \nexpected: \n%s", shape, point, result, expected)
 	}
+}
 
+func TestColorAtWithObjectAndPatternTransformation(t *testing.T) {
 	// Stripes with both an object and a pattern transformation
-	shape = NewTestShape()
+	shape := NewTestShape()
 	shape.SetTransform(matrix.Scaling(2, 2, 2))
-	mat = shape.Material()
+	mat := shape.Material()
 	mat.SetPattern(materials.NewPattern(materials.Stripe, color.White(), color.Black()))
 	mat.SetTransform(matrix.Translation(0.5, 0, 0))
 
-	point = tuple.NewPoint(2.5, 0, 0)
-	expected = color.White()
+	point := tuple.NewPoint(2.5, 0, 0)
+	expected := color.White()
 
 	if result := ColorAt(point, shape); !result.Equal(expected) {
 		t.Errorf("test color for:\n%s \n at point: %s. \nresult: \n%s. \nexpected: \n%s", shape, point, result, expected)
@@ -178,6 +188,7 @@ func TestIntersect(t *testing.T) {
 		expected Intersections
 	}{
 		{
+			// A ray intersects a sphere at two points
 			ray: ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1)),
 			s:   sphere,
 			expected: Intersections{
@@ -186,6 +197,7 @@ func TestIntersect(t *testing.T) {
 			},
 		},
 		{
+			// A ray intersects a sphere at a tangent
 			ray: ray.NewRay(tuple.NewPoint(0, 1, -5), tuple.NewVector(0, 0, 1)),
 			s:   sphere,
 			expected: Intersections{
@@ -194,11 +206,13 @@ func TestIntersect(t *testing.T) {
 			},
 		},
 		{
+			// A ray misses a sphere
 			ray:      ray.NewRay(tuple.NewPoint(0, 2, -5), tuple.NewVector(0, 0, 1)),
 			s:        sphere,
 			expected: Intersections{},
 		},
 		{
+			// A ray originates inside a sphere
 			ray: ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1)),
 			s:   sphere,
 			expected: Intersections{
@@ -207,6 +221,7 @@ func TestIntersect(t *testing.T) {
 			},
 		},
 		{
+			// A sphere is behind a ray
 			ray: ray.NewRay(tuple.NewPoint(0, 0, 5), tuple.NewVector(0, 0, 1)),
 			s:   sphere,
 			expected: Intersections{

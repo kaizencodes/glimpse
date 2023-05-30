@@ -14,7 +14,7 @@ type Shape interface {
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
 	LocalNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple
-	LocalIntersect(r *ray.Ray) Intersections
+	localIntersect(r *ray.Ray) Intersections
 	Parent() Shape
 	SetParent(Shape)
 }
@@ -34,7 +34,7 @@ func Intersect(s Shape, r *ray.Ray) Intersections {
 	direction := tuple.Multiply(transform, r.Direction)
 	localRay := ray.NewRay(origin, direction)
 
-	return s.LocalIntersect(localRay)
+	return s.localIntersect(localRay)
 }
 
 func NormalAt(scenePoint tuple.Tuple, shape Shape, hit Intersection) tuple.Tuple {

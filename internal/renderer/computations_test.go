@@ -12,6 +12,7 @@ import (
 )
 
 func TestPrepareComputations(t *testing.T) {
+	// The hit, when an intersection occurs on the outside
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	s := shapes.NewSphere()
 	i := shapes.NewIntersection(4, s)
@@ -22,26 +23,33 @@ func TestPrepareComputations(t *testing.T) {
 	inside := false
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
+}
 
-	r = ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
-	i = shapes.NewIntersection(1, s)
-	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	point = tuple.NewPoint(0, 0, 1)
-	eyeV = tuple.NewVector(0, 0, -1)
-	normalV = tuple.NewVector(0, 0, -1)
-	inside = true
+func TestPrepareComputations2(t *testing.T) {
+	// The hit, when an intersection occurs on the inside
+	r := ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+	s := shapes.NewSphere()
+	i := shapes.NewIntersection(1, s)
+	comps := PrepareComputations(i, r, shapes.Intersections{i})
+	point := tuple.NewPoint(0, 0, 1)
+	eyeV := tuple.NewVector(0, 0, -1)
+	normalV := tuple.NewVector(0, 0, -1)
+	inside := true
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
+}
 
-	r = ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
-	s = shapes.NewSphere()
+func TestPrepareComputations3(t *testing.T) {
+	// The hit should offset the point
+	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	s := shapes.NewSphere()
 	s.SetTransform(matrix.Translation(0, 0, 1))
-	i = shapes.NewIntersection(5, s)
-	comps = PrepareComputations(i, r, shapes.Intersections{i})
-	point = tuple.NewPoint(0, 0, 0)
-	eyeV = tuple.NewVector(0, 0, -1)
-	normalV = tuple.NewVector(0, 0, -1)
-	inside = false
+	i := shapes.NewIntersection(5, s)
+	comps := PrepareComputations(i, r, shapes.Intersections{i})
+	point := tuple.NewPoint(0, 0, 0)
+	eyeV := tuple.NewVector(0, 0, -1)
+	normalV := tuple.NewVector(0, 0, -1)
+	inside := false
 
 	testComputation(t, comps, s, i, point, eyeV, normalV, inside)
 	if comps.OverPoint.Z > -utils.EPSILON/2.0 {
@@ -51,12 +59,15 @@ func TestPrepareComputations(t *testing.T) {
 	if comps.Point.Z < comps.OverPoint.Z {
 		t.Errorf("incorrect Z %f < OverPoint.Z %f", comps.Point.Z, comps.OverPoint.Z)
 	}
+}
 
+func TestPrepareComputations4(t *testing.T) {
 	// The under point is offset below the surface
-	s = shapes.NewGlassSphere()
+	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	s := shapes.NewGlassSphere()
 	s.SetTransform(matrix.Translation(0, 0, 1))
-	i = shapes.NewIntersection(5, s)
-	comps = PrepareComputations(i, r, shapes.Intersections{i})
+	i := shapes.NewIntersection(5, s)
+	comps := PrepareComputations(i, r, shapes.Intersections{i})
 	eps := utils.EPSILON / 2.0
 	if comps.UnderPoint.Z < eps {
 		t.Errorf("incorrect UnderPoint.Z %f < %f", comps.UnderPoint.Z, utils.EPSILON/2)
@@ -65,13 +76,15 @@ func TestPrepareComputations(t *testing.T) {
 	if comps.Point.Z > comps.UnderPoint.Z {
 		t.Errorf("incorrect Z %f > UnderPoint.Z %f", comps.Point.Z, comps.UnderPoint.Z)
 	}
+}
 
+func TestPrepareComputations5(t *testing.T) {
 	// Precomputing the reflection vector
 
-	r = ray.NewRay(tuple.NewPoint(0, 1, -1), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
+	r := ray.NewRay(tuple.NewPoint(0, 1, -1), tuple.NewVector(0, -math.Sqrt(2)/2, math.Sqrt(2)/2))
 	p := shapes.NewPlane()
-	i = shapes.NewIntersection(math.Sqrt(2), p)
-	comps = PrepareComputations(i, r, shapes.Intersections{i})
+	i := shapes.NewIntersection(math.Sqrt(2), p)
+	comps := PrepareComputations(i, r, shapes.Intersections{i})
 	reflectV := tuple.NewVector(0, math.Sqrt(2)/2, math.Sqrt(2)/2)
 
 	if comps.ReflectV != reflectV {
@@ -138,31 +151,35 @@ func TestSchlick(t *testing.T) {
 	if !utils.FloatEquals(result, expected) {
 		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
 	}
+}
 
+func TestSchlick2(t *testing.T) {
 	// The Schlick approximation with a perpendicular viewing angle
-	sphere = shapes.NewGlassSphere()
-	r = ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
-	xs = shapes.Intersections{
+	sphere := shapes.NewGlassSphere()
+	r := ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 1, 0))
+	xs := shapes.Intersections{
 		shapes.NewIntersection(-1, sphere),
 		shapes.NewIntersection(1, sphere),
 	}
-	comps = PrepareComputations(xs[1], r, xs)
-	result = comps.Schlick()
-	expected = 0.04
+	comps := PrepareComputations(xs[1], r, xs)
+	result := comps.Schlick()
+	expected := 0.04
 
 	if !utils.FloatEquals(result, expected) {
 		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)
 	}
+}
 
+func TestSchlick3(t *testing.T) {
 	// The Schlick approximation with small angle and n2 > n1
-	sphere = shapes.NewGlassSphere()
-	r = ray.NewRay(tuple.NewPoint(0, 0.99, -2), tuple.NewVector(0, 0, 1))
-	xs = shapes.Intersections{
+	sphere := shapes.NewGlassSphere()
+	r := ray.NewRay(tuple.NewPoint(0, 0.99, -2), tuple.NewVector(0, 0, 1))
+	xs := shapes.Intersections{
 		shapes.NewIntersection(1.8589, sphere),
 	}
-	comps = PrepareComputations(xs[0], r, xs)
-	result = comps.Schlick()
-	expected = 0.4887308101221217
+	comps := PrepareComputations(xs[0], r, xs)
+	result := comps.Schlick()
+	expected := 0.4887308101221217
 
 	if result != expected {
 		t.Errorf("incorrect reflectance:\nresult: \n%f. \nexpected: \n%f", result, expected)

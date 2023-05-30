@@ -62,7 +62,7 @@ func (s *Triangle) smoothLocalNormalAt(point tuple.Tuple, hit Intersection) tupl
 		s.N1.Scalar(1-hit.u-hit.v))
 }
 
-func (s *Triangle) LocalIntersect(r *ray.Ray) Intersections {
+func (s *Triangle) localIntersect(r *ray.Ray) Intersections {
 	// Möller–Trumbore algorithm
 	directionCrossE2 := tuple.Cross(r.Direction, s.E2)
 	determinant := tuple.Dot(s.E1, directionCrossE2)

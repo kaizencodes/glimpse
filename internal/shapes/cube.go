@@ -49,7 +49,7 @@ func (s *Cube) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return tuple.NewVector(0, 0, point.Z)
 }
 
-func (s *Cube) LocalIntersect(r *ray.Ray) Intersections {
+func (s *Cube) localIntersect(r *ray.Ray) Intersections {
 	xMin, xMax := checkAxis(r.Origin.X, r.Direction.X)
 	yMin, yMax := checkAxis(r.Origin.Y, r.Direction.Y)
 	zMin, zMax := checkAxis(r.Origin.Z, r.Direction.Z)

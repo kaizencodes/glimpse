@@ -45,6 +45,7 @@ func TestIntersect(t *testing.T) {
 }
 
 func TestShadeHit(t *testing.T) {
+	// Shading an intersection
 	scene := scenes.Default()
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	shape := scene.Shapes[0]
@@ -57,6 +58,7 @@ func TestShadeHit(t *testing.T) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
+	// Shading an intersection from the inside
 	scene = scenes.Default()
 	scene.Lights = []light.Light{
 		light.NewLight(tuple.NewPoint(0, 0.25, 0), color.New(1, 1, 1)),
@@ -89,6 +91,7 @@ func TestShadeHit(t *testing.T) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
+	// shadeHit() is given an intersection in shadow
 	scene = scenes.Default()
 	scene.Lights = []light.Light{
 		light.NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
@@ -183,6 +186,7 @@ func TestShadeHit(t *testing.T) {
 }
 
 func TestColorAt(t *testing.T) {
+	// The color when a ray misses
 	scene := scenes.Default()
 	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 1, 0))
 	result := colorAt(scene, r)
@@ -191,6 +195,7 @@ func TestColorAt(t *testing.T) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
+	// The color when a ray hits
 	scene = scenes.Default()
 	r = ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	result = colorAt(scene, r)
@@ -199,6 +204,7 @@ func TestColorAt(t *testing.T) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
 
+	// The color with an intersection behind the ray
 	scene = scenes.Default()
 	outer := scene.Shapes[0]
 	m := outer.Material()
@@ -254,21 +260,25 @@ func TestShadowAt(t *testing.T) {
 		expected bool
 	}{
 		{
+			// There is no shadow when nothing is collinear with point and light
 			scene:    scene,
 			point:    tuple.NewPoint(0, 10, 0),
 			expected: false,
 		},
 		{
+			// The shadow when an object is between the point and the light
 			scene:    scene,
 			point:    tuple.NewPoint(10, -10, 10),
 			expected: true,
 		},
 		{
+			// There is no shadow when an object is behind the light
 			scene:    scene,
 			point:    tuple.NewPoint(-20, 20, -20),
 			expected: false,
 		},
 		{
+			// There is no shadow when an object is behind the point
 			scene:    scene,
 			point:    tuple.NewPoint(-2, 2, -2),
 			expected: false,

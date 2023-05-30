@@ -19,6 +19,7 @@ func TestLighting(t *testing.T) {
 		expected color.Color
 	}{
 		{
+			// Lighting with the eye between the light and the surface
 			eyeV:     tuple.NewVector(0, 0, -1),
 			normalV:  tuple.NewVector(0, 0, -1),
 			light:    NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
@@ -26,6 +27,7 @@ func TestLighting(t *testing.T) {
 			expected: color.New(1.9, 1.9, 1.9),
 		},
 		{
+			// Lighting with the eye between light and surface, eye offset 45°
 			eyeV:     tuple.NewVector(0, math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0),
 			normalV:  tuple.NewVector(0, 0, -1),
 			light:    NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),
@@ -33,6 +35,7 @@ func TestLighting(t *testing.T) {
 			expected: color.New(1.0, 1.0, 1.0),
 		},
 		{
+			// Lighting with eye opposite surface, light offset 45°
 			eyeV:     tuple.NewVector(0, 0, -1),
 			normalV:  tuple.NewVector(0, 0, -1),
 			light:    NewLight(tuple.NewPoint(0, 10, -10), color.New(1, 1, 1)),
@@ -40,6 +43,7 @@ func TestLighting(t *testing.T) {
 			expected: color.New(0.7363961030678927, 0.7363961030678927, 0.7363961030678927),
 		},
 		{
+			// Lighting with eye in the path of the reflection vector
 			eyeV:     tuple.NewVector(0, -math.Sqrt(2)/2.0, -math.Sqrt(2)/2.0),
 			normalV:  tuple.NewVector(0, 0, -1),
 			light:    NewLight(tuple.NewPoint(0, 10, -10), color.New(1, 1, 1)),
@@ -47,6 +51,7 @@ func TestLighting(t *testing.T) {
 			expected: color.New(1.6363961030678928, 1.6363961030678928, 1.6363961030678928),
 		},
 		{
+			// Lighting with the light behind the surface
 			eyeV:     tuple.NewVector(0, 0, -1),
 			normalV:  tuple.NewVector(0, 0, -1),
 			light:    NewLight(tuple.NewPoint(0, 0, 10), color.New(1, 1, 1)),

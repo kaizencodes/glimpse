@@ -81,7 +81,7 @@ func TestClosedCylinderLocalNormalAt(t *testing.T) {
 	}
 }
 
-func TestLocalIntersect(t *testing.T) {
+func TestlocalIntersect(t *testing.T) {
 	cylinder := NewCylinder()
 	var tests = []struct {
 		ray      *ray.Ray
@@ -227,7 +227,7 @@ func TestClosedCylinderIntersect(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := test.s.LocalIntersect(test.ray)
+		result := test.s.localIntersect(test.ray)
 		if len(result) != test.expected {
 			t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), test.expected)
 		}
@@ -235,7 +235,7 @@ func TestClosedCylinderIntersect(t *testing.T) {
 }
 
 // func testIntersection(t *testing.T, s Shape, r *ray.Ray, expected Intersections) {
-// 	result := s.LocalIntersect(r)
+// 	result := s.localIntersect(r)
 // 	if len(result) != len(expected) {
 // 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
 // 	} else {

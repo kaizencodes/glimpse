@@ -46,14 +46,19 @@ func (c *Camera) SetTransform(m matrix.Matrix) {
 }
 
 func (c *Camera) RayForPixel(x, y int) *ray.Ray {
+	// the offset from the edge of the canvas to the pixel's center
 	xOffset := (float64(x) + 0.5) * c.pixelSize
 	yOffset := (float64(y) + 0.5) * c.pixelSize
 
+	// the untransformed coordinates of the pixel in world space.
+	// the camera looks toward -z, so +x is to the left.
 	sceneX := c.halfWidth - xOffset
 	sceneY := c.halfHeight - yOffset
 
 	invTransform := c.transform.Inverse()
 
+	// using the camera matrix, transform the canvas point and the origin,
+	// and then compute the ray's direction vector. The canvas is at z=-1
 	pixel := tuple.Multiply(invTransform, tuple.NewPoint(sceneX, sceneY, -1))
 	origin := tuple.Multiply(invTransform, tuple.NewPoint(0, 0, 0))
 	direction := tuple.Subtract(pixel, origin).Normalize()
