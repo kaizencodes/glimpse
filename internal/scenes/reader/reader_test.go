@@ -122,8 +122,14 @@ func TestRead(t *testing.T) {
 	}
 }
 
+func TestReadMissingFile(t *testing.T) {
+	if _, err := Read(`./examples/missing.yml`); err == nil {
+		t.Errorf("%s", "No error was raised for invalid config")
+	}
+}
+
 func TestReadInvalidFile(t *testing.T) {
-	if _, err := Read(`./examples/invalid.yml`); err == nil {
+	if _, err := Read(`./examples/test_invalid.yml`); err == nil {
 		t.Errorf("%s", "No error was raised for invalid config")
 	}
 }
