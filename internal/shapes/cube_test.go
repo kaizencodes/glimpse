@@ -6,7 +6,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
-func TestCubeLocalNormalAt(t *testing.T) {
+func TestCubelocalNormalAt(t *testing.T) {
 	var tests = []struct {
 		shape    *Cube
 		point    tuple.Tuple
@@ -55,7 +55,7 @@ func TestCubeLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.shape.LocalNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
+		if got := test.shape.localNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
 			t.Errorf("Cube normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.shape, test.point, got, test.expected)
 		}
 	}

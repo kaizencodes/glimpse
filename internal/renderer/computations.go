@@ -10,14 +10,24 @@ import (
 )
 
 type Computations struct {
-	T, N1, N2                                             float64
-	Shape                                                 shapes.Shape
-	Point, EyeV, NormalV, ReflectV, OverPoint, UnderPoint tuple.Tuple
-	BounceLimit                                           int
-	Inside                                                bool
+	T      float64 // The distance from the ray's origin to the intersection.
+	N1, N2 float64 // N1 and N2 are the names given to the refractive indices of the materials
+	// on either side of a ray-object intersection, with N1 belonging to the material being exited,
+	// N2 belonging to the material being entered.
+	Shape shapes.Shape
+	Point tuple.Tuple // Point where the intersection occurred between thew shape and the ray.
+	EyeV  tuple.Tuple // the eye vector, pointing from Point to the origin of the ray (usually, where
+	// the eye exists that, is the camera looking at the scene).
+	NormalV     tuple.Tuple // The surface normal, a vector that is perpendicular to the surface at Point.
+	ReflectV    tuple.Tuple // The reflection vector, pointing in the direction that incoming light would bounce, or reflect.
+	OverPoint   tuple.Tuple // The point is slightly over the surface.
+	UnderPoint  tuple.Tuple // The point is slightly under the surface.
+	BounceLimit int         // The maximum number of bounces that can occur.
+	Inside      bool        // true if the intersection occurred from the inside of the shape.
 }
 
-func (comps Computations) Schlick() float64 {
+// An approximation to Fresnel’s equations by Christophe Schlick.
+func (comps Computations) schlick() float64 {
 	// find the cosine of the angle between the eye and normal vectors
 	cos := tuple.Dot(comps.EyeV, comps.NormalV)
 	// total internal reflection can only occur if n1 > n2
@@ -39,7 +49,7 @@ func (comps Computations) Schlick() float64 {
 	return r0 + (1-r0)*math.Pow(1-cos, 5)
 }
 
-func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersections) Computations {
+func prepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersections) Computations {
 	point := r.Position(hit.T())
 	normalV := shapes.NormalAt(point, hit.Shape(), hit)
 	eyeV := r.Direction.Negate()
@@ -54,6 +64,7 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 	overPoint := tuple.Add(point, normalV.Scalar(utils.EPSILON))
 	underPoint := tuple.Subtract(point, normalV.Scalar(utils.EPSILON))
 
+	// contains objects encountered but not yet exited.
 	container := []shapes.Shape{}
 	n1, n2 := 1.0, 1.0
 	for _, val := range xs {
@@ -61,6 +72,7 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 			if len(container) == 0 {
 				n1 = 1.0
 			} else {
+				// setting n1 to the last element in the container
 				n1 = container[len(container)-1].Material().RefractiveIndex
 			}
 		}
@@ -76,14 +88,15 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 			if len(container) == 0 {
 				n2 = 1.0
 			} else {
+				// // setting n2 to the last element in the container
 				n2 = container[len(container)-1].Material().RefractiveIndex
 			}
 			break
 		}
 	}
 	return Computations{
-		T:           hit.T(),
-		Shape:       hit.Shape(),
+		T:           hit.T(),     // Copy the t value from the intersection for convenience.
+		Shape:       hit.Shape(), // Copy the object from the intersection for convenience.
 		Point:       point,
 		EyeV:        eyeV,
 		NormalV:     normalV,
@@ -97,6 +110,7 @@ func PrepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 	}
 }
 
+// helper function to check if a shape is in a collection
 func contains(collection []shapes.Shape, shape shapes.Shape) (bool, int) {
 
 	for i, e := range collection {
@@ -107,6 +121,7 @@ func contains(collection []shapes.Shape, shape shapes.Shape) (bool, int) {
 	return false, math.MaxInt
 }
 
+// helper function to remove a shape from a collection
 func remove(collection []shapes.Shape, i int) []shapes.Shape {
 	collection[i] = collection[len(collection)-1]
 	return collection[:len(collection)-1]

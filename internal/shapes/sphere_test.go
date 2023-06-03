@@ -48,7 +48,7 @@ func TestSphereLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := test.sphere.LocalNormalAt(test.point, Intersection{}); !result.Equal(test.expected) {
+		if result := test.sphere.localNormalAt(test.point, Intersection{}); !result.Equal(test.expected) {
 			t.Errorf("Sphere normal:\n%s \n point: %s. \nresult: \n%s. \nexpected: \n%s", test.sphere, test.point, result, test.expected)
 		}
 	}
@@ -56,7 +56,7 @@ func TestSphereLocalNormalAt(t *testing.T) {
 
 func TestIntersectWithScaledSphere(t *testing.T) {
 	// Intersecting a scaled sphere with a ray
-	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	sphere := NewSphere()
 	sphere.SetTransform(matrix.Scaling(2, 2, 2))
 	expected := Intersections{
@@ -77,7 +77,7 @@ func TestIntersectWithScaledSphere(t *testing.T) {
 
 func TestIntersectWithTranslatedSphere(t *testing.T) {
 	// Intersecting a translated sphere with a ray
-	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	sphere := NewSphere()
 	sphere.SetTransform(matrix.Translation(5, 0, 0))
 

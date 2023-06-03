@@ -43,7 +43,7 @@ func (s *TestShape) SetParent(other Shape) {
 	s.parent = other
 }
 
-func (s *TestShape) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
+func (s *TestShape) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return point.ToVector()
 }
 

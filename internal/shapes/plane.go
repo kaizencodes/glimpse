@@ -37,7 +37,7 @@ func (s *Plane) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Plane) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
+func (s *Plane) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return tuple.NewVector(0, 1, 0)
 }
 

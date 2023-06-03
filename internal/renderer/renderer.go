@@ -1,3 +1,4 @@
+// All rendering logic is contained in this package.
 package renderer
 
 import (
@@ -14,6 +15,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
+// The main function that renders the scene pixel by pixel.
 func Render(c *camera.Camera, w *scenes.Scene) canvas.Canvas {
 	img := canvas.New(c.Width, c.Height)
 	var wg sync.WaitGroup
@@ -36,6 +38,7 @@ func Render(c *camera.Camera, w *scenes.Scene) canvas.Canvas {
 	return img
 }
 
+// Computes the color of a pixel.
 func colorAt(scene *scenes.Scene, r *ray.Ray) color.Color {
 	intersections := intersect(scene, r)
 	hit := intersections.Hit()
@@ -43,19 +46,10 @@ func colorAt(scene *scenes.Scene, r *ray.Ray) color.Color {
 		return color.Black()
 	}
 
-	return shadeHit(scene, PrepareComputations(hit, r, intersections))
+	return shadeHit(scene, prepareComputations(hit, r, intersections))
 }
 
-func intersect(scene *scenes.Scene, r *ray.Ray) shapes.Intersections {
-	coll := shapes.Intersections{}
-	for _, o := range scene.Shapes {
-		coll = append(coll, shapes.Intersect(o, r)...)
-	}
-	coll.Sort()
-
-	return coll
-}
-
+// helper method for colorAt.
 func shadeHit(scene *scenes.Scene, comps Computations) color.Color {
 	isShadowed := shadowAt(scene, comps.OverPoint)
 	c := light.Lighting(
@@ -70,7 +64,7 @@ func shadeHit(scene *scenes.Scene, comps Computations) color.Color {
 	refracted := refractedColor(scene, comps)
 	mat := comps.Shape.Material()
 	if mat.Reflective > 0 && mat.Transparency > 0 {
-		reflectance := comps.Schlick()
+		reflectance := comps.schlick()
 		reflected = reflected.Scalar(reflectance)
 		refracted = refracted.Scalar(1 - reflectance)
 	}
@@ -93,13 +87,31 @@ func shadeHit(scene *scenes.Scene, comps Computations) color.Color {
 	return c
 }
 
+// Computes all intersections between a ray and the scene objects.
+func intersect(scene *scenes.Scene, r *ray.Ray) shapes.Intersections {
+	coll := shapes.Intersections{}
+	for _, o := range scene.Shapes {
+		coll = append(coll, shapes.Intersect(o, r)...)
+	}
+	// Sorting is helpful for reflections and refractions.
+	coll.Sort()
+
+	return coll
+}
+
+// Determines if a point is in shadow or not.
 func shadowAt(scene *scenes.Scene, point tuple.Tuple) bool {
 	for _, l := range scene.Lights {
+		// Measure the distance from point to the light source by subtracting point from the light position
 		v := tuple.Subtract(l.Position(), point)
+		// The magnitude of the resulting vector is the distance between the point and the light source.
 		dist := v.Magnitude()
-		r := ray.NewRay(point, v.Normalize())
+		// Create a ray from point toward the light source by normalizing the vector.
+		r := ray.New(point, v.Normalize())
+		// check for intersections between the point and the light source.
 		hit := intersect(scene, r).Hit()
 
+		// if there is an intersection then the point is in shadow.
 		if !hit.Empty() && hit.T() < dist {
 			return true
 		}
@@ -107,24 +119,29 @@ func shadowAt(scene *scenes.Scene, point tuple.Tuple) bool {
 	return false
 }
 
+// Computes the color of a reflected ray.
 func reflectedColor(scene *scenes.Scene, comps Computations) color.Color {
 	if comps.Shape.Material().Reflective == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
 
-	r := ray.NewRay(comps.OverPoint, comps.ReflectV)
+	// use OverPoint to avoid shadow acne.
+	r := ray.New(comps.OverPoint, comps.ReflectV)
 	r.BounceLimit = comps.BounceLimit - 1
 	c := colorAt(scene, r)
 
 	return c.Scalar(comps.Shape.Material().Reflective)
 }
 
+// Computes the color of a refracted ray.
+// Refraction describes how light bends when it passes from one transparent medium to another.
+// uses Snell’s Law which describes the relationship between the angles of the light rays and the refractive indices of the two media.
 func refractedColor(scene *scenes.Scene, comps Computations) color.Color {
 	if comps.Shape.Material().Transparency == 0 || comps.BounceLimit < 1 {
 		return color.Black()
 	}
 
-	// Find the ration of first index of refraction to the second.
+	// Find the ratio of first index of refraction to the second.
 	nRatio := comps.N1 / comps.N2
 	// cos(theta i) is the same as the dot product of the two vectors.
 	cosI := tuple.Dot(comps.EyeV, comps.NormalV)
@@ -139,7 +156,7 @@ func refractedColor(scene *scenes.Scene, comps Computations) color.Color {
 
 	// Compute the direction of the refracted ray.
 	direction := tuple.Subtract(comps.NormalV.Scalar((nRatio*cosI)-cosT), comps.EyeV.Scalar(nRatio))
-	refractedRay := ray.NewRay(comps.UnderPoint, direction)
+	refractedRay := ray.New(comps.UnderPoint, direction)
 	refractedRay.BounceLimit = comps.BounceLimit - 1
 
 	// Find the color of the refracted ray, making sure to multiply by the transparency

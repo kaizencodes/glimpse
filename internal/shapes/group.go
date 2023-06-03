@@ -36,7 +36,7 @@ func (s *Group) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Group) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
+func (s *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return tuple.Tuple{}
 }
 

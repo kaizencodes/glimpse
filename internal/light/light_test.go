@@ -59,6 +59,7 @@ func TestLighting(t *testing.T) {
 			expected: color.New(0.1, 0.1, 0.1),
 		},
 		{
+			// Lighting with the surface in shadow
 			eyeV:     tuple.NewVector(0, 0, -1),
 			normalV:  tuple.NewVector(0, 0, -1),
 			light:    NewLight(tuple.NewPoint(0, 0, -10), color.New(1, 1, 1)),

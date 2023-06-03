@@ -1,3 +1,4 @@
+// Used to store the rendered pixels.
 package canvas
 
 import (

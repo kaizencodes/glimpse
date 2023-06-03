@@ -57,7 +57,7 @@ func (s *Cylinder) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Cylinder) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
+func (s *Cylinder) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	// compute the square of the distance from the y axis.
 	dist := math.Pow(point.X, 2) + math.Pow(point.Z, 2)
 
@@ -126,8 +126,9 @@ func (s *Cylinder) intersectionsForCaps(xs Intersections, r *ray.Ray) Intersecti
 	return xs
 }
 
+// a helper function to reduce duplication
 // checks to see if the intersection at `t` is within a radius
-//  of 1 (the radius of your cylinders) from the y axis.
+// of 1 (the radius of your cylinders) from the y axis.
 func checkCap(r *ray.Ray, t float64) bool {
 	x := r.Origin.X + t*r.Direction.X
 	z := r.Origin.Z + t*r.Direction.Z

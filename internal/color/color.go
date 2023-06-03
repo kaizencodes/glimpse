@@ -1,3 +1,4 @@
+// color represents a color in RGB space.
 package color
 
 import (
@@ -7,6 +8,8 @@ import (
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
+// Color represents a color in RGB space. Max value is 1.0. Min value is 0.0.
+// The default value is black.
 type Color struct {
 	R, G, B float64
 }
@@ -44,6 +47,7 @@ func Subtract(a, b Color) Color {
 	return Color{a.R - b.R, a.G - b.G, a.B - b.B}
 }
 
+// This method of blending two colors works by multiplying corresponding components of each color to form a new color.
 func HadamardProduct(a, b Color) Color {
 	return Color{a.R * b.R, a.G * b.G, a.B * b.B}
 }

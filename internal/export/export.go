@@ -1,3 +1,4 @@
+// Exports the finished canvas into a PPM file.
 package export
 
 import (
@@ -37,6 +38,7 @@ func convertColor(c color.Color) string {
 	return fmt.Sprintf("%d %d %d ", r, g, b)
 }
 
+// colors have a 0-1 range values, this method converts it to the ppm compatible 0-255 rgb range
 func rgbScale(v float64) int {
 	return int(math.Min(math.Max(0, v*PpmMax), PpmMax))
 }

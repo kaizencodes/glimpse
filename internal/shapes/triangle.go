@@ -11,6 +11,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
+// Triangle is an atomic object that is used to build more complex shapes.
 type Triangle struct {
 	transform                              matrix.Matrix
 	material                               *materials.Material
@@ -46,7 +47,7 @@ func (s *Triangle) SetParent(other Shape) {
 	s.parent = other
 }
 
-func (s *Triangle) LocalNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple {
+func (s *Triangle) localNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple {
 	if s.smooth() {
 		return s.smoothLocalNormalAt(point, hit)
 	}

@@ -222,7 +222,7 @@ func TestDeterminant(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.a.Determinant(); got != test.expected {
+		if got := test.a.determinant(); got != test.expected {
 			t.Errorf("matrix determinant,\na:\n%s\ngot: %f\nexpected: %f", test.a, got, test.expected)
 		}
 	}
@@ -266,7 +266,7 @@ func TestSubmatrix(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.a.Submatrix(test.col, test.row); got.String() != test.expected.String() {
+		if got := test.a.submatrix(test.col, test.row); got.String() != test.expected.String() {
 			t.Errorf("submatrix,\na:\n%s\n col: %d\n row: %d\ngot:\n%s\nexpected: \n%s", test.a, test.col, test.row, got, test.expected)
 		}
 	}
@@ -302,8 +302,8 @@ func TestMinor(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.a.Minor(test.col, test.row); got != test.expected {
-			t.Errorf("Minor,\na:\n%s\n col: %d\n row: %d\ngot: %f\nexpected: %f", test.a, test.col, test.row, got, test.expected)
+		if got := test.a.minor(test.col, test.row); got != test.expected {
+			t.Errorf("minor,\na:\n%s\n col: %d\n row: %d\ngot: %f\nexpected: %f", test.a, test.col, test.row, got, test.expected)
 		}
 	}
 }
