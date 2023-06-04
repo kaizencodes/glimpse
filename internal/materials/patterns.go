@@ -22,7 +22,7 @@ const (
 
 type Pattern struct {
 	transform matrix.Matrix
-	colorAt   func(tuple.Tuple) color.Color
+	colorAt   func(tuple.Tuple) color.Color // function that determines the color at a point
 }
 
 func NewPattern(pattern PatternType, colors ...color.Color) *Pattern {
@@ -44,6 +44,7 @@ func NewPattern(pattern PatternType, colors ...color.Color) *Pattern {
 	}
 }
 
+// return a constant color
 func newBasePattern(c color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
@@ -51,6 +52,7 @@ func newBasePattern(c color.Color) *Pattern {
 	}
 }
 
+// returns a striped patter with two colors
 func newStripePattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
@@ -63,6 +65,7 @@ func newStripePattern(a, b color.Color) *Pattern {
 	}
 }
 
+// returns a gradient pattern with two colors
 func newGradientPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
@@ -74,6 +77,7 @@ func newGradientPattern(a, b color.Color) *Pattern {
 	}
 }
 
+// returns a ring pattern with two colors
 func newRingPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
@@ -87,6 +91,7 @@ func newRingPattern(a, b color.Color) *Pattern {
 	}
 }
 
+// returns a checker pattern with two colors
 func newCheckerPattern(a, b color.Color) *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),
@@ -100,6 +105,7 @@ func newCheckerPattern(a, b color.Color) *Pattern {
 	}
 }
 
+// returns a test pattern
 func newTestPattern() *Pattern {
 	return &Pattern{
 		transform: matrix.DefaultTransform(),

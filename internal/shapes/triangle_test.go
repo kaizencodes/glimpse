@@ -59,7 +59,7 @@ func TestLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if result := triangle.LocalNormalAt(test.point, Intersection{}); !result.Equal(triangle.Normal) {
+		if result := triangle.localNormalAt(test.point, Intersection{}); !result.Equal(triangle.Normal) {
 			t.Errorf("Triangle normal:\n point: %s. \nresult: \n%s. \nexpected: \n%s", test.point, result, triangle.Normal)
 		}
 	}
@@ -97,27 +97,27 @@ func TestTriangleIntersect(t *testing.T) {
 	}{
 		// Intersecting a ray parallel to the triangle
 		{
-			ray:      ray.NewRay(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 1, 0)),
+			ray:      ray.New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 1, 0)),
 			expected: Intersections{},
 		},
 		// ray misses the p1-p3 edge
 		{
-			ray:      ray.NewRay(tuple.NewPoint(1, 1, -2), tuple.NewVector(0, 0, 1)),
+			ray:      ray.New(tuple.NewPoint(1, 1, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{},
 		},
 		// ray misses the p1-p2 edge
 		{
-			ray:      ray.NewRay(tuple.NewPoint(-1, 1, -2), tuple.NewVector(0, 0, 1)),
+			ray:      ray.New(tuple.NewPoint(-1, 1, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{},
 		},
 		// ray misses the p2-p3 edge
 		{
-			ray:      ray.NewRay(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 0, 1)),
+			ray:      ray.New(tuple.NewPoint(0, -1, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{},
 		},
 		// ray strikes the triangle
 		{
-			ray: ray.NewRay(tuple.NewPoint(0, 0.5, -2), tuple.NewVector(0, 0, 1)),
+			ray: ray.New(tuple.NewPoint(0, 0.5, -2), tuple.NewVector(0, 0, 1)),
 			expected: Intersections{
 				NewIntersection(2, triangle),
 			},

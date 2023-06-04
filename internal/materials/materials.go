@@ -1,3 +1,4 @@
+// materials define the surface appearance of an object.
 package materials
 
 import (
@@ -9,8 +10,14 @@ import (
 )
 
 type Material struct {
-	pattern                                                                          *Pattern
-	Ambient, Diffuse, Specular, Shininess, Reflective, Transparency, RefractiveIndex float64
+	pattern *Pattern
+	Ambient, Diffuse, Specular, Shininess, Reflective, Transparency,
+	RefractiveIndex float64 // refractivity of the material, here are some refractive indices:
+	//  Vacuum: 1
+	//  Air: 1.00029
+	//  Water: 1.333
+	//  Glass: 1.52
+	//  Diamond: 2.417
 }
 
 func (mat *Material) ColorAt(pos tuple.Tuple) color.Color {

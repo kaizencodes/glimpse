@@ -1,3 +1,4 @@
+// utility functions that are used throughout the project
 package utils
 
 import (
@@ -5,7 +6,18 @@ import (
 	"reflect"
 )
 
-// Compare compares two objects and returns a list of differences. Mainly used for testing.
+const EPSILON float64 = 0.00000001
+
+// FloatEquals compares two floats, used to avoid floating point errors.
+// Round-off error can make two numbers that should be equivalent instead be slightly different.
+func FloatEquals(a, b float64) bool {
+	if (a-b) < EPSILON && (b-a) < EPSILON {
+		return true
+	}
+	return false
+}
+
+// Compare compares two objects and returns a list of differences. Used for testing.
 func Compare(obj1, obj2 interface{}) []string {
 	diff := []string{}
 

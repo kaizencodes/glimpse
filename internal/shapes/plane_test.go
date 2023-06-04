@@ -7,6 +7,7 @@ import (
 )
 
 func TestPlaneLocalNormalAt(t *testing.T) {
+	// The normal of a plane is constant everywhere.
 	var tests = []struct {
 		plane    *Plane
 		point    tuple.Tuple
@@ -30,7 +31,7 @@ func TestPlaneLocalNormalAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := test.plane.LocalNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
+		if got := test.plane.localNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
 			t.Errorf("Plane normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.plane, test.point, got, test.expected)
 		}
 	}

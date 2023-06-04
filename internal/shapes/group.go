@@ -36,11 +36,11 @@ func (s *Group) Transform() matrix.Matrix {
 	return s.transform
 }
 
-func (s *Group) LocalNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
+func (s *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return tuple.Tuple{}
 }
 
-func (s *Group) LocalIntersect(r *ray.Ray) Intersections {
+func (s *Group) localIntersect(r *ray.Ray) Intersections {
 	xs := Intersections{}
 	for _, child := range s.Children() {
 		xs = append(xs, Intersect(child, r)...)

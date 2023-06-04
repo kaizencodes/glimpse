@@ -1,21 +1,31 @@
+/*
+Package main is the entry point for the glimpse ray tracer. It reads a scene
+file, renders the scene, and writes the result to a PPM file.
+*/
 package main
 
 import (
 	"fmt"
-	"glimpse/export"
-	"glimpse/reader"
-	"glimpse/world/builder"
 	"log"
 	"os"
 	"time"
+
+	"github.com/kaizencodes/glimpse/internal/export"
+	"github.com/kaizencodes/glimpse/internal/renderer"
+	"github.com/kaizencodes/glimpse/internal/scenes/builder"
+	"github.com/kaizencodes/glimpse/internal/scenes/reader"
 )
 
 func main() {
+	os.Exit(realMain())
+}
+
+func realMain() int {
 	start := time.Now()
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: ./glimpse <filepath>")
-		return
+		return 1
 	}
 
 	filepath := os.Args[1]
@@ -23,19 +33,19 @@ func main() {
 	_, err := os.Stat(filepath)
 	if os.IsNotExist(err) {
 		fmt.Printf("File '%s' does not exist\n", filepath)
-		return
+		return 1
 	}
 
 	config, err := reader.Read(filepath)
 	if err != nil {
-		fmt.Printf("The input file has the following error:\n\n %e\n", err)
+		fmt.Printf("The input file has the following error:\n\n %s\n", err.Error())
 		os.Exit(1)
 	}
 
-	cam, world := builder.BuildScene(config)
+	cam, scene := builder.BuildScene(config)
 	fmt.Printf("Rendering initiated\n")
 
-	img := cam.Render(world)
+	img := renderer.Render(cam, scene)
 
 	fmt.Printf("File writing initiated\n")
 
@@ -47,5 +57,6 @@ func main() {
 	fmt.Printf("File writing completed\n")
 	elapsed := time.Since(start)
 	fmt.Printf("Rendering took %s\n", elapsed)
-	os.Exit(0)
+
+	return 0
 }

@@ -21,7 +21,7 @@ func TestAddChild(t *testing.T) {
 
 func TestEmptyGroupIntersect(t *testing.T) {
 	g := NewGroup()
-	r := ray.NewRay(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
+	r := ray.New(tuple.NewPoint(0, 0, 0), tuple.NewVector(0, 0, 1))
 	expected := Intersections{}
 
 	testIntersection(t, g, r, expected)
@@ -37,7 +37,7 @@ func TestGroupIntersect(t *testing.T) {
 	g.AddChild(s1)
 	g.AddChild(s2)
 	g.AddChild(s3)
-	r := ray.NewRay(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
+	r := ray.New(tuple.NewPoint(0, 0, -5), tuple.NewVector(0, 0, 1))
 	expected := Intersections{
 		NewIntersection(1, s2),
 		NewIntersection(3, s2),
@@ -54,7 +54,7 @@ func TestGroupTransformation(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	g.AddChild(s)
-	r := ray.NewRay(tuple.NewPoint(10, 0, -10), tuple.NewVector(0, 0, 1))
+	r := ray.New(tuple.NewPoint(10, 0, -10), tuple.NewVector(0, 0, 1))
 	if len(Intersect(g, r)) != 2 {
 		t.Errorf("incorrect transformation")
 	}

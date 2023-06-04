@@ -8,16 +8,18 @@ import (
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
-func TestTuple(t *testing.T) {
+func TestIsPoint(t *testing.T) {
 	var tests = []struct {
 		input    Tuple
 		expected bool
 	}{
 		{
+			// if w is 1, it is a point.
 			input:    Tuple{4.3, -4.2, 3.1, 1.0},
 			expected: true,
 		},
 		{
+			// if w is 0, it is a vector.
 			input:    Tuple{-3.3, 3.2, 3.1, 0.0},
 			expected: false,
 		},
@@ -30,19 +32,27 @@ func TestTuple(t *testing.T) {
 	}
 }
 
-func TestNewVector(t *testing.T) {
-	test := NewVector(1, 2, 3)
-
-	if test.IsPoint() {
-		t.Errorf("expected to get vector, got point")
+func TestIsVector(t *testing.T) {
+	var tests = []struct {
+		input    Tuple
+		expected bool
+	}{
+		{
+			// if w is 1, it is a point.
+			input:    Tuple{4.3, -4.2, 3.1, 1.0},
+			expected: false,
+		},
+		{
+			// if w is 0, it is a vector.
+			input:    Tuple{-3.3, 3.2, 3.1, 0.0},
+			expected: true,
+		},
 	}
-}
 
-func TestNewPoint(t *testing.T) {
-	test := NewPoint(1, 2, 3)
-
-	if test.IsVector() {
-		t.Errorf("expected to get point, got vector")
+	for _, test := range tests {
+		if got := test.input.IsVector(); got != test.expected {
+			t.Errorf("expected IsVector() to be %t, got %t", got, test.expected)
+		}
 	}
 }
 
@@ -241,6 +251,10 @@ func TestMagnitude(t *testing.T) {
 			input:    Tuple{1.0, 2.0, 3.0, 0.0},
 			expected: math.Sqrt(14.0),
 		},
+		{
+			input:    Tuple{-1.0, -2.0, -3.0, 0.0},
+			expected: math.Sqrt(14.0),
+		},
 	}
 
 	for _, test := range tests {
@@ -260,7 +274,8 @@ func TestNormalize(t *testing.T) {
 			expected: Tuple{1.0, 0.0, 0.0, 0.0},
 		},
 		{
-			input:    Tuple{1.0, 2.0, 3.0, 0.0},
+			input: Tuple{1.0, 2.0, 3.0, 0.0},
+			// (1/√14, 2/√14, 3/√14, 0)
 			expected: Tuple{0.2672612419124244, 0.5345224838248488, 0.8017837257372732, 0.0},
 		},
 	}

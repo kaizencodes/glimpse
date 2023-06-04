@@ -4,8 +4,25 @@ import (
 	"testing"
 )
 
+func TestFloatEquals(t *testing.T) {
+	var tests = []struct {
+		left     float64
+		right    float64
+		expected bool
+	}{
+		{1.000000001, 1.000000002, true},
+		{1.0000001, 1.0000002, false},
+	}
+
+	for _, test := range tests {
+		if result := FloatEquals(test.left, test.right); result != test.expected {
+			t.Errorf("%f == %f result %t, expected %t", test.left, test.right, result, test.expected)
+		}
+	}
+}
+
 // Test that structs with the same values are considered equal.
-func TestStructs(t *testing.T) {
+func TestCompareStructs(t *testing.T) {
 	type testStruct struct {
 		Foo string
 		Bar int
@@ -37,7 +54,7 @@ func TestStructs(t *testing.T) {
 	}
 }
 
-func TestDifferentSizeOfStructs(t *testing.T) {
+func TestCompareDifferentSizeOfStructs(t *testing.T) {
 	type testStruct1 struct {
 		Foo string
 		Bar int
@@ -60,7 +77,7 @@ func TestDifferentSizeOfStructs(t *testing.T) {
 }
 
 // Test that struct with different fields are considered unequal.
-func TestDifferentStructs(t *testing.T) {
+func TestCompareDifferentStructs(t *testing.T) {
 	type testStruct1 struct {
 		Foo string
 		Bar int
@@ -108,7 +125,7 @@ func TestSlices(t *testing.T) {
 	}
 }
 
-func TestDifferentTypeOfSlices(t *testing.T) {
+func TestCompareDifferentTypeOfSlices(t *testing.T) {
 	obj1 := []float64{0.0, 1.0, 2.0}
 	obj2 := []int{0, 1, 2}
 
@@ -117,7 +134,7 @@ func TestDifferentTypeOfSlices(t *testing.T) {
 	}
 }
 
-func TestNestedStructs(t *testing.T) {
+func TestCompareNestedStructs(t *testing.T) {
 	type nestedStruct struct {
 		Slice []int
 	}

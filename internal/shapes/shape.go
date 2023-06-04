@@ -1,3 +1,10 @@
+// This package contains 3d primitives that can be rendered.
+// The following primitives are supported:
+// - Sphere
+// - Plane
+// - Cube
+// - Cylinder
+
 package shapes
 
 import (
@@ -8,13 +15,14 @@ import (
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
+// Shape is an interface that defines the methods that all 3d shapes must implement.
 type Shape interface {
 	Material() *materials.Material
 	SetMaterial(m *materials.Material)
 	Transform() matrix.Matrix
 	SetTransform(transform matrix.Matrix)
-	LocalNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple
-	LocalIntersect(r *ray.Ray) Intersections
+	localNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple
+	localIntersect(r *ray.Ray) Intersections
 	Parent() Shape
 	SetParent(Shape)
 }
@@ -32,14 +40,18 @@ func Intersect(s Shape, r *ray.Ray) Intersections {
 	transform := s.Transform().Inverse()
 	origin := tuple.Multiply(transform, r.Origin)
 	direction := tuple.Multiply(transform, r.Direction)
-	localRay := ray.NewRay(origin, direction)
+	localRay := ray.New(origin, direction)
 
-	return s.LocalIntersect(localRay)
+	return s.localIntersect(localRay)
 }
 
+// Calculates the normal vector on the surface of a shape at a given point (the hit).
 func NormalAt(scenePoint tuple.Tuple, shape Shape, hit Intersection) tuple.Tuple {
+	// transform a point in scene(global) space to object(local) space
 	localPoint := sceneToObject(scenePoint, shape)
-	localNormal := shape.LocalNormalAt(localPoint, hit)
+	// calculate the normal vector in object(local) space
+	localNormal := shape.localNormalAt(localPoint, hit)
+	// transform the normal vector in object(local) space to scene(global) space.
 	return normalToScene(localNormal, shape)
 }
 
