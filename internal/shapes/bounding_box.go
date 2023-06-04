@@ -3,6 +3,7 @@ package shapes
 import (
 	"math"
 
+	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
@@ -41,6 +42,21 @@ func (b *BoundingBox) AddPoint(p tuple.Tuple) {
 	b.Max.Z = math.Max(b.Max.Z, p.Z)
 }
 
+func (b *BoundingBox) AddBox(box *BoundingBox) {
+	b.AddPoint(box.Min)
+	b.AddPoint(box.Max)
+}
+
+func (b *BoundingBox) ContainsPoint(p tuple.Tuple) bool {
+	return b.Min.X <= p.X && p.X <= b.Max.X &&
+		b.Min.Y <= p.Y && p.Y <= b.Max.Y &&
+		b.Min.Z <= p.Z && p.Z <= b.Max.Z
+}
+
+func (b *BoundingBox) ContainsBox(box *BoundingBox) bool {
+	return b.ContainsPoint(box.Min) && b.ContainsPoint(box.Max)
+}
+
 // Creates a bounding box for a shape, in object space
 func BoundFor(shape Shape) *BoundingBox {
 	box := DefaultBoundingBox()
@@ -66,5 +82,24 @@ func BoundFor(shape Shape) *BoundingBox {
 		box.Max = tuple.NewPoint(1, 1, 1)
 	}
 
+	return box
+}
+
+func Transform(b *BoundingBox, m matrix.Matrix) *BoundingBox {
+	box := DefaultBoundingBox()
+	points := []tuple.Tuple{
+		tuple.NewPoint(b.Min.X, b.Min.Y, b.Min.Z),
+		tuple.NewPoint(b.Min.X, b.Min.Y, b.Max.Z),
+		tuple.NewPoint(b.Min.X, b.Max.Y, b.Min.Z),
+		tuple.NewPoint(b.Min.X, b.Max.Y, b.Max.Z),
+		tuple.NewPoint(b.Max.X, b.Min.Y, b.Min.Z),
+		tuple.NewPoint(b.Max.X, b.Min.Y, b.Max.Z),
+		tuple.NewPoint(b.Max.X, b.Max.Y, b.Min.Z),
+		tuple.NewPoint(b.Max.X, b.Max.Y, b.Max.Z),
+	}
+
+	for _, p := range points {
+		box.AddPoint(tuple.Multiply(m, p))
+	}
 	return box
 }
