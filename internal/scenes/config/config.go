@@ -26,6 +26,7 @@ type Object struct {
 	Material         Material
 	Minimum, Maximum float64
 	Closed           bool
+	File             string
 }
 
 type Transform struct {

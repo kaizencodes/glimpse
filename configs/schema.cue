@@ -83,7 +83,7 @@
 
 #Model: {
   type: "model"
-  path: string
+  file: string
   transform?: #transform
 }
 

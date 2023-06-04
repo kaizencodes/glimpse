@@ -147,6 +147,7 @@ func TestColorAtWithObjectAndPatternTransformation(t *testing.T) {
 }
 
 func TestSceneToObject(t *testing.T) {
+	// Converting a point from scene to object space
 	g1 := NewGroup()
 	g1.SetTransform(matrix.RotationY(math.Pi / 2))
 	g2 := NewGroup()
@@ -163,6 +164,7 @@ func TestSceneToObject(t *testing.T) {
 }
 
 func TestNormalToScene(t *testing.T) {
+	// Converting a normal from object to scene space
 	g1 := NewGroup()
 	g1.SetTransform(matrix.RotationY(math.Pi / 2))
 	g2 := NewGroup()

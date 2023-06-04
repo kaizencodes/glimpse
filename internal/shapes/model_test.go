@@ -1,9 +1,8 @@
-package parser
+package shapes
 
 import (
 	"testing"
 
-	"github.com/kaizencodes/glimpse/internal/shapes"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
@@ -127,7 +126,7 @@ f 1 2 3 4 5
 	assertFace(vertices[2], points[1], points[4], points[5], t)
 }
 
-func assertFace(face *shapes.Triangle, p1, p2, p3 tuple.Tuple, t *testing.T) {
+func assertFace(face *Triangle, p1, p2, p3 tuple.Tuple, t *testing.T) {
 	if !face.P1.Equal(p1) {
 		t.Errorf("Incorrect parsing. expected vertex point P1 to be \n%s \n got %s", p1, face.P1)
 	}
@@ -139,7 +138,7 @@ func assertFace(face *shapes.Triangle, p1, p2, p3 tuple.Tuple, t *testing.T) {
 	}
 }
 
-func assertFaceNormal(face *shapes.Triangle, n1, n2, n3 tuple.Tuple, t *testing.T) {
+func assertFaceNormal(face *Triangle, n1, n2, n3 tuple.Tuple, t *testing.T) {
 	if !face.N1.Equal(n1) {
 		t.Errorf("Incorrect parsing. expected vertex normal N1 to be \n%s \n got %s", n1, face.N1)
 	}

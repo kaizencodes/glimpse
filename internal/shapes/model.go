@@ -1,16 +1,77 @@
-package parser
+package shapes
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/kaizencodes/glimpse/internal/shapes"
+	"github.com/kaizencodes/glimpse/internal/materials"
+	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
-func Parse(input string) *shapes.Group {
-	group := shapes.NewGroup()
+// Model is a shape that is defined by vertices.
+// It is a group of triangles primitives.
+type Model struct {
+	group  Group
+	parent Shape
+}
+
+func NewModel(model string) *Model {
+	return &Model{
+		group: *Parse(model),
+	}
+}
+
+func (m *Model) String() string {
+	return fmt.Sprintf("Model(material: %s, transform: %s)", m.group.material, m.group.transform)
+}
+
+func (m *Model) SetTransform(transform matrix.Matrix) {
+	m.group.transform = transform
+}
+
+func (s *Model) SetMaterial(mat *materials.Material) {
+	s.group.material = mat
+}
+
+func (m *Model) Material() *materials.Material {
+	return m.group.material
+}
+
+func (m *Model) Transform() matrix.Matrix {
+	return m.group.transform
+}
+
+func (m *Model) localNormalAt(_point tuple.Tuple, _hit Intersection) tuple.Tuple {
+	return tuple.Tuple{}
+}
+
+func (m *Model) localIntersect(r *ray.Ray) Intersections {
+	return m.group.localIntersect(r)
+}
+
+func (m *Model) Parent() Shape {
+	return m.parent
+}
+
+func (m *Model) SetParent(other Shape) {
+	m.parent = other
+}
+
+// func (m *Model) AddChild(s Shape) {
+// 	s.SetParent(m)
+// 	m.group.children = append(m.group.children, s)
+// }
+
+// func (m *Model) Children() []Shape {
+// 	return m.group.children
+// }
+
+func Parse(input string) *Group {
+	group := NewGroup()
 	vertices := parseVertices(input)
 	normals := parseNormals(input)
 
@@ -54,7 +115,7 @@ func parseNormals(input string) []tuple.Tuple {
 	return normals
 }
 
-func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*shapes.Triangle) {
+func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*Triangle) {
 	r := regexp.MustCompile("(?m)^f.*\n")
 	faceLines := r.FindAllString(input, -1)
 	// faces := []*shapes.Triangle{}
@@ -64,10 +125,10 @@ func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*shapes.
 		for i := 0; i < len(indexes)-2; i++ {
 			// var face *shapes.Triangle
 			if indexes[0][1] != 0 {
-				face := shapes.NewSmoothTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]], vertices[indexes[0][1]], vertices[indexes[i+1][1]], vertices[indexes[i+2][1]])
+				face := NewSmoothTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]], vertices[indexes[0][1]], vertices[indexes[i+1][1]], vertices[indexes[i+2][1]])
 				faces = append(faces, face)
 			} else {
-				face := shapes.NewTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]])
+				face := NewTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]])
 				faces = append(faces, face)
 			}
 		}

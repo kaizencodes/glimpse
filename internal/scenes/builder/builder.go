@@ -1,11 +1,15 @@
 package builder
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/kaizencodes/glimpse/internal/camera"
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/projectpath"
 	"github.com/kaizencodes/glimpse/internal/scenes"
 	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
 	"github.com/kaizencodes/glimpse/internal/shapes"
@@ -70,6 +74,13 @@ func buildObject(config cfg.Object) shapes.Shape {
 		cylinder.Closed = config.Closed
 
 		shape = cylinder
+	case "model":
+		data, err := os.ReadFile(projectpath.Root + config.File)
+		if err != nil {
+			panic(fmt.Sprintf("Object file could not be read: %s\n%s", config.File, err.Error()))
+		}
+
+		shape = shapes.NewModel(string(data))
 	default:
 		panic("Unknown shape type")
 	}
