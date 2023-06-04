@@ -77,6 +77,10 @@ func BoundFor(shape Shape) *BoundingBox {
 		box.AddPoint(s.P1)
 		box.AddPoint(s.P2)
 		box.AddPoint(s.P3)
+	case *Group:
+		for _, child := range s.Children() {
+			box.AddBox(TransformedBoundFor(child))
+		}
 	case *TestShape:
 		box.Min = tuple.NewPoint(-1, -1, -1)
 		box.Max = tuple.NewPoint(1, 1, 1)
@@ -102,4 +106,8 @@ func Transform(b *BoundingBox, m matrix.Matrix) *BoundingBox {
 		box.AddPoint(tuple.Multiply(m, p))
 	}
 	return box
+}
+
+func TransformedBoundFor(shape Shape) *BoundingBox {
+	return Transform(BoundFor(shape), shape.Transform())
 }

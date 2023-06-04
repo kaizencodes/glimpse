@@ -106,6 +106,34 @@ func TestBoundForTestShape(t *testing.T) {
 	}
 }
 
+func TestBoundForGroups(t *testing.T) {
+	// A group has a bounding box that contains its children
+	s1 := NewSphere()
+	s1.SetTransform(
+		matrix.Multiply(
+			matrix.Translation(2, 5, -3),
+			matrix.Scaling(2, 2, 2),
+		),
+	)
+	c := NewCylinder()
+	c.Minimum = -2
+	c.Maximum = 2
+	c.SetTransform(
+		matrix.Multiply(
+			matrix.Translation(-4, -1, 4),
+			matrix.Scaling(0.5, 1, 0.5),
+		),
+	)
+	g := NewGroup()
+	g.AddChild(s1)
+	g.AddChild(c)
+	box := BoundFor(g)
+	expected := NewBoundingBox(tuple.NewPoint(-4.5, -3, -5), tuple.NewPoint(4, 7, 4.5))
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+}
+
 func TestAddBox(t *testing.T) {
 	// Merging two bounding boxes
 	box1 := NewBoundingBox(tuple.NewPoint(-5, -2, 0), tuple.NewPoint(7, 4, 4))
@@ -209,6 +237,20 @@ func TestTransformBoundingBox(t *testing.T) {
 		tuple.NewPoint(1.414213562373095, 1.7071067811865475, 1.7071067811865475))
 
 	for _, diff := range utils.Compare(result, expected) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+}
+
+func TestTransformedBoundFor(t *testing.T) {
+	// Querying a shape's bounding box in its parent's space
+	shape := NewSphere()
+	shape.SetTransform(
+		matrix.Multiply(matrix.Translation(1, -3, 5), matrix.Scaling(0.5, 2, 4)),
+	)
+	box := TransformedBoundFor(shape)
+	expected := NewBoundingBox(tuple.NewPoint(0.5, -5, 1), tuple.NewPoint(1.5, -1, 9))
+
+	for _, diff := range utils.Compare(box, expected) {
 		t.Errorf("Mismatch: %s", diff)
 	}
 }
