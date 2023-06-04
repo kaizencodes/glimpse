@@ -20,8 +20,14 @@ func DefaultBoundingBox() *BoundingBox {
 			X: math.Inf(1),
 			Y: math.Inf(1),
 			Z: math.Inf(1),
+			W: 1,
 		},
-		Max: tuple.Tuple{X: math.Inf(-1), Y: math.Inf(-1), Z: math.Inf(-1)},
+		Max: tuple.Tuple{
+			X: math.Inf(-1),
+			Y: math.Inf(-1),
+			Z: math.Inf(-1),
+			W: 1,
+		},
 	}
 }
 
@@ -33,4 +39,32 @@ func (b *BoundingBox) AddPoint(p tuple.Tuple) {
 	b.Max.X = math.Max(b.Max.X, p.X)
 	b.Max.Y = math.Max(b.Max.Y, p.Y)
 	b.Max.Z = math.Max(b.Max.Z, p.Z)
+}
+
+// Creates a bounding box for a shape, in object space
+func BoundFor(shape Shape) *BoundingBox {
+	box := DefaultBoundingBox()
+	switch s := shape.(type) {
+	case *Sphere:
+		box.Min = tuple.NewPoint(-1, -1, -1)
+		box.Max = tuple.NewPoint(1, 1, 1)
+	case *Plane:
+		box.Min = tuple.NewPoint(math.Inf(-1), 0, math.Inf(-1))
+		box.Max = tuple.NewPoint(math.Inf(1), 0, math.Inf(1))
+	case *Cube:
+		box.Min = tuple.NewPoint(-1, -1, -1)
+		box.Max = tuple.NewPoint(1, 1, 1)
+	case *Cylinder:
+		box.Min = tuple.NewPoint(-1, math.Max(s.Minimum, math.Inf(-1)), -1)
+		box.Max = tuple.NewPoint(1, math.Min(s.Maximum, math.Inf(1)), 1)
+	case *Triangle:
+		box.AddPoint(s.P1)
+		box.AddPoint(s.P2)
+		box.AddPoint(s.P3)
+	case *TestShape:
+		box.Min = tuple.NewPoint(-1, -1, -1)
+		box.Max = tuple.NewPoint(1, 1, 1)
+	}
+
+	return box
 }

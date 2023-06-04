@@ -163,7 +163,7 @@ func TestSceneToObject(t *testing.T) {
 	}
 }
 
-func TestobjectToScene(t *testing.T) {
+func TestObjectToScene(t *testing.T) {
 	// Converting a normal from object to scene space
 	g1 := NewGroup()
 	g1.SetTransform(matrix.RotationY(math.Pi / 2))

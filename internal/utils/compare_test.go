@@ -54,6 +54,38 @@ func TestCompareStructs(t *testing.T) {
 	}
 }
 
+func TestComparePointers(t *testing.T) {
+	type testStruct struct {
+		Foo string
+		Bar int
+	}
+
+	obj1 := &testStruct{
+		Foo: "foo",
+		Bar: 1,
+	}
+	obj2 := obj1
+
+	for _, diff := range Compare(obj1, obj2) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+
+	var tests = []struct {
+		obj1 *testStruct
+		obj2 *testStruct
+	}{
+		{&testStruct{"foo", 1}, &testStruct{"bar", 1}},
+		{&testStruct{"foo", 1}, &testStruct{"foo", 2}},
+		{&testStruct{"", 2}, &testStruct{"foo", 2}},
+		{&testStruct{}, &testStruct{"foo", 2}},
+	}
+	for _, test := range tests {
+		if diff := Compare(test.obj1, test.obj2); len(diff) == 0 {
+			t.Errorf("Expected mismatch, but got none, for %v and %v", test.obj1, test.obj2)
+		}
+	}
+}
+
 func TestCompareDifferentSizeOfStructs(t *testing.T) {
 	type testStruct1 struct {
 		Foo string

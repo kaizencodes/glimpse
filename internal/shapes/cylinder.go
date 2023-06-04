@@ -23,8 +23,8 @@ func NewCylinder() *Cylinder {
 	return &Cylinder{
 		transform: matrix.DefaultTransform(),
 		material:  materials.DefaultMaterial(),
-		Minimum:   -math.MaxFloat64,
-		Maximum:   math.MaxFloat64,
+		Minimum:   math.Inf(-1),
+		Maximum:   math.Inf(1),
 		Closed:    false,
 	}
 }
