@@ -28,8 +28,8 @@ type Shape interface {
 }
 
 func ColorAt(scenePoint tuple.Tuple, shape Shape) color.Color {
-	invShapeTransform := shape.Transform().Inverse()
-	objectPoint := tuple.Multiply(invShapeTransform, scenePoint)
+	// transform a point in scene(global) space to object(local) space
+	objectPoint := sceneToObject(scenePoint, shape)
 	invPatternTransform := shape.Material().Transform().Inverse()
 	patternPoint := tuple.Multiply(invPatternTransform, objectPoint)
 
@@ -52,7 +52,7 @@ func NormalAt(scenePoint tuple.Tuple, shape Shape, hit Intersection) tuple.Tuple
 	// calculate the normal vector in object(local) space
 	localNormal := shape.localNormalAt(localPoint, hit)
 	// transform the normal vector in object(local) space to scene(global) space.
-	return normalToScene(localNormal, shape)
+	return objectToScene(localNormal, shape)
 }
 
 func sceneToObject(p tuple.Tuple, s Shape) tuple.Tuple {
@@ -65,12 +65,12 @@ func sceneToObject(p tuple.Tuple, s Shape) tuple.Tuple {
 	return result
 }
 
-func normalToScene(v tuple.Tuple, s Shape) tuple.Tuple {
+func objectToScene(v tuple.Tuple, s Shape) tuple.Tuple {
 	transposed := s.Transform().Inverse().Transpose()
 	normal := tuple.Multiply(transposed, v).ToVector().Normalize()
 
 	if s.Parent() != nil {
-		normal = normalToScene(normal, s.Parent())
+		normal = objectToScene(normal, s.Parent())
 	}
 
 	return normal

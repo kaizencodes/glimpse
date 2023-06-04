@@ -27,6 +27,7 @@ type Object struct {
 	Minimum, Maximum float64
 	Closed           bool
 	File             string
+	Children         []Object
 }
 
 type Transform struct {

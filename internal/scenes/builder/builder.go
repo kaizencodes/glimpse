@@ -81,6 +81,13 @@ func buildObject(config cfg.Object) shapes.Shape {
 		}
 
 		shape = shapes.NewModel(string(data))
+	case "group":
+		group := shapes.NewGroup()
+		shapes := buildObjects(config.Children)
+		for _, s := range shapes {
+			group.AddChild(s)
+		}
+		shape = group
 	default:
 		panic("Unknown shape type")
 	}

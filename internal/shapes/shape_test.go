@@ -163,7 +163,7 @@ func TestSceneToObject(t *testing.T) {
 	}
 }
 
-func TestNormalToScene(t *testing.T) {
+func TestobjectToScene(t *testing.T) {
 	// Converting a normal from object to scene space
 	g1 := NewGroup()
 	g1.SetTransform(matrix.RotationY(math.Pi / 2))
@@ -173,7 +173,7 @@ func TestNormalToScene(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	g2.AddChild(s)
-	result := normalToScene(tuple.NewVector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3), s)
+	result := objectToScene(tuple.NewVector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3), s)
 	expected := tuple.NewVector(0.28571428571428575, 0.42857142857142855, -0.8571428571428571)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect point conversion to object space.\nexpected: %s\nresult: %s", expected, result)

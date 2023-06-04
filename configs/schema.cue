@@ -87,10 +87,17 @@
   transform?: #transform
 }
 
-#Object: {
-[...#Sphere | #Cube | #Plane | #Cylinder | #Model]
+#Group: {
+  type: "group"
+  children: #Objects
+  transform?: #transform
+  material?: #material
+}
+
+#Objects: {
+[...#Sphere | #Cube | #Plane | #Cylinder | #Model | #Group]
 }
 
 camera: #Camera
 light: #Light
-objects: #Object
+objects: #Objects

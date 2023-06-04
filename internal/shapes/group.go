@@ -37,7 +37,7 @@ func (s *Group) Transform() matrix.Matrix {
 }
 
 func (s *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
-	return tuple.Tuple{}
+	panic("localNormalAt called on group. Groups do not have normals")
 }
 
 func (s *Group) localIntersect(r *ray.Ray) Intersections {
