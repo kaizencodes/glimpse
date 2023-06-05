@@ -403,3 +403,45 @@ func TestBoxIntersection2(t *testing.T) {
 		}
 	}
 }
+
+func TestSplit(t *testing.T) {
+	var tests = []struct {
+		box, left, right *BoundingBox
+	}{
+		{
+			// Splitting a perfect cube
+			box:   NewBoundingBox(tuple.NewPoint(-1, -4, -5), tuple.NewPoint(9, 6, 5)),
+			left:  NewBoundingBox(tuple.NewPoint(-1, -4, -5), tuple.NewPoint(4, 6, 5)),
+			right: NewBoundingBox(tuple.NewPoint(4, -4, -5), tuple.NewPoint(9, 6, 5)),
+		},
+		{
+			// Splitting an x-wide box
+			box:   NewBoundingBox(tuple.NewPoint(-1, -2, -3), tuple.NewPoint(9, 5.5, 3)),
+			left:  NewBoundingBox(tuple.NewPoint(-1, -2, -3), tuple.NewPoint(4, 5.5, 3)),
+			right: NewBoundingBox(tuple.NewPoint(4, -2, -3), tuple.NewPoint(9, 5.5, 3)),
+		},
+		{
+			// Splitting a y-wide box
+			box:   NewBoundingBox(tuple.NewPoint(-1, -2, -3), tuple.NewPoint(5, 8, 3)),
+			left:  NewBoundingBox(tuple.NewPoint(-1, -2, -3), tuple.NewPoint(5, 3, 3)),
+			right: NewBoundingBox(tuple.NewPoint(-1, 3, -3), tuple.NewPoint(5, 8, 3)),
+		},
+		{
+			// Splitting a z-wide box
+			box:   NewBoundingBox(tuple.NewPoint(-1, -2, -3), tuple.NewPoint(5, 3, 7)),
+			left:  NewBoundingBox(tuple.NewPoint(-1, -2, -3), tuple.NewPoint(5, 3, 2)),
+			right: NewBoundingBox(tuple.NewPoint(-1, -2, 2), tuple.NewPoint(5, 3, 7)),
+		},
+	}
+
+	for _, test := range tests {
+		left, right := test.box.Split()
+		for _, diff := range utils.Compare(left, test.left) {
+			t.Errorf("Split left Mismatch: %s", diff)
+		}
+		for _, diff := range utils.Compare(right, test.right) {
+			t.Errorf("Split right Mismatch: %s", diff)
+		}
+
+	}
+}

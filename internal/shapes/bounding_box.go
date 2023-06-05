@@ -117,3 +117,30 @@ func BoxIntersection(box *BoundingBox, r *ray.Ray) bool {
 	intersections := aABBIntersect(NewTestShape(), r, box.Min, box.Max)
 	return len(intersections) > 0
 }
+
+// Splits the bounding box into two even smaller boxes.
+// The split is always along the longest axis.
+// If the axis have the same length, the x axis is chosen.
+func (b *BoundingBox) Split() (left, right *BoundingBox) {
+	dx := b.Max.X - b.Min.X
+	dy := b.Max.Y - b.Min.Y
+	dz := b.Max.Z - b.Min.Z
+
+	var midMin, midMax tuple.Tuple
+	greatest := math.Max(dx, math.Max(dy, dz))
+	switch greatest {
+	case dx:
+		midMin = tuple.NewPoint(b.Min.X+dx/2, b.Min.Y, b.Min.Z)
+		midMax = tuple.NewPoint(b.Max.X-dx/2, b.Max.Y, b.Max.Z)
+	case dy:
+		midMin = tuple.NewPoint(b.Min.X, b.Min.Y+dy/2, b.Min.Z)
+		midMax = tuple.NewPoint(b.Max.X, b.Max.Y-dy/2, b.Max.Z)
+	case dz:
+		midMin = tuple.NewPoint(b.Min.X, b.Min.Y, b.Min.Z+dz/2)
+		midMax = tuple.NewPoint(b.Max.X, b.Max.Y, b.Max.Z-dz/2)
+	}
+
+	left = NewBoundingBox(b.Min, midMax)
+	right = NewBoundingBox(midMin, b.Max)
+	return left, right
+}
