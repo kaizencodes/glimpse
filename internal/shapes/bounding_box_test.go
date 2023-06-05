@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
@@ -252,5 +253,153 @@ func TestTransformedBoundFor(t *testing.T) {
 
 	for _, diff := range utils.Compare(box, expected) {
 		t.Errorf("Mismatch: %s", diff)
+	}
+}
+
+func TestBoxIntersection(t *testing.T) {
+	// Intersecting a ray with a bounding box at the origin
+	box := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
+	var tests = []struct {
+		origin, direction tuple.Tuple
+		expected          bool
+	}{
+		{
+			origin:    tuple.NewPoint(5, 0.5, 0),
+			direction: tuple.NewVector(-1, 0, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(-5, 0.5, 0),
+			direction: tuple.NewVector(1, 0, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(0.5, 5, 0),
+			direction: tuple.NewVector(0, -1, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(0.5, -5, 0),
+			direction: tuple.NewVector(0, 1, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(0.5, 0, 5),
+			direction: tuple.NewVector(0, 0, -1),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(0.5, 0, -5),
+			direction: tuple.NewVector(0, 0, 1),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(0, 0.5, 0),
+			direction: tuple.NewVector(0, 0, 1),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(-2, 0, 0),
+			direction: tuple.NewVector(2, 4, 6),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(0, -2, 0),
+			direction: tuple.NewVector(6, 2, 4),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(0, 0, -2),
+			direction: tuple.NewVector(4, 6, 2),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(2, 0, 2),
+			direction: tuple.NewVector(0, 0, -1),
+			expected:  false,
+		},
+		{
+			origin:    tuple.NewPoint(0, 2, 2),
+			direction: tuple.NewVector(0, -1, 0),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(2, 2, 0),
+			direction: tuple.NewVector(-1, 0, 0),
+			expected:  false,
+		},
+	}
+	for _, test := range tests {
+		r := ray.New(test.origin, test.direction)
+		if result := BoxIntersection(box, r); result != test.expected {
+			if test.expected {
+				t.Errorf("Expected ray %v to intersect bounding box %v", r, box)
+			} else {
+				t.Errorf("Expected ray %v to not intersect bounding box %v", r, box)
+			}
+		}
+	}
+}
+
+func TestBoxIntersection2(t *testing.T) {
+	// Intersecting a ray with a non-cubic bounding box
+	box := NewBoundingBox(tuple.NewPoint(5, -2, 0), tuple.NewPoint(11, 4, 7))
+	var tests = []struct {
+		origin, direction tuple.Tuple
+		expected          bool
+	}{
+		{
+			origin:    tuple.NewPoint(15, 1, 2),
+			direction: tuple.NewVector(-1, 0, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(-5, -1, 4),
+			direction: tuple.NewVector(1, 0, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(7, 6, 5),
+			direction: tuple.NewVector(0, -1, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(9, -5, 6),
+			direction: tuple.NewVector(0, 1, 0),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(8, 2, 12),
+			direction: tuple.NewVector(0, 0, -1),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(6, 0, -5),
+			direction: tuple.NewVector(0, 0, 1),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(8, 1, 3.5),
+			direction: tuple.NewVector(0, 0, 1),
+			expected:  true,
+		}, {
+			origin:    tuple.NewPoint(9, -1, -8),
+			direction: tuple.NewVector(2, 4, 6),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(8, 3, -4),
+			direction: tuple.NewVector(6, 2, 4),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(9, -1, -2),
+			direction: tuple.NewVector(4, 6, 2),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(4, 0, 9),
+			direction: tuple.NewVector(0, 0, 1),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(8, 6, -1),
+			direction: tuple.NewVector(0, -1, 0),
+			expected:  false,
+		}, {
+			origin:    tuple.NewPoint(12, 5, 4),
+			direction: tuple.NewVector(-1, 0, 0),
+			expected:  false,
+		},
+	}
+
+	for _, test := range tests {
+		r := ray.New(test.origin, test.direction)
+		if result := BoxIntersection(box, r); result != test.expected {
+			if test.expected {
+				t.Errorf("Expected ray %v to intersect bounding box %v", r, box)
+			} else {
+				t.Errorf("Expected ray %v to not intersect bounding box %v", r, box)
+			}
+		}
 	}
 }

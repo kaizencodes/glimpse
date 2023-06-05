@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
 )
 
@@ -110,4 +111,9 @@ func Transform(b *BoundingBox, m matrix.Matrix) *BoundingBox {
 
 func TransformedBoundFor(shape Shape) *BoundingBox {
 	return Transform(BoundFor(shape), shape.Transform())
+}
+
+func BoxIntersection(box *BoundingBox, r *ray.Ray) bool {
+	intersections := aABBIntersect(NewTestShape(), r, box.Min, box.Max)
+	return len(intersections) > 0
 }

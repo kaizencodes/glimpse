@@ -41,6 +41,11 @@ func (s *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple 
 }
 
 func (s *Group) localIntersect(r *ray.Ray) Intersections {
+	// TODO: check if we can save the bound calculation and reuse it
+	if !BoxIntersection(BoundFor(s), r) {
+		return Intersections{}
+	}
+
 	xs := Intersections{}
 	for _, child := range s.Children() {
 		xs = append(xs, Intersect(child, r)...)
