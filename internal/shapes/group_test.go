@@ -59,3 +59,40 @@ func TestGroupTransformation(t *testing.T) {
 		t.Errorf("incorrect transformation")
 	}
 }
+
+func TestRemoveChild(t *testing.T) {
+	g := NewGroup()
+	s1 := NewSphere()
+	s2 := NewSphere()
+	s2.SetTransform(matrix.Translation(0, 0, -3))
+	g.AddChild(s1)
+	g.AddChild(s2)
+	g.RemoveChild(s1)
+
+	if len(g.Children()) != 1 && g.Children()[0] != s2 {
+		t.Errorf("group did not remove child")
+	}
+}
+
+func TestPartition(t *testing.T) {
+	g := NewGroup()
+	s1 := NewSphere()
+	s1.SetTransform(matrix.Translation(-2, 0, 0))
+	s2 := NewSphere()
+	s2.SetTransform(matrix.Translation(2, 0, 0))
+	s3 := NewSphere()
+	g.AddChild(s1)
+	g.AddChild(s2)
+	g.AddChild(s3)
+	left, right := g.Partition()
+
+	if left[0] != s1 {
+		t.Errorf("incorrect partition for left, expected \n%v\n, got \n%v\n", s1, left[0])
+	}
+	if right[0] != s2 {
+		t.Errorf("incorrect partition for right, expected \n%v\n, got \n%v\n", s2, right[0])
+	}
+	if g.children[0] != s3 {
+		t.Errorf("incorrect partition for original group, expected \n%v\n, got \n%v", s3, g.children[0])
+	}
+}

@@ -75,6 +75,39 @@ func (g *Group) AddChild(s Shape) {
 	g.children = append(g.children, s)
 }
 
+func (g *Group) RemoveChild(s Shape) {
+	s.SetParent(nil)
+	for i, child := range g.children {
+		if child == s {
+			// replace the child with the last element
+			g.children[i] = g.children[len(g.children)-1]
+			// remove the last element
+			g.children = g.children[:len(g.children)-1]
+			// this is a much faster solution and the ordering doesn't matter
+			return
+		}
+	}
+}
+
 func (g *Group) Children() []Shape {
 	return g.children
+}
+
+func (g *Group) Partition() (left, right []Shape) {
+	box := BoundFor(g)
+	leftBox, rightBox := box.Split()
+	for _, child := range g.children {
+		if leftBox.ContainsBox(TransformedBoundFor(child)) {
+			left = append(left, child)
+		} else if rightBox.ContainsBox(TransformedBoundFor(child)) {
+			right = append(right, child)
+		}
+	}
+	for _, child := range left {
+		g.RemoveChild(child)
+	}
+	for _, child := range right {
+		g.RemoveChild(child)
+	}
+	return left, right
 }
