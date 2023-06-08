@@ -70,9 +70,11 @@ func (s *Group) SetParent(other Shape) {
 	s.parent = other
 }
 
-func (g *Group) AddChild(s Shape) {
-	s.SetParent(g)
-	g.children = append(g.children, s)
+func (g *Group) AddChild(shapes ...Shape) {
+	for _, s := range shapes {
+		s.SetParent(g)
+	}
+	g.children = append(g.children, shapes...)
 }
 
 func (g *Group) RemoveChild(s Shape) {
@@ -110,4 +112,26 @@ func (g *Group) Partition() (left, right []Shape) {
 		g.RemoveChild(child)
 	}
 	return left, right
+}
+
+func (g *Group) Divide(threshold int) {
+	if len(g.children) >= threshold {
+		left, right := g.Partition()
+		if len(left) > 0 {
+			subGroup := NewGroup()
+			subGroup.AddChild(left...)
+			g.AddChild(subGroup)
+
+		}
+		if len(right) > 0 {
+			subGroup := NewGroup()
+			subGroup.AddChild(right...)
+			g.AddChild(subGroup)
+		}
+	}
+	for _, child := range g.children {
+		if group, ok := child.(*Group); ok {
+			group.Divide(threshold)
+		}
+	}
 }
