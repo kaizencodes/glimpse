@@ -105,11 +105,11 @@ func splitVertexLine(line string) (float64, float64, float64) {
 
 func parseNormals(input string) []tuple.Tuple {
 	r := regexp.MustCompile("(?m)^vn.*\n")
-	vertexLines := r.FindAllString(input, -1)
+	normalLines := r.FindAllString(input, -1)
 	normals := []tuple.Tuple{
 		tuple.NewVector(0, 0, 0), // index is 1 based
 	}
-	for _, line := range vertexLines {
+	for _, line := range normalLines {
 		normals = append(normals, tuple.NewVector(splitVertexLine(line)))
 	}
 	return normals
@@ -118,14 +118,14 @@ func parseNormals(input string) []tuple.Tuple {
 func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*Triangle) {
 	r := regexp.MustCompile("(?m)^f.*\n")
 	faceLines := r.FindAllString(input, -1)
-	// faces := []*shapes.Triangle{}
 	for _, line := range faceLines {
 		indexes := convertLinesToIndexes(line)
+
 		// fan triangulation
 		for i := 0; i < len(indexes)-2; i++ {
 			// var face *shapes.Triangle
 			if indexes[0][1] != 0 {
-				face := NewSmoothTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]], vertices[indexes[0][1]], vertices[indexes[i+1][1]], vertices[indexes[i+2][1]])
+				face := NewSmoothTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]], normals[indexes[0][1]], normals[indexes[i+1][1]], normals[indexes[i+2][1]])
 				faces = append(faces, face)
 			} else {
 				face := NewTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]])

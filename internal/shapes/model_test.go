@@ -99,8 +99,8 @@ f 1/0/3 2/102/1 3/14/2
 
 	assertFace(faces[0], vertices[1], vertices[2], vertices[3], t)
 	assertFace(faces[1], vertices[1], vertices[2], vertices[3], t)
-	assertFaceNormal(faces[0], vertices[3], vertices[1], vertices[2], t)
-	assertFaceNormal(faces[1], vertices[3], vertices[1], vertices[2], t)
+	assertFaceNormal(faces[0], normals[3], normals[1], normals[2], t)
+	assertFaceNormal(faces[1], normals[3], normals[1], normals[2], t)
 }
 
 func TestTriangulatingPolygons(t *testing.T) {
