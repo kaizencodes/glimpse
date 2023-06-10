@@ -18,9 +18,11 @@ func TestRead(t *testing.T) {
 			To:     []float64{0, 1, 0},
 			Up:     []float64{0, 1, 0},
 		},
-		Light: cfg.Light{
-			Position:  []float64{-10, 10, -10},
-			Intensity: []float64{1, 1, 1},
+		Lights: []cfg.Light{
+			{
+				Position:  []float64{-10, 10, -10},
+				Intensity: []float64{1, 1, 1},
+			},
 		},
 		Objects: []cfg.Object{
 			{

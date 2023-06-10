@@ -2,7 +2,7 @@ package config
 
 type Scene struct {
 	Camera  Camera
-	Light   Light
+	Lights  []Light
 	Objects []Object
 }
 

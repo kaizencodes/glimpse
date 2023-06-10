@@ -19,7 +19,7 @@ import (
 func BuildScene(config cfg.Scene) (*camera.Camera, *scenes.Scene) {
 	cam := buildCamera(config.Camera)
 	scene := scenes.Default()
-	scene.Lights = buildLight(config.Light)
+	scene.Lights = buildLights(config.Lights)
 	scene.Shapes = buildObjects(config.Objects)
 
 	return cam, scene
@@ -39,13 +39,16 @@ func buildCamera(config cfg.Camera) *camera.Camera {
 	return cam
 }
 
-func buildLight(config cfg.Light) []light.Light {
-	return []light.Light{
-		light.NewLight(
-			tuple.NewPointFromSlice(config.Position),
-			color.FromSlice(config.Intensity),
-		),
+func buildLights(config []cfg.Light) []light.Light {
+	var lights []light.Light
+	for _, c := range config {
+		l := light.NewLight(
+			tuple.NewPointFromSlice(c.Position),
+			color.FromSlice(c.Intensity),
+		)
+		lights = append(lights, l)
 	}
+	return lights
 }
 
 func buildObjects(config []cfg.Object) []shapes.Shape {

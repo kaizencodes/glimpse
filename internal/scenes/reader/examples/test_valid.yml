@@ -5,9 +5,9 @@ camera:
   from: [0, 2, -7]
   to: [0, 1, 0]
   up: [0, 1, 0]
-light:
-  position: [-10, 10, -10]
-  intensity: [1, 1, 1]
+lights:
+  - position: [-10, 10, -10]
+    intensity: [1, 1, 1]
 objects:
   - type: sphere
     transform:
