@@ -163,12 +163,14 @@ func TestMultiply(t *testing.T) {
 		expected Tuple
 	}{
 		{
-			a: matrix.Matrix{
-				[]float64{1, 2, 3, 4},
-				[]float64{2, 4, 4, 2},
-				[]float64{8, 6, 4, 1},
-				[]float64{0, 0, 0, 1},
-			},
+			a: matrix.New(4, 4,
+				[]float64{
+					1, 2, 3, 4,
+					2, 4, 4, 2,
+					8, 6, 4, 1,
+					0, 0, 0, 1,
+				},
+			),
 			b:        Tuple{1, 2, 3, 1},
 			expected: Tuple{18, 24, 33, 1},
 		},

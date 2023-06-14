@@ -23,7 +23,7 @@ func New(width, height int, fov float64) *Camera {
 		Width:     width,
 		Height:    height,
 		Fov:       fov,
-		transform: matrix.NewIdentity(4),
+		transform: matrix.DefaultTransform(),
 	}
 
 	halfView := math.Tan(fov / 2.0)
@@ -82,12 +82,14 @@ func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
 	left := tuple.Cross(forward, up.Normalize())
 	trueUp := tuple.Cross(left, forward)
 
-	orientation := matrix.Matrix{
-		[]float64{left.X, left.Y, left.Z, 0},
-		[]float64{trueUp.X, trueUp.Y, trueUp.Z, 0},
-		[]float64{-forward.X, -forward.Y, -forward.Z, 0},
-		[]float64{0, 0, 0, 1},
-	}
+	orientation := matrix.New(4, 4,
+		[]float64{
+			left.X, left.Y, left.Z, 0,
+			trueUp.X, trueUp.Y, trueUp.Z, 0,
+			-forward.X, -forward.Y, -forward.Z, 0,
+			0, 0, 0, 1,
+		},
+	)
 
 	result := matrix.Multiply(orientation, matrix.Translation(-from.X, -from.Y, -from.Z))
 

@@ -83,7 +83,7 @@ func buildObject(config cfg.Object) shapes.Shape {
 			panic(fmt.Sprintf("Object file could not be read: %s\n%s", config.File, err.Error()))
 		}
 		group := shapes.Parse(string(data))
-		group.Divide(3)
+		group.Divide(2500)
 
 		shape = group
 	case "group":
@@ -92,7 +92,7 @@ func buildObject(config cfg.Object) shapes.Shape {
 		for _, s := range shapes {
 			group.AddChild(s)
 		}
-		group.Divide(3)
+		group.Divide(2500)
 		shape = group
 	default:
 		panic("Unknown shape type")
@@ -109,7 +109,7 @@ func buildTransforms(config []cfg.Transform) matrix.Matrix {
 
 	// If there are no transforms, return the identity matrix.
 	if len(config) == 0 {
-		return matrix.NewIdentity(4)
+		return matrix.DefaultTransform()
 	}
 
 	// If there is only one transform, just build it and return.
