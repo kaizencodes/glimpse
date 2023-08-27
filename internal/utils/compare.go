@@ -86,10 +86,6 @@ func Compare(obj1, obj2 interface{}) []string {
 		re := v1.Elem().Interface()
 		nestedDiff := Compare(re, v2.Elem().Interface())
 		diff = append(diff, nestedDiff...)
-		// case reflect.Float64, reflect.Float32:
-		// 	if !FloatEquals(v1.Float(), v2.Float()) {
-		// 		diff = append(diff, fmt.Sprintf("actual %f != expected %f", v1.Float(), v2.Float()))
-		// 	}
 	}
 
 	return diff

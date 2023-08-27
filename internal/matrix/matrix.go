@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/kaizencodes/glimpse/internal/utils"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -59,5 +60,5 @@ func Multiply(a, b Matrix) Matrix {
 }
 
 func Equal(a, b Matrix) bool {
-	return mat.Equal(a.inner, b.inner)
+	return mat.EqualApprox(a.inner, b.inner, utils.EPSILON)
 }
