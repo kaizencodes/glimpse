@@ -17,6 +17,7 @@ jobs:
       run: |
         go mod download
         go get -u golang.org/x/lint/golint
+        go install cuelang.org/go/cmd/cue@latest
 
     - name: Test
       run: go test -gcflags=-l -v ./...
