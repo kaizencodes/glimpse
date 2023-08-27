@@ -34,15 +34,12 @@ func Render(c *camera.Camera, w *scenes.Scene) canvas.Canvas {
 				col := colorAt(w, r)
 				img[x][y] = col
 				done += 1
-				fmt.Printf("\rProgress: %d%%", int(math.Round((float64(done)/float64(total))*100)))
-				if done == total {
-					fmt.Printf("\nDone!")
-				}
+				fmt.Printf("\rRendering: %d%%", int(math.Round((float64(done)/float64(total))*100)))
 			}(x, y)
 		}
 	}
 	wg.Wait()
-
+	fmt.Printf("\nDone!")
 	return img
 }
 

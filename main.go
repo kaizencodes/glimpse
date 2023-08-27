@@ -47,23 +47,19 @@ Additional Information:
   - glimpse will append a timestamp and extension to the output file`
 
 func main() {
-	os.Exit(realMain())
-}
-
-func realMain() int {
 	start := time.Now()
 
 	flag.Parse()
 
-	if len(os.Args) < 2 || filePath == "" {
+	if filePath == "" {
 		fmt.Println(commandHelp)
-		return 1
+		os.Exit(1)
 	}
 
 	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
 		fmt.Printf("File '%s' does not exist\n", filePath)
-		return 1
+		os.Exit(1)
 	}
 
 	config, err := reader.Read(filePath)
@@ -73,19 +69,18 @@ func realMain() int {
 	}
 
 	cam, scene := builder.BuildScene(config)
-	fmt.Printf("Rendering initiated\n")
 
 	img := renderer.Render(cam, scene)
 
-	fmt.Printf("\nFile writing initiated\n")
+	fmt.Printf("\nWriting to file\n")
 
 	if err := os.WriteFile(fmt.Sprintf(outputPath+"-%s.ppm", time.Now().Format(time.RFC3339Nano)), []byte(export.Export(img)), 0666); err != nil {
 		fmt.Printf("%e\n", err)
 		log.Fatal(err)
 	}
-	fmt.Printf("File writing completed\n")
-	elapsed := time.Since(start)
-	fmt.Printf("Rendering took %s\n", elapsed)
 
-	return 0
+	elapsed := time.Since(start)
+	fmt.Printf("Total time: %s\n", elapsed)
+
+	os.Exit(0)
 }
