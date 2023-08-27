@@ -5,6 +5,7 @@ file, renders the scene, and writes the result to a PPM file.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -16,47 +17,70 @@ import (
 	"github.com/kaizencodes/glimpse/internal/scenes/reader"
 )
 
-func main() {
-	os.Exit(realMain())
+var filePath, outputPath, defaultOutputPath string
+
+func init() {
+	defaultOutputPath = "renders/render"
+
+	flag.StringVar(&filePath, "f", "", "Filepath for the yml describing the scene.")
+	flag.StringVar(&outputPath, "o", defaultOutputPath, "Output path where the render will be saved. Folder has to exist.")
 }
 
-func realMain() int {
+const commandHelp = `Usage:
+  glimpse [options]
+
+Description:
+  Glimpse is a ray tracer. It reads a scene
+  file, renders the scene, and writes the result to a PPM file.
+
+Options:
+  -h		Show this help message and exit.
+  -f		Filepath for the yml describing the scene.
+  -o 		Output path where the render will be saved. Folder has to exist.
+
+Examples:
+  command -f /examples/marbles.yml
+  command -f /examples/marbles.yml -o /renders/new_marble_render
+
+Additional Information:
+  - The -o flag has a default value. It defaults to the renders folder.
+  - glimpse will append a timestamp and extension to the output file`
+
+func main() {
 	start := time.Now()
 
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: ./glimpse <filepath>")
-		return 1
+	flag.Parse()
+
+	if filePath == "" {
+		fmt.Println(commandHelp)
+		os.Exit(1)
 	}
 
-	filepath := os.Args[1]
-
-	_, err := os.Stat(filepath)
+	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
-		fmt.Printf("File '%s' does not exist\n", filepath)
-		return 1
+		fmt.Printf("File '%s' does not exist\n", filePath)
+		os.Exit(1)
 	}
 
-	config, err := reader.Read(filepath)
+	config, err := reader.Read(filePath)
 	if err != nil {
 		fmt.Printf("The input file has the following error:\n\n %s\n", err.Error())
 		os.Exit(1)
 	}
 
 	cam, scene := builder.BuildScene(config)
-	fmt.Printf("Rendering initiated\n")
 
 	img := renderer.Render(cam, scene)
 
-	fmt.Printf("File writing initiated\n")
+	fmt.Printf("\nWriting to file\n")
 
-	filename := fmt.Sprintf("renders/render-%d.ppm", time.Now().Unix())
-	if err := os.WriteFile(filename, []byte(export.Export(img)), 0666); err != nil {
+	if err := os.WriteFile(fmt.Sprintf(outputPath+"-%s.ppm", time.Now().Format(time.RFC3339Nano)), []byte(export.Export(img)), 0666); err != nil {
 		fmt.Printf("%e\n", err)
 		log.Fatal(err)
 	}
-	fmt.Printf("File writing completed\n")
-	elapsed := time.Since(start)
-	fmt.Printf("Rendering took %s\n", elapsed)
 
-	return 0
+	elapsed := time.Since(start)
+	fmt.Printf("Total time: %s\n", elapsed)
+
+	os.Exit(0)
 }
