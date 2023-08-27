@@ -13,6 +13,10 @@
   intensity: #Tuple
 }
 
+#Lights: {
+  [...#Light]
+}
+
 #scale: {
   type: "scale" 
   values: #Tuple
@@ -83,14 +87,21 @@
 
 #Model: {
   type: "model"
-  path: string
+  file: string
   transform?: #transform
 }
 
-#Object: {
-[...#Sphere | #Cube | #Plane | #Cylinder | #Model]
+#Group: {
+  type: "group"
+  children: [...#Objects]
+  transform?: #transform
+  material?: #material
+}
+
+#Objects: {
+#Sphere | #Cube | #Plane | #Cylinder | #Model | #Group
 }
 
 camera: #Camera
-light: #Light
-objects: #Object
+lights: #Lights
+objects: [...#Objects]

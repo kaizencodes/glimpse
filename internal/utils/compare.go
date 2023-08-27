@@ -82,6 +82,10 @@ func Compare(obj1, obj2 interface{}) []string {
 				diff = append(diff, fmt.Sprintf("%d: actual %v != expected %v", i, field1.Interface(), field2.Interface()))
 			}
 		}
+	case reflect.Pointer, reflect.UnsafePointer:
+		re := v1.Elem().Interface()
+		nestedDiff := Compare(re, v2.Elem().Interface())
+		diff = append(diff, nestedDiff...)
 	}
 
 	return diff

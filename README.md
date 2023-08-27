@@ -1,6 +1,6 @@
 # Glimpse
 
-![](renders/marbles.png)
+![](examples/marbles.png)
 
 Glimpse is a ray tracer written in Go. It is an implementation of the [Ray tracer challenge](https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/) by Jamis Buck.
 

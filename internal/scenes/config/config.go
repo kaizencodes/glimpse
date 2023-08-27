@@ -2,7 +2,7 @@ package config
 
 type Scene struct {
 	Camera  Camera
-	Light   Light
+	Lights  []Light
 	Objects []Object
 }
 
@@ -26,6 +26,8 @@ type Object struct {
 	Material         Material
 	Minimum, Maximum float64
 	Closed           bool
+	File             string
+	Children         []Object
 }
 
 type Transform struct {

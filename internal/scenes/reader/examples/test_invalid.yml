@@ -1,5 +1,6 @@
 camera:
-  width: 250
+  # incorrect width
+  Wdth: 250
   height: 125
   fov: 1.0471975512
   from: [0, 2, -7]

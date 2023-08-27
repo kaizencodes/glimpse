@@ -50,9 +50,13 @@ func (s *Cube) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 }
 
 func (s *Cube) localIntersect(r *ray.Ray) Intersections {
-	xMin, xMax := checkAxis(r.Origin.X, r.Direction.X)
-	yMin, yMax := checkAxis(r.Origin.Y, r.Direction.Y)
-	zMin, zMax := checkAxis(r.Origin.Z, r.Direction.Z)
+	return aABBIntersect(s, r, tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
+}
+
+func aABBIntersect(s Shape, r *ray.Ray, minPoint, maxPoint tuple.Tuple) Intersections {
+	xMin, xMax := checkAxis(r.Origin.X, r.Direction.X, minPoint.X, maxPoint.X)
+	yMin, yMax := checkAxis(r.Origin.Y, r.Direction.Y, minPoint.Y, maxPoint.Y)
+	zMin, zMax := checkAxis(r.Origin.Z, r.Direction.Z, minPoint.Z, maxPoint.Z)
 
 	min := math.Max(xMin, math.Max(yMin, zMin))
 	max := math.Min(xMax, math.Min(yMax, zMax))
@@ -67,9 +71,9 @@ func (s *Cube) localIntersect(r *ray.Ray) Intersections {
 	}
 }
 
-func checkAxis(origin, direction float64) (min, max float64) {
-	minNumerator := -1 - origin
-	maxNumerator := 1 - origin
+func checkAxis(origin, direction, min, max float64) (float64, float64) {
+	minNumerator := min - origin
+	maxNumerator := max - origin
 	if math.Abs(direction) >= utils.EPSILON {
 		min = minNumerator / direction
 		max = maxNumerator / direction

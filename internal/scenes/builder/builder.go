@@ -1,11 +1,15 @@
 package builder
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/kaizencodes/glimpse/internal/camera"
 	"github.com/kaizencodes/glimpse/internal/color"
 	"github.com/kaizencodes/glimpse/internal/light"
 	"github.com/kaizencodes/glimpse/internal/materials"
 	"github.com/kaizencodes/glimpse/internal/matrix"
+	"github.com/kaizencodes/glimpse/internal/projectpath"
 	"github.com/kaizencodes/glimpse/internal/scenes"
 	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
 	"github.com/kaizencodes/glimpse/internal/shapes"
@@ -15,7 +19,7 @@ import (
 func BuildScene(config cfg.Scene) (*camera.Camera, *scenes.Scene) {
 	cam := buildCamera(config.Camera)
 	scene := scenes.Default()
-	scene.Lights = buildLight(config.Light)
+	scene.Lights = buildLights(config.Lights)
 	scene.Shapes = buildObjects(config.Objects)
 
 	return cam, scene
@@ -35,13 +39,16 @@ func buildCamera(config cfg.Camera) *camera.Camera {
 	return cam
 }
 
-func buildLight(config cfg.Light) []light.Light {
-	return []light.Light{
-		light.NewLight(
-			tuple.NewPointFromSlice(config.Position),
-			color.FromSlice(config.Intensity),
-		),
+func buildLights(config []cfg.Light) []light.Light {
+	var lights []light.Light
+	for _, c := range config {
+		l := light.NewLight(
+			tuple.NewPointFromSlice(c.Position),
+			color.FromSlice(c.Intensity),
+		)
+		lights = append(lights, l)
 	}
+	return lights
 }
 
 func buildObjects(config []cfg.Object) []shapes.Shape {
@@ -70,6 +77,23 @@ func buildObject(config cfg.Object) shapes.Shape {
 		cylinder.Closed = config.Closed
 
 		shape = cylinder
+	case "model":
+		data, err := os.ReadFile(projectpath.Root + config.File)
+		if err != nil {
+			panic(fmt.Sprintf("Object file could not be read: %s\n%s", config.File, err.Error()))
+		}
+		group := shapes.Parse(string(data))
+		group.Divide(2500)
+
+		shape = group
+	case "group":
+		group := shapes.NewGroup()
+		shapes := buildObjects(config.Children)
+		for _, s := range shapes {
+			group.AddChild(s)
+		}
+		group.Divide(2500)
+		shape = group
 	default:
 		panic("Unknown shape type")
 	}
@@ -85,7 +109,7 @@ func buildTransforms(config []cfg.Transform) matrix.Matrix {
 
 	// If there are no transforms, return the identity matrix.
 	if len(config) == 0 {
-		return matrix.NewIdentity(4)
+		return matrix.DefaultTransform()
 	}
 
 	// If there is only one transform, just build it and return.

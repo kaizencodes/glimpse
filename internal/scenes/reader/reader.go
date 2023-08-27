@@ -23,7 +23,7 @@ func Read(path string) (cfg.Scene, error) {
 	// Validate the config file against the schema using cue.
 	cmd := exec.Command("cue", "vet", path, projectpath.Root+schemaPath)
 	if output, err := cmd.CombinedOutput(); err != nil {
-		return cfg.Scene{}, ValidationError{message: string(output)}
+		return cfg.Scene{}, ValidationError{message: string(output) + err.Error()}
 	}
 
 	scene := cfg.Scene{}
