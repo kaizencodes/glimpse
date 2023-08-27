@@ -3,12 +3,13 @@ package reader
 import (
 	"testing"
 
+	"github.com/kaizencodes/glimpse/internal/projectpath"
 	cfg "github.com/kaizencodes/glimpse/internal/scenes/config"
 	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestRead(t *testing.T) {
-	config, err := Read(`./examples/test_valid.yml`)
+	config, err := Read(projectpath.Root + `/internal/scenes/reader/examples/test_valid.yml`)
 	expectedConfig := cfg.Scene{
 		Camera: cfg.Camera{
 			Width:  250,
@@ -116,7 +117,7 @@ func TestRead(t *testing.T) {
 	}
 
 	if err != nil {
-		t.Errorf("%s", err.Error())
+		t.Errorf("Could not read file: %s", err.Error())
 	} else {
 		for _, diff := range utils.Compare(config, expectedConfig) {
 			t.Errorf("Mismatch: %s", diff)
