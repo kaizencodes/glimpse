@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  glimpse:
+    build:
+      context: .
+    container_name: glimpse
+    volumes:
+      - ./:/glimpse
+    command: sleep infinity
