@@ -46,9 +46,9 @@ camera:
   up: [0, 1, 0]                 # camera up vector
 
 # describe the light source
-light:
-  position: [0, 6.9, -5]        # light position, x,y,z coordinates
-  intensity: [1, 1, 0.9]        # light intensity, r,g,b values between 0 and 1
+lights:
+  - position: [0, 6.9, -5]        # light position, x,y,z coordinates
+    intensity: [1, 1, 0.9]        # light intensity, r,g,b values between 0 and 1
 
 # describe the objects in the scene
 objects:
