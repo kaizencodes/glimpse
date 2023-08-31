@@ -1,0 +1,40 @@
+shared:
+  default-material: &default-material
+    color: [1, 1, 1]
+    ambient: 0.1
+    diffuse: 0.9
+    specular: 0.9
+    shininess: 200
+    reflective: 0
+    transparency: 0
+    refractive_index: 1
+camera:
+  width: 1000
+  height: 1000
+  fov: 0.785
+  from: [8, 8, -8]
+  to: [0, 3, 0]
+  up: [0, 1, 0]
+lights:
+  - position: [0, 6.9, -5]
+    intensity: [1, 1, 0.9]
+objects:
+  # floor
+  - type: plane
+    transform:
+      - type: "rotate-y"
+        values: [0.31415]
+    material:
+      <<: *default-material
+      specular: 0
+      reflective: 0.1
+  - type: model
+    file: "/examples/models/mug.obj"
+    material:
+      <<: *default-material
+      ambient: 0.3
+    transform:
+      - type: "translate"
+        values: [0, 1.5, -6]
+      - type: "scale"
+        values: [1.8, 1.8, 1.8]

@@ -1,0 +1,295 @@
+shared:
+  white-material: &white-material
+    color: [1, 1, 1]
+    ambient: 0.1
+    diffuse: 0.7
+    specular: 0.0
+    shininess: 200
+    reflective: 0.1
+    transparency: 0
+    refractive_index: 1
+  blue-material: &blue-material
+    <<: *white-material
+    color: [0.537, 0.831, 0.914]
+  red-material: &red-material
+    <<: *white-material
+    color: [0.941, 0.322, 0.388]
+  purple-material: &purple-material
+    <<: *white-material
+    color: [0.373, 0.404, 0.550]
+  default-transform: &default-transform
+    - type: "translate"
+      values: [1, -1, 1]
+    - type: "scale"
+      values: [0.5, 0.5, 0.5]
+  large-transform: &large-transform
+    - type: "translate"
+      values: [1, -1, 1]
+    - type: "scale"
+      values: [0.5, 0.5, 0.5]
+    - type: "scale"
+      values: [3.5, 3.5, 3.5]
+  medium-transform: &medium-transform
+    - type: "translate"
+      values: [1, -1, 1]
+    - type: "scale"
+      values: [0.5, 0.5, 0.5]
+    - type: "scale"
+      values: [3, 3, 3]
+  small-transform: &small-transform
+    - type: "translate"
+      values: [1, -1, 1]
+    - type: "scale"
+      values: [0.5, 0.5, 0.5]
+    - type: "scale"
+      values: [2, 2, 2]
+camera:
+  width: 1000
+  height: 1000
+  fov: 0.785
+  from: [-6, 6, -10]
+  to: [6, 0, 6]
+  up: [-0.45, 1, 0]
+lights:
+  - position: [50, 100, -50]
+    intensity: [1, 1, 1]
+  - position: [-400, 50, -10]
+    intensity: [0.2, 0.2, 0.2]
+objects:
+  # white backdrop
+  - type: plane
+    transform:
+      - type: "rotate-x"
+        values: [1.5707963267948966]
+      - type: "translate"
+        values: [0, 0, 500]
+    material:
+      color: [1, 1, 1]
+      ambient: 1
+      diffuse: 0
+      specular: 0
+      shininess: 0
+      reflective: 0
+      transparency: 0
+      refractive_index: 1
+  - type: sphere
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+    material:
+      color: [ 0.373, 0.404, 0.550 ]
+      ambient:         0
+      diffuse:         0.4
+      specular:        0.9
+      shininess:       300
+      reflective:      0.9
+      transparency:    0.9
+      refractive_index: 1.5
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3, 3, 3]
+      - type: "translate"
+        values: [4, 0, 0]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [8.5, 1.5, -0.5]
+    material:
+      <<: *blue-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [0, 0, 4]
+    material:
+      <<: *red-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [2, 2, 2]
+      - type: "translate"
+        values: [4, 0, 4]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3, 3, 3]
+      - type: "translate"
+        values: [7.5, 0.5, 4]
+    material:
+      <<: *purple-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3, 3, 3]
+      - type: "translate"
+        values: [-0.25, 0.25, 8]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [4, 1, 7.5]
+    material:
+      <<: *blue-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3, 3, 3]
+      - type: "translate"
+        values: [10, 2, 7.5]
+    material:
+      <<: *red-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [2, 2, 2]
+      - type: "translate"
+        values: [8, 2, 12]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [2, 2, 2]
+      - type: "translate"
+        values: [20, 1, 9]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [-0.5, -5, 0.25]
+    material:
+      <<: *blue-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [4, -4, 0]
+    material:
+      <<: *red-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [8.5, -4, 0]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [0, -4, 4]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [-0.5, -4.5, 8]
+    material:
+      <<: *purple-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [0, -8, 4]
+    material:
+      <<: *white-material
+  - type: cube
+    transform:
+      - type: "translate"
+        values: [1, -1, 1]
+      - type: "scale"
+        values: [0.5, 0.5, 0.5]
+      - type: "scale"
+        values: [3.5, 3.5, 3.5]
+      - type: "translate"
+        values: [-0.5, -8.5, 8]
+    material:
+      <<: *white-material
