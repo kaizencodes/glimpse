@@ -81,3 +81,10 @@ Start the container with `docker-compose up -d`
 Then you can run commands in the container with `docker exec -it glimpse bash`
 
 The source code is mounted so this can be used to recompile the code after changes `go build .`, to run the tests `go test -gcflags=-l -v ./...`, and to run render which will be saved in the mounted host directory.
+
+## Renders
+
+![](examples/cover.png)
+
+![](examples/mug.png)
+
