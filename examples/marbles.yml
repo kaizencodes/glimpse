@@ -27,8 +27,8 @@ shared:
     reflective: 0.3
     refractive_index: 1
 camera:
-  width: 400
-  height: 200
+  width: 800
+  height: 400
   fov: 1.152
   from: [-2.6, 1.5, -3.9]
   to: [-0.6, 1, -0.8]

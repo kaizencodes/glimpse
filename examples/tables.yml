@@ -9,15 +9,15 @@ shared:
     transparency: 0
     refractive_index: 1
 camera:
-  width: 800
-  height: 400
+  width: 400
+  height: 200
   fov: 0.785
   from: [8, 6, -8]
   to: [0, 3, 0]
   up: [0, 1, 0]
-light:
-  position: [0, 6.9, -5]
-  intensity: [1, 1, 0.9]
+lights:
+  - position: [0, 6.9, -5]
+    intensity: [1, 1, 0.9]
 objects:
   # floor/ceiling
   - type: cube
