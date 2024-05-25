@@ -2,32 +2,36 @@
 package matrix
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 
 	"github.com/kaizencodes/glimpse/internal/utils"
-	"gonum.org/v1/gonum/mat"
 )
 
-// Hiding the implementation details of the matrix type with the inner attribute.
-// Previously it was an internal solution, so kept the interface and changed the implementation
-// to use gonum/mat package since it's much more efficient resulting in a 10x speedup.
-type Matrix struct {
-	inner mat.Matrix
+type Matrix [][]float64
+
+func New(n, m int) Matrix {
+	mat := make(Matrix, n)
+	for i := 0; i < int(n); i++ {
+		mat[i] = make([]float64, m)
+	}
+	return mat
 }
 
-func New(rows, cols int, data []float64) Matrix {
-	return Matrix{inner: mat.NewDense(rows, cols, data)}
+func NewIdentity(size int) Matrix {
+	identity := New(size, size)
+	for n := range identity {
+		identity[n][n] = 1
+	}
+	return identity
 }
 
 func (m Matrix) String() string {
 	var result string
 
-	rows, cols := m.inner.Dims()
-
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			result += strconv.FormatFloat(m.inner.At(i, j), 'f', -1, 64)
+	for _, row := range m {
+		for _, val := range row {
+			result += strconv.FormatFloat(val, 'f', -1, 64)
 			result += ", "
 		}
 		result += string('\n')
@@ -35,30 +39,113 @@ func (m Matrix) String() string {
 	return result
 }
 
-func (m Matrix) Inverse() Matrix {
-	var inv mat.Dense
-	if err := inv.Inverse(m.inner); err != nil {
-		log.Fatal(err)
+// Transposing the matrix swaps the rows and columns.
+func (a Matrix) Transpose() Matrix {
+	mat := New(len(a[0]), len(a))
+	for n := 0; n < len(mat); n++ {
+		for m := 0; m < len(mat[0]); m++ {
+			mat[n][m] = a[m][n]
+		}
 	}
-	return Matrix{inner: &inv}
+	return mat
 }
 
-func (m Matrix) Transpose() Matrix {
-	return Matrix{inner: m.inner.T()}
+// Inverse of a matrix is a matrix that when multiplied by the original matrix results in the identity matrix.
+func (a Matrix) Inverse() Matrix {
+	det := a.determinant()
+	if det == 0 {
+		panic(fmt.Errorf("non-invertible matrix, determinant is zero for \n%s", a.String()))
+	}
+
+	inverse := New(len(a), len(a[0]))
+	for n, col := range inverse {
+		for m := range col {
+			// the col and row are swapped here. n m vs m n
+			inverse[m][n] = a.Cofactor(n, m) / det
+		}
+	}
+	return inverse
 }
 
 func (m Matrix) At(row, col int) float64 {
-	return m.inner.At(row, col)
+	return m[row][col]
 }
 
 // multiplications are used to perform transformations: scaling, rotating, translating.
 func Multiply(a, b Matrix) Matrix {
-	var m mat.Dense
-	m.Mul(a.inner, b.inner)
+	if len(a[0]) != len(b) {
+		panic(fmt.Errorf("incompatible matrices: len: col a: %d, col: b  %d", len(a[0]), len(b)))
+	}
 
-	return Matrix{inner: &m}
+	new_mat := New(len(a), len(b[0]))
+	for n, row := range new_mat {
+		for m := range row {
+			new_mat[n][m] = dot(a, b, n, m)
+		}
+	}
+	return new_mat
 }
 
-func Equal(a, b Matrix) bool {
-	return mat.EqualApprox(a.inner, b.inner, utils.EPSILON)
+func (m Matrix) Equal(other Matrix) bool {
+	if len(m) != len(other) || len(m[0]) != len(other[0]) {
+		return false
+	}
+
+	for i, row := range m {
+		for j, val := range row {
+			if !utils.FloatEquals(val, other[i][j]) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+// Calculates the determinant of a matrix.
+func (a Matrix) determinant() float64 {
+	if len(a) == 2 {
+		return float64(a[0][0]*a[1][1] - a[0][1]*a[1][0])
+	} else {
+		var deter float64
+		for n, elem := range a[0] {
+			deter += elem * a.Cofactor(0, n)
+		}
+		return deter
+	}
+}
+
+func (a Matrix) submatrix(col, row int) Matrix {
+	new_mat := New(len(a), len(a[0]))
+	for n, col := range a {
+		copy(new_mat[n], col)
+	}
+
+	new_mat = append(new_mat[:col], new_mat[col+1:]...)
+	for n := 0; n < len(new_mat); n++ {
+		new_mat[n] = append(new_mat[n][:row], new_mat[n][row+1:]...)
+	}
+
+	return new_mat
+}
+
+func (a Matrix) minor(col, row int) float64 {
+	return a.submatrix(col, row).determinant()
+}
+
+func (a Matrix) Cofactor(col, row int) float64 {
+	deter := a.minor(col, row)
+	if (col+row)%2 != 0 {
+		deter *= -1
+	}
+
+	return deter
+}
+
+func dot(a, b Matrix, row, col int) float64 {
+	var sum float64
+	for i := range a[0] {
+		sum += a[row][i] * b[i][col]
+	}
+
+	return sum
 }
