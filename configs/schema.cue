@@ -89,6 +89,7 @@
   type: "model"
   file: string
   transform?: #transform
+  material?: #material
 }
 
 #Group: {
