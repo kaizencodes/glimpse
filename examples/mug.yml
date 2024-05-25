@@ -9,8 +9,8 @@ shared:
     transparency: 0
     refractive_index: 1
 camera:
-  width: 1000
-  height: 1000
+  width: 250
+  height: 250
   fov: 0.785
   from: [8, 8, -8]
   to: [0, 3, 0]
