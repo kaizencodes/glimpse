@@ -15,7 +15,7 @@ func (m Matrix) Inverse() Matrix {
 	}
 
 	inv := Matrix{
-		data:     make([]float64, 16),
+		data:     [16]float64{},
 		row_size: 4,
 		col_size: 4,
 	}

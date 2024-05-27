@@ -11,7 +11,7 @@ func TestInverse(t *testing.T) {
 	}{
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					-5, 2, 6, -8,
 					1, -5, 1, 8,
 					7, 7, -6, -7,
@@ -21,7 +21,7 @@ func TestInverse(t *testing.T) {
 				col_size: 4,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					0.21804511278195488, 0.45112781954887216, 0.24060150375939848, -0.045112781954887216,
 					-0.8082706766917294, -1.4567669172932332, -0.44360902255639095, 0.5206766917293233,
 					-0.07894736842105263, -0.2236842105263158, -0.05263157894736842, 0.19736842105263158,
@@ -33,7 +33,7 @@ func TestInverse(t *testing.T) {
 		},
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					8, -5, 9, 2,
 					7, 5, 6, 1,
 					-6, 0, 9, 6,
@@ -43,7 +43,7 @@ func TestInverse(t *testing.T) {
 				col_size: 4,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					-0.15384615384615385, -0.15384615384615385, -0.28205128205128205, -0.5384615384615384,
 					-0.07692307692307693, 0.12307692307692308, 0.02564102564102564, 0.03076923076923077,
 					0.358974358974359, 0.358974358974359, 0.4358974358974359, 0.9230769230769231,
@@ -55,7 +55,7 @@ func TestInverse(t *testing.T) {
 		},
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					9, 3, 0, 9,
 					-5, -2, -6, -3,
 					-4, 9, 6, 4,
@@ -65,7 +65,7 @@ func TestInverse(t *testing.T) {
 				col_size: 4,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					-0.040740740740740744, -0.07777777777777778, 0.14444444444444443, -0.2222222222222222,
 					-0.07777777777777778, 0.03333333333333333, 0.36666666666666664, -0.3333333333333333,
 					-0.029012345679012345, -0.14629629629629629, -0.10925925925925926, 0.12962962962962962,
@@ -92,7 +92,7 @@ func TestNonInvertibleMatrix(t *testing.T) {
 	}()
 
 	Matrix{
-		data: []float64{
+		data: [16]float64{
 			-4, 2, -2, -3,
 			9, 6, 2, 6,
 			0, -5, 1, -5,
@@ -111,7 +111,7 @@ func TestDeterminant(t *testing.T) {
 	}{
 		{
 			m: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3, 4,
 					5, 6, 7, 8,
 					9, 10, 11, 12,
@@ -124,7 +124,7 @@ func TestDeterminant(t *testing.T) {
 		},
 		{
 			m: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -137,7 +137,7 @@ func TestDeterminant(t *testing.T) {
 		},
 		{
 			m: Matrix{
-				data: []float64{
+				data: [16]float64{
 					-2, -8, 3, 5,
 					-3, 1, 7, 3,
 					1, 2, -9, 6,
@@ -150,7 +150,7 @@ func TestDeterminant(t *testing.T) {
 		},
 		{
 			m: Matrix{
-				data: []float64{
+				data: [16]float64{
 					2, 4, 1, 3,
 					1, 2, 2, 1,
 					3, 4, 4, 2,
@@ -178,7 +178,7 @@ func TestSubDet(t *testing.T) {
 	}{
 		{
 			m: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3, 4,
 					5, 6, 7, 8,
 					9, 10, 11, 12,
@@ -193,7 +193,7 @@ func TestSubDet(t *testing.T) {
 		},
 		{
 			m: Matrix{
-				data: []float64{
+				data: [16]float64{
 					6, 1, 1, 3,
 					4, -2, 5, 1,
 					2, 8, 7, 6,

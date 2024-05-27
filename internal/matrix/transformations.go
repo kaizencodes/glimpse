@@ -5,7 +5,7 @@ import "math"
 // Translation moves the object in 3D space.
 func Translation(x, y, z float64) Matrix {
 	return Matrix{
-		data: []float64{
+		data: [16]float64{
 			1, 0, 0, x,
 			0, 1, 0, y,
 			0, 0, 1, z,
@@ -22,7 +22,7 @@ func Translation(x, y, z float64) Matrix {
 // // Scaling by a negative value will flip the object.
 func Scaling(x, y, z float64) Matrix {
 	return Matrix{
-		data: []float64{
+		data: [16]float64{
 			x, 0, 0, 0,
 			0, y, 0, 0,
 			0, 0, z, 0,
@@ -36,7 +36,7 @@ func Scaling(x, y, z float64) Matrix {
 // // RotationX rotates the object around the x-axis.
 func RotationX(rad float64) Matrix {
 	return Matrix{
-		data: []float64{
+		data: [16]float64{
 			1, 0, 0, 0,
 			0, math.Cos(rad), -math.Sin(rad), 0,
 			0, math.Sin(rad), math.Cos(rad), 0,
@@ -50,7 +50,7 @@ func RotationX(rad float64) Matrix {
 // // RotationY rotates the object around the y-axis.
 func RotationY(rad float64) Matrix {
 	return Matrix{
-		data: []float64{
+		data: [16]float64{
 			math.Cos(rad), 0, math.Sin(rad), 0,
 			0, 1, 0, 0,
 			-math.Sin(rad), 0, math.Cos(rad), 0,
@@ -64,7 +64,7 @@ func RotationY(rad float64) Matrix {
 // // RotationZ rotates the object around the z-axis.
 func RotationZ(rad float64) Matrix {
 	return Matrix{
-		data: []float64{
+		data: [16]float64{
 			math.Cos(rad), -math.Sin(rad), 0, 0,
 			math.Sin(rad), math.Cos(rad), 0, 0,
 			0, 0, 1, 0,
@@ -78,7 +78,7 @@ func RotationZ(rad float64) Matrix {
 // // Shearing skews the object in 3D space.
 func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 	return Matrix{
-		data: []float64{
+		data: [16]float64{
 			1, xy, xz, 0,
 			yx, 1, yz, 0,
 			zx, zy, 1, 0,
@@ -90,7 +90,7 @@ func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 }
 
 var Identity = Matrix{
-	[]float64{
+	[16]float64{
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,

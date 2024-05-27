@@ -12,7 +12,7 @@ func TestNewEmpty(t *testing.T) {
 		{
 			n: 3, m: 2,
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					0, 0,
 					0, 0,
 					0, 0,
@@ -38,7 +38,7 @@ func TestNewIdentity(t *testing.T) {
 		{
 			s: 3,
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 0, 0,
 					0, 1, 0,
 					0, 0, 1,
@@ -64,7 +64,7 @@ func TestMultiply(t *testing.T) {
 	}{
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3,
 					4, 5, 6,
 					7, 8, 9,
@@ -73,7 +73,7 @@ func TestMultiply(t *testing.T) {
 				col_size: 3,
 			},
 			b: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3,
 					1, 2, 3,
 					1, 2, 3,
@@ -82,7 +82,7 @@ func TestMultiply(t *testing.T) {
 				col_size: 3,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					6, 12, 18,
 					15, 30, 45,
 					24, 48, 72,
@@ -93,7 +93,7 @@ func TestMultiply(t *testing.T) {
 		},
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3,
 					4, 5, 6,
 				},
@@ -101,7 +101,7 @@ func TestMultiply(t *testing.T) {
 				col_size: 3,
 			},
 			b: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2,
 					1, 2,
 					1, 2,
@@ -110,7 +110,7 @@ func TestMultiply(t *testing.T) {
 				col_size: 2,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					6, 12,
 					15, 30,
 				},
@@ -141,7 +141,7 @@ func TestInvalidMultiply(t *testing.T) {
 	}{
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3,
 					4, 5, 6,
 					7, 8, 9,
@@ -150,7 +150,7 @@ func TestInvalidMultiply(t *testing.T) {
 				col_size: 3,
 			},
 			b: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 2, 3, 4,
 					1, 2, 3, 4,
 				},
@@ -172,7 +172,7 @@ func TestTranspose(t *testing.T) {
 	}{
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					0, 9, 3, 0,
 					9, 6, 0, 8,
 					1, 8, 2, 3,
@@ -182,7 +182,7 @@ func TestTranspose(t *testing.T) {
 				col_size: 4,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					0, 9, 1, 0,
 					9, 6, 8, 0,
 					3, 0, 2, 5,
@@ -194,7 +194,7 @@ func TestTranspose(t *testing.T) {
 		},
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -204,7 +204,7 @@ func TestTranspose(t *testing.T) {
 				col_size: 4,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -216,7 +216,7 @@ func TestTranspose(t *testing.T) {
 		},
 		{
 			a: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 7,
 					9, 6,
 					4, 8,
@@ -226,7 +226,7 @@ func TestTranspose(t *testing.T) {
 				col_size: 2,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1, 9, 4, 2,
 					7, 6, 8, 3,
 				},
@@ -236,12 +236,12 @@ func TestTranspose(t *testing.T) {
 		},
 		{
 			a: Matrix{
-				data:     []float64{1, 9, 4, 2},
+				data:     [16]float64{1, 9, 4, 2},
 				row_size: 1,
 				col_size: 4,
 			},
 			expected: Matrix{
-				data: []float64{
+				data: [16]float64{
 					1,
 					9,
 					4,
