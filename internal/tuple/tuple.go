@@ -103,12 +103,10 @@ func Subtract(a, b Tuple) Tuple {
 }
 
 func Multiply(a matrix.Matrix, b Tuple) Tuple {
-	mat := matrix.New(4, 1)
-	for i, v := range b.ToSlice() {
-		mat[i][0] = float64(v)
-	}
-	mat = matrix.Multiply(a, mat).Transpose()
-	return Tuple{mat.At(0, 0), mat.At(0, 1), mat.At(0, 2), mat.At(0, 3)}
+	mat := matrix.New(4, 1, b.ToSlice())
+	mat = matrix.Multiply(a, mat)
+	// implicitly transpose the result.
+	return Tuple{mat.At(0, 0), mat.At(1, 0), mat.At(2, 0), mat.At(3, 0)}
 }
 
 // The dot product of two vectors.
