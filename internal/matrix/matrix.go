@@ -9,18 +9,18 @@ import (
 )
 
 type Matrix struct {
-	data               []float64
+	data               [16]float64
 	row_size, col_size int
 }
 
 func NewEmpty(n, m int) Matrix {
 	return Matrix{
-		make([]float64, n*m),
+		[16]float64{},
 		n, m,
 	}
 }
 
-func New(n int, m int, data []float64) Matrix {
+func New(n int, m int, data [16]float64) Matrix {
 	return Matrix{
 		data,
 		n, m,

@@ -82,7 +82,7 @@ func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
 	left := tuple.Cross(forward, up.Normalize())
 	trueUp := tuple.Cross(left, forward)
 
-	data := []float64{
+	data := [16]float64{
 		left.X, left.Y, left.Z, 0,
 		trueUp.X, trueUp.Y, trueUp.Z, 0,
 		-forward.X, -forward.Y, -forward.Z, 0,

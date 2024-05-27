@@ -67,8 +67,8 @@ func (t Tuple) Negate() Tuple {
 	return Tuple{-t.X, -t.Y, -t.Z, -t.W}
 }
 
-func (t Tuple) ToSlice() []float64 {
-	return []float64{t.X, t.Y, t.Z, t.W}
+func (t Tuple) ToSlice() [16]float64 {
+	return [16]float64{t.X, t.Y, t.Z, t.W}
 }
 
 func NewVector(x, y, z float64) Tuple {
