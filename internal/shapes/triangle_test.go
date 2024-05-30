@@ -5,6 +5,7 @@ import (
 
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestNewTriangle(t *testing.T) {
@@ -125,5 +126,20 @@ func TestTriangleIntersect(t *testing.T) {
 	}
 	for _, test := range tests {
 		testIntersection(t, triangle, test.ray, test.expected)
+	}
+}
+
+func TestBoundingBoxForTriangles(t *testing.T) {
+	//  A triangle has a bounding box
+	p1 := tuple.NewPoint(-3, 7, 2)
+	p2 := tuple.NewPoint(6, 2, -4)
+	p3 := tuple.NewPoint(2, -1, -1)
+	tri := NewTriangle(p1, p2, p3)
+	tri.CalculateBoundingBox()
+	box := tri.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-3, -1, -4), tuple.NewPoint(6, 7, 2))
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
 	}
 }

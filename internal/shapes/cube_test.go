@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestCubelocalNormalAt(t *testing.T) {
@@ -58,5 +59,17 @@ func TestCubelocalNormalAt(t *testing.T) {
 		if got := test.shape.localNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
 			t.Errorf("Cube normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.shape, test.point, got, test.expected)
 		}
+	}
+}
+
+func TestBoundingBoxForCube(t *testing.T) {
+	//  A cube has a bounding box
+	c := NewCube()
+	c.CalculateBoundingBox()
+	box := c.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
 	}
 }

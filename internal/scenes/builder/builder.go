@@ -82,17 +82,19 @@ func buildObject(config cfg.Object) shapes.Shape {
 		if err != nil {
 			panic(fmt.Sprintf("Object file could not be read: %s\n%s", config.File, err.Error()))
 		}
-		group := shapes.Parse(string(data))
-		group.Divide(2500)
+		model := shapes.NewModel(string(data))
+		model.CalculateBoundingBox()
 
-		shape = group
+		shape = model
 	case "group":
 		group := shapes.NewGroup()
 		shapes := buildObjects(config.Children)
 		for _, s := range shapes {
 			group.AddChild(s)
 		}
-		group.Divide(2500)
+		group.CalculateBoundingBoxCascade()
+
+		group.Divide(10)
 		shape = group
 	default:
 		panic("Unknown shape type")

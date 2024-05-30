@@ -11,9 +11,10 @@ import (
 )
 
 type Sphere struct {
-	transform matrix.Matrix
-	material  *materials.Material
-	parent    Shape
+	transform   matrix.Matrix
+	material    *materials.Material
+	parent      Shape
+	boundingBox *BoundingBox
 }
 
 func (s *Sphere) String() string {
@@ -67,10 +68,22 @@ func (s *Sphere) SetParent(other Shape) {
 	s.parent = other
 }
 
+func (s *Sphere) CalculateBoundingBox() {
+	s.boundingBox.Min = tuple.NewPoint(-1, -1, -1)
+	s.boundingBox.Max = tuple.NewPoint(1, 1, 1)
+
+	TransformBoundingBox(s.boundingBox, s.Transform())
+}
+
+func (s *Sphere) BoundingBox() *BoundingBox {
+	return s.boundingBox
+}
+
 func NewSphere() *Sphere {
 	return &Sphere{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
+		transform:   matrix.DefaultTransform(),
+		material:    materials.DefaultMaterial(),
+		boundingBox: DefaultBoundingBox(),
 	}
 }
 
@@ -80,7 +93,8 @@ func NewGlassSphere() *Sphere {
 	mat.Transparency = 1.0
 	mat.RefractiveIndex = 1.5
 	return &Sphere{
-		transform: matrix.DefaultTransform(),
-		material:  mat,
+		transform:   matrix.DefaultTransform(),
+		material:    mat,
+		boundingBox: DefaultBoundingBox(),
 	}
 }

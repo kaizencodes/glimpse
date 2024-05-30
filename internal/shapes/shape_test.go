@@ -180,6 +180,18 @@ func TestObjectToScene(t *testing.T) {
 	}
 }
 
+func TestBoundingBoxForTestShape(t *testing.T) {
+	//  A test shape has a bounding box
+	ts := NewTestShape()
+	ts.CalculateBoundingBox()
+	box := ts.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+}
+
 func TestIntersect(t *testing.T) {
 	sphere := NewSphere()
 	plane := NewPlane()

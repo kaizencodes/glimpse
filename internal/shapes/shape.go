@@ -25,6 +25,8 @@ type Shape interface {
 	localIntersect(r *ray.Ray) Intersections
 	Parent() Shape
 	SetParent(Shape)
+	CalculateBoundingBox()
+	BoundingBox() *BoundingBox
 }
 
 func ColorAt(scenePoint tuple.Tuple, shape Shape) color.Color {

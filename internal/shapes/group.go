@@ -10,10 +10,11 @@ import (
 )
 
 type Group struct {
-	transform matrix.Matrix
-	material  *materials.Material
-	parent    Shape
-	children  []Shape
+	transform   matrix.Matrix
+	material    *materials.Material
+	parent      Shape
+	children    []Shape
+	boundingBox *BoundingBox
 }
 
 func (s *Group) String() string {
@@ -41,8 +42,7 @@ func (s *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple 
 }
 
 func (s *Group) localIntersect(r *ray.Ray) Intersections {
-	// TODO: check if we can save the bound calculation and reuse it
-	if !BoxIntersection(BoundFor(s), r) {
+	if !BoxIntersection(s.boundingBox, r) {
 		return Intersections{}
 	}
 
@@ -56,9 +56,10 @@ func (s *Group) localIntersect(r *ray.Ray) Intersections {
 
 func NewGroup() *Group {
 	return &Group{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
-		children:  []Shape{},
+		transform:   matrix.DefaultTransform(),
+		material:    materials.DefaultMaterial(),
+		children:    []Shape{},
+		boundingBox: DefaultBoundingBox(),
 	}
 }
 
@@ -95,43 +96,64 @@ func (g *Group) Children() []Shape {
 	return g.children
 }
 
+func (g *Group) CalculateBoundingBox() {
+	//TODO: use i:=0; i<... format over the range everywhere
+	for _, child := range g.Children() {
+		g.boundingBox.AddBox(child.BoundingBox())
+	}
+}
+
+func (g *Group) CalculateBoundingBoxCascade() {
+	for _, child := range g.Children() {
+		child.CalculateBoundingBox()
+		g.boundingBox.AddBox(child.BoundingBox())
+	}
+}
+
+func (g *Group) BoundingBox() *BoundingBox {
+	return g.boundingBox
+}
+
 func (g *Group) Partition() (left, right []Shape) {
-	box := BoundFor(g)
-	leftBox, rightBox := box.Split()
+	leftBox, _ := g.boundingBox.Split()
+
 	for _, child := range g.children {
-		if leftBox.ContainsBox(TransformedBoundFor(child)) {
+		if leftBox.ContainsBox(child.BoundingBox()) {
 			left = append(left, child)
-		} else if rightBox.ContainsBox(TransformedBoundFor(child)) {
+		} else {
 			right = append(right, child)
 		}
-	}
-	for _, child := range left {
-		g.RemoveChild(child)
-	}
-	for _, child := range right {
-		g.RemoveChild(child)
 	}
 	return left, right
 }
 
 func (g *Group) Divide(threshold int) {
+	// TODO: recursively check each children and if a group, sum it's children as well.
+	// models can have thousands of children and it's not reflected on the parent groups.
 	if len(g.children) >= threshold {
 		left, right := g.Partition()
-		if len(left) > 0 {
-			subGroup := NewGroup()
-			subGroup.AddChild(left...)
-			g.AddChild(subGroup)
 
+		if len(left) > 0 && len(right) > 0 {
+			g.children = []Shape{}
+
+			leftGroup := NewGroup()
+			leftGroup.AddChild(left...)
+			leftGroup.CalculateBoundingBox()
+			g.AddChild(leftGroup)
+
+			rightGroup := NewGroup()
+			rightGroup.AddChild(right...)
+			rightGroup.CalculateBoundingBox()
+			g.AddChild(rightGroup)
 		}
-		if len(right) > 0 {
-			subGroup := NewGroup()
-			subGroup.AddChild(right...)
-			g.AddChild(subGroup)
-		}
+
 	}
 	for _, child := range g.children {
 		if group, ok := child.(*Group); ok {
 			group.Divide(threshold)
+		}
+		if model, ok := child.(*Model); ok {
+			model.Divide(threshold)
 		}
 	}
 }

@@ -12,9 +12,10 @@ import (
 )
 
 type Plane struct {
-	transform matrix.Matrix
-	material  *materials.Material
-	parent    Shape
+	transform   matrix.Matrix
+	material    *materials.Material
+	parent      Shape
+	boundingBox *BoundingBox
 }
 
 func (s *Plane) String() string {
@@ -35,6 +36,15 @@ func (s *Plane) Material() *materials.Material {
 
 func (s *Plane) Transform() matrix.Matrix {
 	return s.transform
+}
+
+func (s *Plane) CalculateBoundingBox() {
+	s.boundingBox.Min = tuple.NewPoint(math.Inf(-1), 0, math.Inf(-1))
+	s.boundingBox.Max = tuple.NewPoint(math.Inf(1), 0, math.Inf(1))
+}
+
+func (s *Plane) BoundingBox() *BoundingBox {
+	return s.boundingBox
 }
 
 func (s *Plane) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
@@ -62,7 +72,8 @@ func (s *Plane) SetParent(other Shape) {
 
 func NewPlane() *Plane {
 	return &Plane{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
+		transform:   matrix.DefaultTransform(),
+		material:    materials.DefaultMaterial(),
+		boundingBox: DefaultBoundingBox(),
 	}
 }

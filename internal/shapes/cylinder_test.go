@@ -1,10 +1,12 @@
 package shapes
 
 import (
+	"math"
 	"testing"
 
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestCylinderLocalNormalAt(t *testing.T) {
@@ -234,18 +236,27 @@ func TestClosedCylinderIntersect(t *testing.T) {
 	}
 }
 
-// func testIntersection(t *testing.T, s Shape, r *ray.Ray, expected Intersections) {
-// 	result := s.localIntersect(r)
-// 	if len(result) != len(expected) {
-// 		t.Errorf("incorrect number of intersections. Result: %d. Expected: %d", len(result), len(expected))
-// 	} else {
-// 		for i := range result {
-// 			if !utils.FloatEquals(result[i].t, expected[i].t) {
-// 				t.Errorf("incorrect t of intersect:\n%s \n \nresult: \n%f. \nexpected: \n%f", r, result[i].t, expected[i].t)
-// 			}
-// 			if result[i].shape != expected[i].shape {
-// 				t.Errorf("incorrect Shape of intersect:\n%s \n \nresult: \n%s. \nexpected: \n%s", r, result[i].shape, expected[i].shape)
-// 			}
-// 		}
-// 	}
-// }
+func TestBoundingBoxForCylinder(t *testing.T) {
+	//  A cylinder has a bounding box
+	c := NewCylinder()
+	c.CalculateBoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-1, math.Inf(-1), -1), tuple.NewPoint(1, math.Inf(1), 1))
+
+	for _, diff := range utils.Compare(c.BoundingBox(), expected) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+}
+
+func TestBoundingBoxForLimitedCylinder(t *testing.T) {
+	//  A cylinder has a bounding box
+	c := NewCylinder()
+	c.Minimum = -5
+	c.Maximum = 3
+	c.CalculateBoundingBox()
+	box := c.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-1, -5, -1), tuple.NewPoint(1, 3, 1))
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+}

@@ -45,6 +45,18 @@ func (m *Model) Transform() matrix.Matrix {
 	return m.group.transform
 }
 
+func (m *Model) CalculateBoundingBox() {
+	m.group.CalculateBoundingBoxCascade()
+}
+
+func (m *Model) BoundingBox() *BoundingBox {
+	return m.group.BoundingBox()
+}
+
+func (m *Model) Divide(threshold int) {
+	m.group.Divide(threshold)
+}
+
 func (m *Model) localNormalAt(_point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return tuple.Tuple{}
 }
@@ -60,15 +72,6 @@ func (m *Model) Parent() Shape {
 func (m *Model) SetParent(other Shape) {
 	m.parent = other
 }
-
-// func (m *Model) AddChild(s Shape) {
-// 	s.SetParent(m)
-// 	m.group.children = append(m.group.children, s)
-// }
-
-// func (m *Model) Children() []Shape {
-// 	return m.group.children
-// }
 
 func Parse(input string) *Group {
 	group := NewGroup()

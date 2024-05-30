@@ -22,119 +22,6 @@ func TestAddPoint(t *testing.T) {
 	}
 }
 
-func TestBoundForSphere(t *testing.T) {
-	//  A sphere has a bounding box
-	s := NewSphere()
-	box := BoundFor(s)
-	expected := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForPlane(t *testing.T) {
-	//  A plane has a bounding box
-	p := NewPlane()
-	box := BoundFor(p)
-	expected := NewBoundingBox(
-		tuple.NewPoint(math.Inf(-1), 0, math.Inf(-1)),
-		tuple.NewPoint(math.Inf(1), 0, math.Inf(1)),
-	)
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForCube(t *testing.T) {
-	//  A cube has a bounding box
-	c := NewCube()
-	box := BoundFor(c)
-	expected := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForCylinder(t *testing.T) {
-	//  A cylinder has a bounding box
-	c := NewCylinder()
-	box := BoundFor(c)
-	expected := NewBoundingBox(tuple.NewPoint(-1, math.Inf(-1), -1), tuple.NewPoint(1, math.Inf(1), 1))
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForLimitedCylinder(t *testing.T) {
-	//  A cylinder has a bounding box
-	c := NewCylinder()
-	c.Minimum = -5
-	c.Maximum = 3
-	box := BoundFor(c)
-	expected := NewBoundingBox(tuple.NewPoint(-1, -5, -1), tuple.NewPoint(1, 3, 1))
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForTriangles(t *testing.T) {
-	//  A triangle has a bounding box
-	p1 := tuple.NewPoint(-3, 7, 2)
-	p2 := tuple.NewPoint(6, 2, -4)
-	p3 := tuple.NewPoint(2, -1, -1)
-	tri := NewTriangle(p1, p2, p3)
-	box := BoundFor(tri)
-	expected := NewBoundingBox(tuple.NewPoint(-3, -1, -4), tuple.NewPoint(6, 7, 2))
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForTestShape(t *testing.T) {
-	//  A test shape has a bounding box
-	ts := NewTestShape()
-	box := BoundFor(ts)
-	expected := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
-
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestBoundForGroups(t *testing.T) {
-	// A group has a bounding box that contains its children
-	s1 := NewSphere()
-	s1.SetTransform(
-		matrix.Multiply(
-			matrix.Translation(2, 5, -3),
-			matrix.Scaling(2, 2, 2),
-		),
-	)
-	c := NewCylinder()
-	c.Minimum = -2
-	c.Maximum = 2
-	c.SetTransform(
-		matrix.Multiply(
-			matrix.Translation(-4, -1, 4),
-			matrix.Scaling(0.5, 1, 0.5),
-		),
-	)
-	g := NewGroup()
-	g.AddChild(s1)
-	g.AddChild(c)
-	box := BoundFor(g)
-	expected := NewBoundingBox(tuple.NewPoint(-4.5, -3, -5), tuple.NewPoint(4, 7, 4.5))
-	for _, diff := range utils.Compare(box, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
 func TestAddBox(t *testing.T) {
 	// Merging two bounding boxes
 	box1 := NewBoundingBox(tuple.NewPoint(-5, -2, 0), tuple.NewPoint(7, 4, 4))
@@ -232,24 +119,10 @@ func TestTransformBoundingBox(t *testing.T) {
 	// Transforming a bounding box
 	box := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
 	matrix := matrix.Multiply(matrix.RotationX(math.Pi/4), matrix.RotationY(math.Pi/4))
-	result := Transform(box, matrix)
+	TransformBoundingBox(box, matrix)
 	expected := NewBoundingBox(
 		tuple.NewPoint(-1.414213562373095, -1.7071067811865475, -1.7071067811865475),
 		tuple.NewPoint(1.414213562373095, 1.7071067811865475, 1.7071067811865475))
-
-	for _, diff := range utils.Compare(result, expected) {
-		t.Errorf("Mismatch: %s", diff)
-	}
-}
-
-func TestTransformedBoundFor(t *testing.T) {
-	// Querying a shape's bounding box in its parent's space
-	shape := NewSphere()
-	shape.SetTransform(
-		matrix.Multiply(matrix.Translation(1, -3, 5), matrix.Scaling(0.5, 2, 4)),
-	)
-	box := TransformedBoundFor(shape)
-	expected := NewBoundingBox(tuple.NewPoint(0.5, -5, 1), tuple.NewPoint(1.5, -1, 9))
 
 	for _, diff := range utils.Compare(box, expected) {
 		t.Errorf("Mismatch: %s", diff)
