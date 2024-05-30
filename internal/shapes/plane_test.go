@@ -1,9 +1,11 @@
 package shapes
 
 import (
+	"math"
 	"testing"
 
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestPlaneLocalNormalAt(t *testing.T) {
@@ -34,5 +36,20 @@ func TestPlaneLocalNormalAt(t *testing.T) {
 		if got := test.plane.localNormalAt(test.point, Intersection{}); !got.Equal(test.expected) {
 			t.Errorf("Plane normal:\n%s \n point: %s. \ngot: \n%s. \nexpected: \n%s", test.plane, test.point, got, test.expected)
 		}
+	}
+}
+
+func TestBoundingBoxForPlane(t *testing.T) {
+	//  A plane has a bounding box
+	p := NewPlane()
+	p.CalculateBoundingBox()
+	box := p.BoundingBox()
+	expected := NewBoundingBox(
+		tuple.NewPoint(math.Inf(-1), 0, math.Inf(-1)),
+		tuple.NewPoint(math.Inf(1), 0, math.Inf(1)),
+	)
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
 	}
 }
