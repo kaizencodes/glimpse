@@ -17,38 +17,38 @@ type Group struct {
 	boundingBox *BoundingBox
 }
 
-func (s *Group) String() string {
-	return fmt.Sprintf("Group(material: %s, transform: %s)", s.material, s.transform)
+func (g *Group) String() string {
+	return fmt.Sprintf("Group(material: %s, transform: %s)", g.material, g.transform)
 }
 
-func (s *Group) SetTransform(transform matrix.Matrix) {
-	s.transform = transform
+func (g *Group) SetTransform(transform matrix.Matrix) {
+	g.transform = transform
 }
 
-func (s *Group) SetMaterial(mat *materials.Material) {
-	s.material = mat
+func (g *Group) SetMaterial(mat *materials.Material) {
+	g.material = mat
 }
 
-func (s *Group) Material() *materials.Material {
-	return s.material
+func (g *Group) Material() *materials.Material {
+	return g.material
 }
 
-func (s *Group) Transform() matrix.Matrix {
-	return s.transform
+func (g *Group) Transform() matrix.Matrix {
+	return g.transform
 }
 
-func (s *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
+func (g *Group) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	panic("localNormalAt called on group. Groups do not have normals")
 }
 
-func (s *Group) localIntersect(r *ray.Ray) Intersections {
-	if !BoxIntersection(s.boundingBox, r) {
+func (g *Group) localIntersect(r *ray.Ray) Intersections {
+	if !BoxIntersection(g.boundingBox, r) {
 		return Intersections{}
 	}
 
 	xs := Intersections{}
-	for _, child := range s.Children() {
-		xs = append(xs, Intersect(child, r)...)
+	for i := 0; i < len(g.children); i++ {
+		xs = append(xs, Intersect(g.children[i], r)...)
 	}
 	xs.Sort()
 	return xs
@@ -67,21 +67,21 @@ func (g *Group) Parent() Shape {
 	return g.parent
 }
 
-func (s *Group) SetParent(other Shape) {
-	s.parent = other
+func (g *Group) SetParent(other Shape) {
+	g.parent = other
 }
 
 func (g *Group) AddChild(shapes ...Shape) {
-	for _, s := range shapes {
-		s.SetParent(g)
+	for i := 0; i < len(shapes); i++ {
+		shapes[i].SetParent(g)
 	}
 	g.children = append(g.children, shapes...)
 }
 
 func (g *Group) RemoveChild(s Shape) {
 	s.SetParent(nil)
-	for i, child := range g.children {
-		if child == s {
+	for i := 0; i < len(g.children); i++ {
+		if g.children[i] == s {
 			// replace the child with the last element
 			g.children[i] = g.children[len(g.children)-1]
 			// remove the last element
@@ -97,16 +97,15 @@ func (g *Group) Children() []Shape {
 }
 
 func (g *Group) CalculateBoundingBox() {
-	//TODO: use i:=0; i<... format over the range everywhere
-	for _, child := range g.Children() {
-		g.boundingBox.AddBox(child.BoundingBox())
+	for i := 0; i < len(g.children); i++ {
+		g.boundingBox.AddBox(g.children[i].BoundingBox())
 	}
 }
 
 func (g *Group) CalculateBoundingBoxCascade() {
-	for _, child := range g.Children() {
-		child.CalculateBoundingBox()
-		g.boundingBox.AddBox(child.BoundingBox())
+	for i := 0; i < len(g.children); i++ {
+		g.children[i].CalculateBoundingBox()
+		g.boundingBox.AddBox(g.children[i].BoundingBox())
 	}
 }
 
@@ -117,11 +116,11 @@ func (g *Group) BoundingBox() *BoundingBox {
 func (g *Group) Partition() (left, right []Shape) {
 	leftBox, _ := g.boundingBox.Split()
 
-	for _, child := range g.children {
-		if leftBox.ContainsBox(child.BoundingBox()) {
-			left = append(left, child)
+	for i := 0; i < len(g.children); i++ {
+		if leftBox.ContainsBox(g.children[i].BoundingBox()) {
+			left = append(left, g.children[i])
 		} else {
-			right = append(right, child)
+			right = append(right, g.children[i])
 		}
 	}
 	return left, right
@@ -148,11 +147,11 @@ func (g *Group) Divide(threshold int) {
 		}
 
 	}
-	for _, child := range g.children {
-		if group, ok := child.(*Group); ok {
+	for i := 0; i < len(g.children); i++ {
+		if group, ok := g.children[i].(*Group); ok {
 			group.Divide(threshold)
 		}
-		if model, ok := child.(*Model); ok {
+		if model, ok := g.children[i].(*Model); ok {
 			model.Divide(threshold)
 		}
 	}

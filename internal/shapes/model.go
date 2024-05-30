@@ -79,8 +79,11 @@ func Parse(input string) *Group {
 	normals := parseNormals(input)
 
 	faces := parseFaces(input, vertices, normals)
-	for _, face := range faces {
-		group.AddChild(face)
+
+	// try to make it work and see if it speeds things up.
+	// group.AddChild(faces.(*Shape)...)
+	for i := 0; i < len(faces); i++ {
+		group.AddChild(faces[i])
 	}
 	return group
 }
@@ -91,8 +94,8 @@ func parseVertices(input string) []tuple.Tuple {
 	vertices := []tuple.Tuple{
 		tuple.NewPoint(0, 0, 0), // index is 1 based
 	}
-	for _, line := range vertexLines {
-		vertices = append(vertices, tuple.NewPoint(splitVertexLine(line)))
+	for i := 0; i < len(vertexLines); i++ {
+		vertices = append(vertices, tuple.NewPoint(splitVertexLine(vertexLines[i])))
 	}
 	return vertices
 }
@@ -112,8 +115,8 @@ func parseNormals(input string) []tuple.Tuple {
 	normals := []tuple.Tuple{
 		tuple.NewVector(0, 0, 0), // index is 1 based
 	}
-	for _, line := range normalLines {
-		normals = append(normals, tuple.NewVector(splitVertexLine(line)))
+	for i := 0; i < len(normalLines); i++ {
+		normals = append(normals, tuple.NewVector(splitVertexLine(normalLines[i])))
 	}
 	return normals
 }
@@ -121,8 +124,8 @@ func parseNormals(input string) []tuple.Tuple {
 func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*Triangle) {
 	r := regexp.MustCompile("(?m)^f.*\n")
 	faceLines := r.FindAllString(input, -1)
-	for _, line := range faceLines {
-		indexes := convertLinesToIndexes(line)
+	for i := 0; i < len(faceLines); i++ {
+		indexes := convertLinesToIndexes(faceLines[i])
 
 		// fan triangulation
 		for i := 0; i < len(indexes)-2; i++ {
