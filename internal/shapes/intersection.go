@@ -28,8 +28,8 @@ func (i Intersection) Shape() Shape {
 func (xs Intersections) String() string {
 	var result string
 
-	for _, section := range xs {
-		result += strconv.FormatFloat(section.t, 'f', -1, 64) + ", "
+	for i := 0; i < len(xs); i++ {
+		result += strconv.FormatFloat(xs[i].t, 'f', -1, 64) + ", "
 	}
 	return result
 }
@@ -42,12 +42,12 @@ func (xs Intersections) Sort() {
 
 func (xs Intersections) Hit() Intersection {
 	res := Intersection{t: math.MaxFloat64}
-	for _, val := range xs {
-		if val.t < 0 {
+	for i := 0; i < len(xs); i++ {
+		if xs[i].t < 0 {
 			continue
 		}
-		if val.t < res.t {
-			res = val
+		if xs[i].t < res.t {
+			res = xs[i]
 		}
 	}
 	return res

@@ -76,13 +76,13 @@ func shadeHit(scene *scenes.Scene, comps Computations) color.Color {
 	c = color.Add(c, reflected)
 	c = color.Add(c, refracted)
 
-	for i, l := range scene.Lights {
+	for i := 0; i < len(scene.Lights); i++ {
 		if i == 0 {
 			continue
 		}
 		c = color.Add(c, light.Lighting(
 			comps.Shape,
-			l,
+			scene.Lights[i],
 			comps.OverPoint,
 			comps.EyeV,
 			comps.NormalV,
@@ -95,8 +95,8 @@ func shadeHit(scene *scenes.Scene, comps Computations) color.Color {
 // Computes all intersections between a ray and the scene objects.
 func intersect(scene *scenes.Scene, r *ray.Ray) shapes.Intersections {
 	coll := shapes.Intersections{}
-	for _, o := range scene.Shapes {
-		coll = append(coll, shapes.Intersect(o, r)...)
+	for i := 0; i < len(scene.Shapes); i++ {
+		coll = append(coll, shapes.Intersect(scene.Shapes[i], r)...)
 	}
 	// Sorting is helpful for reflections and refractions.
 	coll.Sort()
@@ -106,9 +106,9 @@ func intersect(scene *scenes.Scene, r *ray.Ray) shapes.Intersections {
 
 // Determines if a point is in shadow or not.
 func shadowAt(scene *scenes.Scene, point tuple.Tuple) bool {
-	for _, l := range scene.Lights {
+	for i := 0; i < len(scene.Lights); i++ {
 		// Measure the distance from point to the light source by subtracting point from the light position
-		v := tuple.Subtract(l.Position(), point)
+		v := tuple.Subtract(scene.Lights[i].Position(), point)
 		// The magnitude of the resulting vector is the distance between the point and the light source.
 		dist := v.Magnitude()
 		// Create a ray from point toward the light source by normalizing the vector.

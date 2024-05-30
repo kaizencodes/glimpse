@@ -71,8 +71,8 @@ func TransformBoundingBox(b *BoundingBox, m matrix.Matrix) {
 		tuple.NewPoint(b.Max.X, b.Max.Y, b.Max.Z),
 	}
 
-	for _, p := range points {
-		box.AddPoint(tuple.Multiply(m, p))
+	for i := 0; i < len(points); i++ {
+		box.AddPoint(tuple.Multiply(m, points[i]))
 	}
 	b.Min = box.Min
 	b.Max = box.Max

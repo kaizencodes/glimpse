@@ -67,8 +67,8 @@ func prepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 	// contains objects encountered but not yet exited.
 	container := []shapes.Shape{}
 	n1, n2 := 1.0, 1.0
-	for _, val := range xs {
-		if val == hit {
+	for i := 0; i < len(xs); i++ {
+		if xs[i] == hit {
 			if len(container) == 0 {
 				n1 = 1.0
 			} else {
@@ -77,14 +77,14 @@ func prepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 			}
 		}
 
-		ok, at := contains(container, val.Shape())
+		ok, at := contains(container, xs[i].Shape())
 		if ok {
 			container = remove(container, at)
 		} else {
-			container = append(container, val.Shape())
+			container = append(container, xs[i].Shape())
 		}
 
-		if val == hit {
+		if xs[i] == hit {
 			if len(container) == 0 {
 				n2 = 1.0
 			} else {
@@ -112,9 +112,8 @@ func prepareComputations(hit shapes.Intersection, r *ray.Ray, xs shapes.Intersec
 
 // helper function to check if a shape is in a collection
 func contains(collection []shapes.Shape, shape shapes.Shape) (bool, int) {
-
-	for i, e := range collection {
-		if shape == e {
+	for i := 0; i < len(collection); i++ {
+		if shape == collection[i] {
 			return true, i
 		}
 	}

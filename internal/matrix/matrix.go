@@ -39,7 +39,7 @@ func (m Matrix) String() string {
 	var result string
 
 	elem_count := 0
-	for i := range m.data {
+	for i := 0; i < len(m.data); i++ {
 		result += strconv.FormatFloat(m.data[i], 'f', -1, 64)
 		result += ", "
 		elem_count += 1
@@ -72,8 +72,8 @@ func (m Matrix) Equal(other Matrix) bool {
 		return false
 	}
 
-	for i, elem := range m.data {
-		if !utils.FloatEquals(elem, other.data[i]) {
+	for i := 0; i < len(m.data); i++ {
+		if !utils.FloatEquals(m.data[i], other.data[i]) {
 			return false
 		}
 	}

@@ -41,10 +41,10 @@ func buildCamera(config cfg.Camera) *camera.Camera {
 
 func buildLights(config []cfg.Light) []light.Light {
 	var lights []light.Light
-	for _, c := range config {
+	for i := 0; i < len(config); i++ {
 		l := light.NewLight(
-			tuple.NewPointFromSlice(c.Position),
-			color.FromSlice(c.Intensity),
+			tuple.NewPointFromSlice(config[i].Position),
+			color.FromSlice(config[i].Intensity),
 		)
 		lights = append(lights, l)
 	}
@@ -53,8 +53,8 @@ func buildLights(config []cfg.Light) []light.Light {
 
 func buildObjects(config []cfg.Object) []shapes.Shape {
 	var shapes []shapes.Shape
-	for _, obj := range config {
-		shapes = append(shapes, buildObject(obj))
+	for i := 0; i < len(config); i++ {
+		shapes = append(shapes, buildObject(config[i]))
 	}
 	return shapes
 }
@@ -88,10 +88,7 @@ func buildObject(config cfg.Object) shapes.Shape {
 		shape = model
 	case "group":
 		group := shapes.NewGroup()
-		shapes := buildObjects(config.Children)
-		for _, s := range shapes {
-			group.AddChild(s)
-		}
+		group.AddChild(buildObjects(config.Children)...)
 		group.CalculateBoundingBoxCascade()
 
 		group.Divide(10)
