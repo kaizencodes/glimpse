@@ -101,7 +101,7 @@ func main() {
 
 	fmt.Printf("\nWriting to file\n")
 
-	if err := os.WriteFile(fmt.Sprintf(outputPath+"-%s.ppm", time.Now().Format(time.RFC3339Nano)), []byte(export.Export(img)), 0666); err != nil {
+	if err := os.WriteFile(fmt.Sprintf(outputPath+"-%s.ppm", time.Now().Format(time.RFC3339Nano)), export.Export(img), 0666); err != nil {
 		fmt.Printf("%e\n", err)
 		log.Fatal(err)
 	}

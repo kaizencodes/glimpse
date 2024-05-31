@@ -10,7 +10,7 @@ import (
 func TestExport(t *testing.T) {
 	var tests = []struct {
 		c        canvas.Canvas
-		expected string
+		expected []byte
 	}{
 		{
 			c: canvas.Canvas{
@@ -21,19 +21,19 @@ func TestExport(t *testing.T) {
 					color.New(0, 0.5, 0), color.New(0, 0, 0), color.New(0, 0, 0),
 				},
 			},
-			expected: `P3
+			expected: []byte(`P3
 2 3
 255
 255 0 0 0 127 0 
 0 0 255 0 0 0 
 0 0 0 0 0 0 
 
-`,
+`),
 		},
 	}
 
 	for _, test := range tests {
-		if got := Export(test.c); got != test.expected {
+		if got := Export(test.c); string(got) != string(test.expected) {
 			t.Errorf("canvas \n%s \nexport to ppm \ngot: \n%s. \nexpected: \n%s", test.c, got, test.expected)
 		}
 	}

@@ -15,7 +15,7 @@ const (
 	PpmFormat = "P3"
 )
 
-func Export(c canvas.Canvas) string {
+func Export(c canvas.Canvas) []byte {
 	var result bytes.Buffer
 	result.WriteString(header(c))
 
@@ -26,7 +26,7 @@ func Export(c canvas.Canvas) string {
 		result.WriteByte('\n')
 	}
 	result.WriteByte('\n')
-	return result.String()
+	return result.Bytes()
 }
 
 func header(c canvas.Canvas) string {
