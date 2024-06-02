@@ -100,7 +100,7 @@
 }
 
 #Objects: {
-#Sphere | #Cube | #Plane | #Cylinder | #Model | #Group
+  #Sphere | #Cube | #Plane | #Cylinder | #Model | #Group
 }
 
 camera: #Camera
