@@ -6,6 +6,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestAddChild(t *testing.T) {
@@ -84,6 +85,7 @@ func TestPartition(t *testing.T) {
 	g.AddChild(s1)
 	g.AddChild(s2)
 	g.AddChild(s3)
+	g.CalculateBoundingBoxCascade()
 	left, right := g.Partition()
 
 	if left[0] != s1 {
@@ -92,8 +94,8 @@ func TestPartition(t *testing.T) {
 	if right[0] != s2 {
 		t.Errorf("incorrect partition for right, expected \n%v\n, got \n%v\n", s2, right[0])
 	}
-	if g.children[0] != s3 {
-		t.Errorf("incorrect partition for original group, expected \n%v\n, got \n%v", s3, g.children[0])
+	if right[1] != s3 {
+		t.Errorf("incorrect partition for right, expected \n%v\n, got \n%v", s3, right[1])
 	}
 }
 
@@ -107,16 +109,14 @@ func TestDivide(t *testing.T) {
 	s3 := NewSphere()
 	s3.SetTransform(matrix.Scaling(4, 4, 4))
 	g.AddChild(s1, s2, s3)
-
+	g.CalculateBoundingBoxCascade()
 	g.Divide(1)
 
 	if len(g.Children()) != 2 {
 		t.Errorf("incorrect number of children, expected 2, got %v", len(g.Children()))
 	}
-	if g.Children()[0] != s3 {
-		t.Errorf("incorrect children, expected %v, got %v", s3, g.Children())
-	}
-	subGroup := g.Children()[1].(*Group)
+
+	subGroup := g.Children()[0].(*Group)
 	if len(subGroup.Children()) != 2 {
 		t.Errorf("incorrect number of children, expected 2, got %v", len(subGroup.Children()))
 	}
@@ -129,54 +129,41 @@ func TestDivide(t *testing.T) {
 		t.Errorf("incorrect children, expected %v, got %v", s2, subGroupOfS2.Children())
 	}
 
+	subGroup2 := g.Children()[1].(*Group)
+	if len(subGroup2.Children()) != 1 {
+		t.Errorf("incorrect number of children, expected 2, got %v", len(subGroup2.Children()))
+	}
+	if len(subGroup2.Children()) != 1 && subGroup2.Children()[0] != s3 {
+		t.Errorf("incorrect children, expected %v, got %v", s3, subGroup2.Children())
+	}
+
 }
 
-func TestDivide2(t *testing.T) {
-	// Subdividing a group with too few children
-
+func TestBoundingBoxForGroups(t *testing.T) {
+	// A group has a bounding box that contains its children
 	s1 := NewSphere()
-	s1.SetTransform(matrix.Translation(-2, 0, 0))
-	s2 := NewSphere()
-	s2.SetTransform(matrix.Translation(2, 1, 0))
-	s3 := NewSphere()
-	s3.SetTransform(matrix.Translation(2, -1, 0))
-	subGroup := NewGroup()
-	subGroup.AddChild(s1, s2, s3)
-
-	s4 := NewSphere()
+	s1.SetTransform(
+		matrix.Multiply(
+			matrix.Translation(2, 5, -3),
+			matrix.Scaling(2, 2, 2),
+		),
+	)
+	c := NewCylinder()
+	c.Minimum = -2
+	c.Maximum = 2
+	c.SetTransform(
+		matrix.Multiply(
+			matrix.Translation(-4, -1, 4),
+			matrix.Scaling(0.5, 1, 0.5),
+		),
+	)
 	g := NewGroup()
-	g.AddChild(subGroup, s4)
-
-	g.Divide(3)
-
-	if len(g.Children()) != 2 {
-		t.Errorf("incorrect number of children for g, expected 2, got %v", len(g.Children()))
+	g.AddChild(s1)
+	g.AddChild(c)
+	g.CalculateBoundingBoxCascade()
+	box := g.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-4.5, -3, -5), tuple.NewPoint(4, 7, 4.5))
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
 	}
-	if g.Children()[0] != subGroup {
-		t.Errorf("incorrect g.children, expected \n%v\n, got \n%v", subGroup, g.Children())
-	}
-
-	if g.Children()[1] != s4 {
-		t.Errorf("incorrect g.children, expected %v, got %v", s4, g.Children())
-	}
-
-	if len(subGroup.Children()) != 2 {
-		t.Errorf("incorrect number of subGroup.children, expected 2, got %v", len(subGroup.Children()))
-	}
-
-	subGroupOfS1 := subGroup.Children()[0].(*Group)
-	if subGroupOfS1.Children()[0] != s1 {
-		t.Errorf("incorrect subGroupOfS1.children, expected \n%v, got \n%v", s1, subGroupOfS1.Children())
-	}
-	subGroupOfS2 := subGroup.Children()[1].(*Group)
-	if len(subGroupOfS2.Children()) != 2 {
-		t.Errorf("incorrect number of children for subGroupOfS2, expected 2, got %v", len(subGroupOfS2.Children()))
-	}
-	if subGroupOfS2.Children()[0] != s2 {
-		t.Errorf("incorrect subGroupOfS2.children, expected %v, got %v", s2, subGroupOfS2.Children())
-	}
-	if subGroupOfS2.Children()[1] != s3 {
-		t.Errorf("incorrect subGroupOfS2.children, expected %v, got %v", s3, subGroupOfS2.Children())
-	}
-
 }

@@ -12,9 +12,10 @@ import (
 )
 
 type Cube struct {
-	transform matrix.Matrix
-	material  *materials.Material
-	parent    Shape
+	transform   matrix.Matrix
+	material    *materials.Material
+	parent      Shape
+	boundingBox *BoundingBox
 }
 
 func (s *Cube) String() string {
@@ -35,6 +36,17 @@ func (s *Cube) Material() *materials.Material {
 
 func (s *Cube) Transform() matrix.Matrix {
 	return s.transform
+}
+
+func (s *Cube) CalculateBoundingBox() {
+	s.boundingBox.Min = tuple.NewPoint(-1, -1, -1)
+	s.boundingBox.Max = tuple.NewPoint(1, 1, 1)
+
+	TransformBoundingBox(s.boundingBox, s.Transform())
+}
+
+func (s *Cube) BoundingBox() *BoundingBox {
+	return s.boundingBox
 }
 
 func (s *Cube) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
@@ -99,7 +111,8 @@ func (s *Cube) SetParent(other Shape) {
 
 func NewCube() *Cube {
 	return &Cube{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
+		transform:   matrix.DefaultTransform(),
+		material:    materials.DefaultMaterial(),
+		boundingBox: DefaultBoundingBox(),
 	}
 }

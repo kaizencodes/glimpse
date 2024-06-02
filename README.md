@@ -1,11 +1,9 @@
 # Glimpse
 
-![](examples/marbles.png)
+![](examples/cover.png)
 
 Glimpse is a ray tracer written in Go. It is an implementation of the [Ray tracer challenge](https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/) by Jamis Buck.
 This is a personal project to learn Go and ray tracing. It is not meant to be used in production.
-
-It is a work in progress, I will be adding more features such as textures, soft shadows, and anti-aliasing.
 
 ## Features
 
@@ -13,7 +11,12 @@ It can render primitives such as
 - spheres 
 - planes 
 - cubes
-- cylinders. 
+- cylinders.
+
+As well as complex objects like this
+
+![](examples/dragons.png)
+
 
 It can render shadows, reflections, and refractions. It can render a scene with multiple light sources.
 
@@ -31,7 +34,8 @@ go install cuelang.org/go/cmd/cue@latest
 
 ## Usage
 
-After compilation run the executable like so `./glimpse -f example.yml`. The `-f` flag is used to specify the input file. The input file describes the scene to be rendered.
+After compilation run the executable like so `GOGC=1000 ./glimpse -f example.yml`. The `-f` flag is used to specify the input file. The input file describes the scene to be rendered.
+I recommend setting the `GOGC` value higher than the default 100 if your machine has extra ram it can speed up the render.
 
 The format is the following:
 
@@ -82,9 +86,9 @@ Then you can run commands in the container with `docker exec -it glimpse bash`
 
 The source code is mounted so this can be used to recompile the code after changes `go build .`, to run the tests `go test -gcflags=-l -v ./...`, and to run render which will be saved in the mounted host directory.
 
-## Renders
+## Additional Renders
 
-![](examples/cover.png)
+![](examples/marbles.png)
 
 ![](examples/mug.png)
 

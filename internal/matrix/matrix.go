@@ -2,63 +2,104 @@
 package matrix
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 
 	"github.com/kaizencodes/glimpse/internal/utils"
-	"gonum.org/v1/gonum/mat"
 )
 
-// Hiding the implementation details of the matrix type with the inner attribute.
-// Previously it was an internal solution, so kept the interface and changed the implementation
-// to use gonum/mat package since it's much more efficient resulting in a 10x speedup.
 type Matrix struct {
-	inner mat.Matrix
+	data               [16]float64
+	row_size, col_size int
 }
 
-func New(rows, cols int, data []float64) Matrix {
-	return Matrix{inner: mat.NewDense(rows, cols, data)}
+func NewEmpty(n, m int) Matrix {
+	return Matrix{
+		[16]float64{},
+		n, m,
+	}
+}
+
+func New(n int, m int, data [16]float64) Matrix {
+	return Matrix{
+		data,
+		n, m,
+	}
+}
+
+func NewIdentity(size int) Matrix {
+	identity := NewEmpty(size, size)
+	for i := 0; i < size; i++ {
+		identity.data[i*size+i] = 1
+	}
+	return identity
 }
 
 func (m Matrix) String() string {
 	var result string
 
-	rows, cols := m.inner.Dims()
-
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			result += strconv.FormatFloat(m.inner.At(i, j), 'f', -1, 64)
-			result += ", "
+	elem_count := 0
+	for i := 0; i < len(m.data); i++ {
+		result += strconv.FormatFloat(m.data[i], 'f', -1, 64)
+		result += ", "
+		elem_count += 1
+		if elem_count == m.col_size {
+			elem_count = 0
+			result += string('\n')
 		}
-		result += string('\n')
 	}
 	return result
 }
 
-func (m Matrix) Inverse() Matrix {
-	var inv mat.Dense
-	if err := inv.Inverse(m.inner); err != nil {
-		log.Fatal(err)
-	}
-	return Matrix{inner: &inv}
-}
+// Transposing the matrix swaps the rows and columns.
+func (a Matrix) Transpose() Matrix {
+	mat := NewEmpty(a.col_size, a.row_size)
 
-func (m Matrix) Transpose() Matrix {
-	return Matrix{inner: m.inner.T()}
+	for i := 0; i < mat.row_size; i++ {
+		for j := 0; j < mat.col_size; j++ {
+			mat.data[i*mat.col_size+j] = a.At(j, i)
+		}
+	}
+	return mat
 }
 
 func (m Matrix) At(row, col int) float64 {
-	return m.inner.At(row, col)
+	return m.data[row*m.col_size+col]
+}
+
+func (m Matrix) Equal(other Matrix) bool {
+	if len(m.data) != len(other.data) || m.col_size != other.col_size || m.row_size != other.row_size {
+		return false
+	}
+
+	for i := 0; i < len(m.data); i++ {
+		if !utils.FloatEquals(m.data[i], other.data[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 // multiplications are used to perform transformations: scaling, rotating, translating.
 func Multiply(a, b Matrix) Matrix {
-	var m mat.Dense
-	m.Mul(a.inner, b.inner)
+	if a.col_size != b.row_size {
+		panic(fmt.Errorf("incompatible matrices: len: col a: %d, row: b  %d", a.col_size, b.row_size))
+	}
 
-	return Matrix{inner: &m}
+	new_mat := NewEmpty(a.row_size, b.col_size)
+	for i := 0; i < a.row_size; i++ {
+		for j := 0; j < b.col_size; j++ {
+			new_mat.data[i*new_mat.col_size+j] = dot(a, b, i, j)
+		}
+	}
+	return new_mat
 }
 
-func Equal(a, b Matrix) bool {
-	return mat.EqualApprox(a.inner, b.inner, utils.EPSILON)
+func dot(a, b Matrix, row, col int) float64 {
+	var sum float64
+	for i := 0; i < a.col_size; i++ {
+		sum += a.At(row, i) * b.At(i, col)
+	}
+
+	return sum
 }

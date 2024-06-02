@@ -82,14 +82,14 @@ func ViewTransformation(from, to, up tuple.Tuple) matrix.Matrix {
 	left := tuple.Cross(forward, up.Normalize())
 	trueUp := tuple.Cross(left, forward)
 
-	orientation := matrix.New(4, 4,
-		[]float64{
-			left.X, left.Y, left.Z, 0,
-			trueUp.X, trueUp.Y, trueUp.Z, 0,
-			-forward.X, -forward.Y, -forward.Z, 0,
-			0, 0, 0, 1,
-		},
-	)
+	data := [16]float64{
+		left.X, left.Y, left.Z, 0,
+		trueUp.X, trueUp.Y, trueUp.Z, 0,
+		-forward.X, -forward.Y, -forward.Z, 0,
+		0, 0, 0, 1,
+	}
+
+	orientation := matrix.New(4, 4, data)
 
 	result := matrix.Multiply(orientation, matrix.Translation(-from.X, -from.Y, -from.Z))
 

@@ -17,15 +17,17 @@ type Cylinder struct {
 	Minimum, Maximum float64
 	Closed           bool
 	parent           Shape
+	boundingBox      *BoundingBox
 }
 
 func NewCylinder() *Cylinder {
 	return &Cylinder{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
-		Minimum:   math.Inf(-1),
-		Maximum:   math.Inf(1),
-		Closed:    false,
+		transform:   matrix.DefaultTransform(),
+		material:    materials.DefaultMaterial(),
+		Minimum:     math.Inf(-1),
+		Maximum:     math.Inf(1),
+		Closed:      false,
+		boundingBox: DefaultBoundingBox(),
 	}
 }
 
@@ -55,6 +57,20 @@ func (s *Cylinder) Material() *materials.Material {
 
 func (s *Cylinder) Transform() matrix.Matrix {
 	return s.transform
+}
+
+func (s *Cylinder) CalculateBoundingBox() {
+	s.boundingBox.Min = tuple.NewPoint(-1, math.Max(s.Minimum, math.Inf(-1)), -1)
+	s.boundingBox.Max = tuple.NewPoint(1, math.Min(s.Maximum, math.Inf(1)), 1)
+
+	// The matrix transformation would result in Inf x 0 = NaN
+	if s.Minimum != math.Inf(-1) && s.Maximum != math.Inf(1) {
+		TransformBoundingBox(s.boundingBox, s.Transform())
+	}
+}
+
+func (s *Cylinder) BoundingBox() *BoundingBox {
+	return s.boundingBox
 }
 
 func (s *Cylinder) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {

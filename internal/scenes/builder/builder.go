@@ -41,10 +41,10 @@ func buildCamera(config cfg.Camera) *camera.Camera {
 
 func buildLights(config []cfg.Light) []light.Light {
 	var lights []light.Light
-	for _, c := range config {
+	for i := 0; i < len(config); i++ {
 		l := light.NewLight(
-			tuple.NewPointFromSlice(c.Position),
-			color.FromSlice(c.Intensity),
+			tuple.NewPointFromSlice(config[i].Position),
+			color.FromSlice(config[i].Intensity),
 		)
 		lights = append(lights, l)
 	}
@@ -53,8 +53,8 @@ func buildLights(config []cfg.Light) []light.Light {
 
 func buildObjects(config []cfg.Object) []shapes.Shape {
 	var shapes []shapes.Shape
-	for _, obj := range config {
-		shapes = append(shapes, buildObject(obj))
+	for i := 0; i < len(config); i++ {
+		shapes = append(shapes, buildObject(config[i]))
 	}
 	return shapes
 }
@@ -65,10 +65,19 @@ func buildObject(config cfg.Object) shapes.Shape {
 	switch config.Type {
 	case "sphere":
 		shape = shapes.NewSphere()
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "plane":
 		shape = shapes.NewPlane()
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "cube":
 		shape = shapes.NewCube()
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "cylinder":
 		cylinder := shapes.NewCylinder()
 
@@ -77,29 +86,33 @@ func buildObject(config cfg.Object) shapes.Shape {
 		cylinder.Closed = config.Closed
 
 		shape = cylinder
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "model":
 		data, err := os.ReadFile(projectpath.Root + config.File)
 		if err != nil {
 			panic(fmt.Sprintf("Object file could not be read: %s\n%s", config.File, err.Error()))
 		}
-		group := shapes.Parse(string(data))
-		group.Divide(2500)
+		model := shapes.NewModel(string(data))
 
-		shape = group
+		model.SetMaterial(buildMaterial(config.Material))
+		model.SetTransform(buildTransforms(config.Transform))
+
+		model.CalculateBoundingBox()
+
+		shape = model
 	case "group":
 		group := shapes.NewGroup()
-		shapes := buildObjects(config.Children)
-		for _, s := range shapes {
-			group.AddChild(s)
-		}
-		group.Divide(2500)
+		group.AddChild(buildObjects(config.Children)...)
+		group.SetTransform(buildTransforms(config.Transform))
+		group.CalculateBoundingBoxCascade()
+
+		group.Divide(10)
 		shape = group
 	default:
 		panic("Unknown shape type")
 	}
-
-	shape.SetMaterial(buildMaterial(config.Material))
-	shape.SetTransform(buildTransforms(config.Transform))
 
 	return shape
 }

@@ -164,7 +164,7 @@ func TestMultiply(t *testing.T) {
 	}{
 		{
 			a: matrix.New(4, 4,
-				[]float64{
+				[16]float64{
 					1, 2, 3, 4,
 					2, 4, 4, 2,
 					8, 6, 4, 1,

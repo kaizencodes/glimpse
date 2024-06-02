@@ -58,41 +58,9 @@ func (b *BoundingBox) ContainsBox(box *BoundingBox) bool {
 	return b.ContainsPoint(box.Min) && b.ContainsPoint(box.Max)
 }
 
-// Creates a bounding box for a shape, in object space
-func BoundFor(shape Shape) *BoundingBox {
+func TransformBoundingBox(b *BoundingBox, m matrix.Matrix) {
 	box := DefaultBoundingBox()
-	switch s := shape.(type) {
-	case *Sphere:
-		box.Min = tuple.NewPoint(-1, -1, -1)
-		box.Max = tuple.NewPoint(1, 1, 1)
-	case *Plane:
-		box.Min = tuple.NewPoint(math.Inf(-1), 0, math.Inf(-1))
-		box.Max = tuple.NewPoint(math.Inf(1), 0, math.Inf(1))
-	case *Cube:
-		box.Min = tuple.NewPoint(-1, -1, -1)
-		box.Max = tuple.NewPoint(1, 1, 1)
-	case *Cylinder:
-		box.Min = tuple.NewPoint(-1, math.Max(s.Minimum, math.Inf(-1)), -1)
-		box.Max = tuple.NewPoint(1, math.Min(s.Maximum, math.Inf(1)), 1)
-	case *Triangle:
-		box.AddPoint(s.P1)
-		box.AddPoint(s.P2)
-		box.AddPoint(s.P3)
-	case *Group:
-		for _, child := range s.Children() {
-			box.AddBox(TransformedBoundFor(child))
-		}
-	case *TestShape:
-		box.Min = tuple.NewPoint(-1, -1, -1)
-		box.Max = tuple.NewPoint(1, 1, 1)
-	}
-
-	return box
-}
-
-func Transform(b *BoundingBox, m matrix.Matrix) *BoundingBox {
-	box := DefaultBoundingBox()
-	points := []tuple.Tuple{
+	points := [8]tuple.Tuple{
 		tuple.NewPoint(b.Min.X, b.Min.Y, b.Min.Z),
 		tuple.NewPoint(b.Min.X, b.Min.Y, b.Max.Z),
 		tuple.NewPoint(b.Min.X, b.Max.Y, b.Min.Z),
@@ -103,14 +71,11 @@ func Transform(b *BoundingBox, m matrix.Matrix) *BoundingBox {
 		tuple.NewPoint(b.Max.X, b.Max.Y, b.Max.Z),
 	}
 
-	for _, p := range points {
-		box.AddPoint(tuple.Multiply(m, p))
+	for i := 0; i < len(points); i++ {
+		box.AddPoint(tuple.Multiply(m, points[i]))
 	}
-	return box
-}
-
-func TransformedBoundFor(shape Shape) *BoundingBox {
-	return Transform(BoundFor(shape), shape.Transform())
+	b.Min = box.Min
+	b.Max = box.Max
 }
 
 func BoxIntersection(box *BoundingBox, r *ray.Ray) bool {

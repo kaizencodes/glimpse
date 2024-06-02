@@ -15,34 +15,49 @@ import (
 // Model is a shape that is defined by vertices.
 // It is a group of triangles primitives.
 type Model struct {
-	group  Group
-	parent Shape
+	group     Group
+	parent    Shape
+	material  *materials.Material
+	transform matrix.Matrix
 }
 
-func NewModel(model string) *Model {
-	return &Model{
-		group: *Parse(model),
-	}
+func NewModel(input string) *Model {
+	m := &Model{}
+	m.parse(input)
+	m.transform = matrix.DefaultTransform()
+	return m
 }
 
 func (m *Model) String() string {
-	return fmt.Sprintf("Model(material: %s, transform: %s)", m.group.material, m.group.transform)
+	return fmt.Sprintf("Model(material: %s, transform: %s)", m.material, m.transform)
 }
 
 func (m *Model) SetTransform(transform matrix.Matrix) {
-	m.group.transform = transform
+	m.transform = transform
 }
 
 func (s *Model) SetMaterial(mat *materials.Material) {
-	s.group.material = mat
+	s.material = mat
 }
 
 func (m *Model) Material() *materials.Material {
-	return m.group.material
+	return m.material
 }
 
 func (m *Model) Transform() matrix.Matrix {
-	return m.group.transform
+	return m.transform
+}
+
+func (m *Model) CalculateBoundingBox() {
+	m.group.CalculateBoundingBoxCascade()
+}
+
+func (m *Model) BoundingBox() *BoundingBox {
+	return m.group.BoundingBox()
+}
+
+func (m *Model) Divide(threshold int) {
+	m.group.Divide(threshold)
 }
 
 func (m *Model) localNormalAt(_point tuple.Tuple, _hit Intersection) tuple.Tuple {
@@ -61,25 +76,23 @@ func (m *Model) SetParent(other Shape) {
 	m.parent = other
 }
 
-// func (m *Model) AddChild(s Shape) {
-// 	s.SetParent(m)
-// 	m.group.children = append(m.group.children, s)
-// }
+func (m *Model) Children() []Shape {
+	return m.group.children
+}
 
-// func (m *Model) Children() []Shape {
-// 	return m.group.children
-// }
-
-func Parse(input string) *Group {
-	group := NewGroup()
+func (m *Model) parse(input string) {
+	m.group = *NewGroup()
 	vertices := parseVertices(input)
 	normals := parseNormals(input)
 
 	faces := parseFaces(input, vertices, normals)
-	for _, face := range faces {
-		group.AddChild(face)
+
+	// try to make it work and see if it speeds things up.
+	// group.AddChild(faces.(*Shape)...)
+	for i := 0; i < len(faces); i++ {
+		faces[i].Model = m
+		m.group.AddChild(faces[i])
 	}
-	return group
 }
 
 func parseVertices(input string) []tuple.Tuple {
@@ -88,8 +101,8 @@ func parseVertices(input string) []tuple.Tuple {
 	vertices := []tuple.Tuple{
 		tuple.NewPoint(0, 0, 0), // index is 1 based
 	}
-	for _, line := range vertexLines {
-		vertices = append(vertices, tuple.NewPoint(splitVertexLine(line)))
+	for i := 0; i < len(vertexLines); i++ {
+		vertices = append(vertices, tuple.NewPoint(splitVertexLine(vertexLines[i])))
 	}
 	return vertices
 }
@@ -109,8 +122,8 @@ func parseNormals(input string) []tuple.Tuple {
 	normals := []tuple.Tuple{
 		tuple.NewVector(0, 0, 0), // index is 1 based
 	}
-	for _, line := range normalLines {
-		normals = append(normals, tuple.NewVector(splitVertexLine(line)))
+	for i := 0; i < len(normalLines); i++ {
+		normals = append(normals, tuple.NewVector(splitVertexLine(normalLines[i])))
 	}
 	return normals
 }
@@ -118,12 +131,11 @@ func parseNormals(input string) []tuple.Tuple {
 func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*Triangle) {
 	r := regexp.MustCompile("(?m)^f.*\n")
 	faceLines := r.FindAllString(input, -1)
-	for _, line := range faceLines {
-		indexes := convertLinesToIndexes(line)
+	for i := 0; i < len(faceLines); i++ {
+		indexes := convertLinesToIndexes(faceLines[i])
 
 		// fan triangulation
 		for i := 0; i < len(indexes)-2; i++ {
-			// var face *shapes.Triangle
 			if indexes[0][1] != 0 {
 				face := NewSmoothTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]], normals[indexes[0][1]], normals[indexes[i+1][1]], normals[indexes[i+2][1]])
 				faces = append(faces, face)

@@ -7,6 +7,7 @@ import (
 	"github.com/kaizencodes/glimpse/internal/matrix"
 	"github.com/kaizencodes/glimpse/internal/ray"
 	"github.com/kaizencodes/glimpse/internal/tuple"
+	"github.com/kaizencodes/glimpse/internal/utils"
 )
 
 func TestSphereLocalNormalAt(t *testing.T) {
@@ -84,5 +85,32 @@ func TestIntersectWithTranslatedSphere(t *testing.T) {
 	result := Intersect(sphere, r)
 	if len(result) != 0 {
 		t.Errorf("incorrect number of intersections:\n%s \n \nresult: \n%d. \nexpected: \n%d", r, len(result), 0)
+	}
+}
+
+func TestBoundingBoxForSphere(t *testing.T) {
+	//  A sphere has a bounding box
+	s := NewSphere()
+	s.CalculateBoundingBox()
+	box := s.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(-1, -1, -1), tuple.NewPoint(1, 1, 1))
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
+	}
+}
+
+func TestTransformedBoundingBoxForSphere(t *testing.T) {
+	// Querying a shape's bounding box in its parent's space
+	shape := NewSphere()
+	shape.SetTransform(
+		matrix.Multiply(matrix.Translation(1, -3, 5), matrix.Scaling(0.5, 2, 4)),
+	)
+	shape.CalculateBoundingBox()
+	box := shape.BoundingBox()
+	expected := NewBoundingBox(tuple.NewPoint(0.5, -5, 1), tuple.NewPoint(1.5, -1, 9))
+
+	for _, diff := range utils.Compare(box, expected) {
+		t.Errorf("Mismatch: %s", diff)
 	}
 }

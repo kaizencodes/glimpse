@@ -67,8 +67,8 @@ func (t Tuple) Negate() Tuple {
 	return Tuple{-t.X, -t.Y, -t.Z, -t.W}
 }
 
-func (t Tuple) ToSlice() []float64 {
-	return []float64{t.X, t.Y, t.Z, t.W}
+func (t Tuple) ToSlice() [16]float64 {
+	return [16]float64{t.X, t.Y, t.Z, t.W}
 }
 
 func NewVector(x, y, z float64) Tuple {
@@ -103,9 +103,10 @@ func Subtract(a, b Tuple) Tuple {
 }
 
 func Multiply(a matrix.Matrix, b Tuple) Tuple {
-	mat := matrix.New(4, 1, []float64{b.X, b.Y, b.Z, b.W})
-	mat = matrix.Multiply(a, mat).Transpose()
-	return Tuple{mat.At(0, 0), mat.At(0, 1), mat.At(0, 2), mat.At(0, 3)}
+	mat := matrix.New(4, 1, b.ToSlice())
+	mat = matrix.Multiply(a, mat)
+	// implicitly transpose the result.
+	return Tuple{mat.At(0, 0), mat.At(1, 0), mat.At(2, 0), mat.At(3, 0)}
 }
 
 // The dot product of two vectors.

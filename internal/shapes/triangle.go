@@ -13,38 +13,47 @@ import (
 
 // Triangle is an atomic object that is used to build more complex shapes.
 type Triangle struct {
-	transform                              matrix.Matrix
-	material                               *materials.Material
-	parent                                 Shape
+	Model                                  Shape
 	P1, P2, P3, E1, E2, N1, N2, N3, Normal tuple.Tuple
+	boundingBox                            *BoundingBox
 }
 
 func (s *Triangle) String() string {
-	return fmt.Sprintf("Triangle(material: %s, transform: %s)", s.material, s.transform)
+	return fmt.Sprintf("Triangle(material: %s, transform: %s)", s.Material(), s.Transform())
 }
 
+// These are defined to implement the shape interface, no need for them as we use the model's transforms and materials
 func (s *Triangle) SetTransform(transform matrix.Matrix) {
-	s.transform = transform
 }
 
 func (s *Triangle) SetMaterial(mat *materials.Material) {
-	s.material = mat
 }
 
 func (s *Triangle) Material() *materials.Material {
-	return s.material
+	return s.Model.Material()
 }
 
 func (s *Triangle) Transform() matrix.Matrix {
-	return s.transform
+	return matrix.DefaultTransform()
 }
 
 func (s *Triangle) Parent() Shape {
-	return s.parent
+	return s.Model
 }
 
 func (s *Triangle) SetParent(other Shape) {
-	s.parent = other
+}
+
+func (s *Triangle) CalculateBoundingBox() {
+	s.boundingBox.AddPoint(s.P1)
+	s.boundingBox.AddPoint(s.P2)
+	s.boundingBox.AddPoint(s.P3)
+
+	TransformBoundingBox(s.boundingBox, s.Transform())
+}
+
+func (s *Triangle) BoundingBox() *BoundingBox {
+	return s.boundingBox
 }
 
 func (s *Triangle) localNormalAt(point tuple.Tuple, hit Intersection) tuple.Tuple {
@@ -95,14 +104,14 @@ func NewTriangle(p1, p2, p3 tuple.Tuple) *Triangle {
 	normal := tuple.Cross(e2, e1).Normalize()
 
 	return &Triangle{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
-		P1:        p1,
-		P2:        p2,
-		P3:        p3,
-		E1:        e1,
-		E2:        e2,
-		Normal:    normal,
+		boundingBox: DefaultBoundingBox(),
+
+		P1:     p1,
+		P2:     p2,
+		P3:     p3,
+		E1:     e1,
+		E2:     e2,
+		Normal: normal,
 	}
 }
 
@@ -112,17 +121,17 @@ func NewSmoothTriangle(p1, p2, p3, n1, n2, n3 tuple.Tuple) *Triangle {
 	normal := tuple.Cross(e2, e1).Normalize()
 
 	return &Triangle{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
-		P1:        p1,
-		P2:        p2,
-		P3:        p3,
-		E1:        e1,
-		E2:        e2,
-		Normal:    normal,
-		N1:        n1,
-		N2:        n2,
-		N3:        n3,
+		boundingBox: DefaultBoundingBox(),
+
+		P1:     p1,
+		P2:     p2,
+		P3:     p3,
+		E1:     e1,
+		E2:     e2,
+		Normal: normal,
+		N1:     n1,
+		N2:     n2,
+		N3:     n3,
 	}
 }
 

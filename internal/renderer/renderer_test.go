@@ -86,7 +86,7 @@ func TestShadeHit(t *testing.T) {
 	comps = prepareComputations(i, r, shapes.Intersections{i})
 
 	result = shadeHit(scene, comps)
-	expected = color.New(0.19, 0.16999999999999998, 0.1)
+	expected = color.New(0.9949844688633194, 0.9749844688633194, 0.9049844688633194)
 	if !result.Equal(expected) {
 		t.Errorf("incorrect Shading:\nresult: \n%s. \nexpected: \n%s", result, expected)
 	}
@@ -254,41 +254,56 @@ func TestRecusingReflection(t *testing.T) {
 
 func TestShadowAt(t *testing.T) {
 	scene := scenes.Default()
+	lights := []light.Light{
+		light.NewLight(tuple.NewPoint(-10, 10, -10), color.New(1, 1, 1)),
+		light.NewLight(tuple.NewPoint(10, -10, 10), color.New(1, 1, 1)),
+	}
+	multiLightScene := scenes.New(scene.Shapes, lights)
+
 	var tests = []struct {
 		scene    *scenes.Scene
 		point    tuple.Tuple
-		expected bool
+		expected []bool
 	}{
 		{
 			// There is no shadow when nothing is collinear with point and light
 			scene:    scene,
 			point:    tuple.NewPoint(0, 10, 0),
-			expected: false,
+			expected: []bool{false},
 		},
 		{
 			// The shadow when an object is between the point and the light
 			scene:    scene,
 			point:    tuple.NewPoint(10, -10, 10),
-			expected: true,
+			expected: []bool{true},
 		},
 		{
 			// There is no shadow when an object is behind the light
 			scene:    scene,
 			point:    tuple.NewPoint(-20, 20, -20),
-			expected: false,
+			expected: []bool{false},
 		},
 		{
 			// There is no shadow when an object is behind the point
 			scene:    scene,
 			point:    tuple.NewPoint(-2, 2, -2),
-			expected: false,
+			expected: []bool{false},
+		},
+		{
+			// For one light there's shadow, for the other there is not.
+			scene:    multiLightScene,
+			point:    tuple.NewPoint(-2, 2, -2),
+			expected: []bool{false, true},
 		},
 	}
 
 	for _, test := range tests {
-		result := shadowAt(test.scene, test.point)
-		if result != test.expected {
-			t.Errorf("ShadowAt,\npoint:\n%s\nresult:\n%t\nexpected: \n%t", test.point, result, test.expected)
+		results := shadowAt(test.scene, test.point)
+		for i := 0; i < len(results); i++ {
+			if results[i] != test.expected[i] {
+				t.Errorf("ShadowAt,\npoint:\n%s\nresult:\n%t\nexpected: \n%t", test.point, results[i], test.expected[i])
+			}
+
 		}
 	}
 }

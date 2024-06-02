@@ -10,9 +10,10 @@ import (
 )
 
 type TestShape struct {
-	transform matrix.Matrix
-	material  *materials.Material
-	parent    Shape
+	transform   matrix.Matrix
+	material    *materials.Material
+	parent      Shape
+	boundingBox *BoundingBox
 }
 
 func (s *TestShape) String() string {
@@ -43,6 +44,14 @@ func (s *TestShape) SetParent(other Shape) {
 	s.parent = other
 }
 
+func (s *TestShape) CalculateBoundingBox() {
+	TransformBoundingBox(s.boundingBox, s.Transform())
+}
+
+func (s *TestShape) BoundingBox() *BoundingBox {
+	return s.boundingBox
+}
+
 func (s *TestShape) localNormalAt(point tuple.Tuple, _hit Intersection) tuple.Tuple {
 	return point.ToVector()
 }
@@ -53,7 +62,8 @@ func (s *TestShape) localIntersect(r *ray.Ray) Intersections {
 
 func NewTestShape() *TestShape {
 	return &TestShape{
-		transform: matrix.DefaultTransform(),
-		material:  materials.DefaultMaterial(),
+		transform:   matrix.DefaultTransform(),
+		material:    materials.DefaultMaterial(),
+		boundingBox: &BoundingBox{Min: tuple.NewPoint(-1, -1, -1), Max: tuple.NewPoint(1, 1, 1)},
 	}
 }

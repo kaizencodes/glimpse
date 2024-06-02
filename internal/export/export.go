@@ -2,6 +2,7 @@
 package export
 
 import (
+	"bytes"
 	"fmt"
 	"math"
 
@@ -14,16 +15,18 @@ const (
 	PpmFormat = "P3"
 )
 
-func Export(c canvas.Canvas) string {
-	result := header(c)
+func Export(c canvas.Canvas) []byte {
+	var result bytes.Buffer
+	result.WriteString(header(c))
+
 	for y := 0; y < len(c[0]); y++ {
 		for x := 0; x < len(c); x++ {
-			result += convertColor(c[x][y])
+			result.WriteString(convertColor(c[x][y]))
 		}
-		result += string('\n')
+		result.WriteByte('\n')
 	}
-	result += string('\n')
-	return result
+	result.WriteByte('\n')
+	return result.Bytes()
 }
 
 func header(c canvas.Canvas) string {

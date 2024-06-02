@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
+	"runtime/pprof"
 	"time"
 
 	"github.com/kaizencodes/glimpse/internal/export"
@@ -49,6 +51,9 @@ Additional Information:
 func main() {
 	start := time.Now()
 
+	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
+	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
+
 	flag.Parse()
 
 	if filePath == "" {
@@ -68,13 +73,35 @@ func main() {
 		os.Exit(1)
 	}
 
+	if *cpuprofile != "" {
+		fmt.Println("PROFILING")
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal("could not create CPU profile: ", err)
+		}
+
+		defer func() {
+			f.Close() // error handling omitted for example
+			fmt.Println("Closing the file")
+		}()
+
+		if err := pprof.StartCPUProfile(f); err != nil {
+			log.Fatal("could not start CPU profile: ", err)
+		}
+
+		defer func() {
+			pprof.StopCPUProfile()
+			fmt.Println("CPU profiling stopped.")
+		}()
+	}
+
 	cam, scene := builder.BuildScene(config)
 
 	img := renderer.Render(cam, scene)
 
 	fmt.Printf("\nWriting to file\n")
 
-	if err := os.WriteFile(fmt.Sprintf(outputPath+"-%s.ppm", time.Now().Format(time.RFC3339Nano)), []byte(export.Export(img)), 0666); err != nil {
+	if err := os.WriteFile(fmt.Sprintf(outputPath+"-%s.ppm", time.Now().Format(time.RFC3339Nano)), export.Export(img), 0666); err != nil {
 		fmt.Printf("%e\n", err)
 		log.Fatal(err)
 	}
@@ -82,5 +109,15 @@ func main() {
 	elapsed := time.Since(start)
 	fmt.Printf("Total time: %s\n", elapsed)
 
-	os.Exit(0)
+	if *memprofile != "" {
+		f, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatal("could not create memory profile: ", err)
+		}
+		defer f.Close() // error handling omitted for example
+		runtime.GC()    // get up-to-date statistics
+		if err := pprof.WriteHeapProfile(f); err != nil {
+			log.Fatal("could not write memory profile: ", err)
+		}
+	}
 }
