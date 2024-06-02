@@ -15,6 +15,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        go mod vendor
         go mod download
         go get -u golang.org/x/lint/golint
         go install cuelang.org/go/cmd/cue@latest
