@@ -2,11 +2,7 @@ module github.com/kaizencodes/glimpse
 
 go 1.22
 
-require (
-	cuelang.org/go v0.8.2
-	github.com/goccy/go-yaml v1.9.5
-	github.com/google/go-cmp v0.6.0
-)
+require github.com/goccy/go-yaml v1.9.5
 
 require (
 	github.com/fatih/color v1.13.0 // indirect
