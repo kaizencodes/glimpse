@@ -75,6 +75,8 @@ func TestLocalNormalAtWithSmoothTriangle(t *testing.T) {
 		tuple.NewVector(-1, 0, 0),
 		tuple.NewVector(1, 0, 0),
 	)
+	// so that triangle has access to transform and material
+	triangle.Model = NewGroup()
 
 	// A smooth triangle uses u/v to interpolate the normal
 
@@ -91,6 +93,7 @@ func TestTriangleIntersect(t *testing.T) {
 		tuple.NewPoint(-1, 0, 0),
 		tuple.NewPoint(1, 0, 0),
 	)
+	triangle.Model = NewGroup()
 
 	var tests = []struct {
 		ray      *ray.Ray

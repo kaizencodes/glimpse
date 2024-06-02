@@ -11,14 +11,13 @@ import (
 
 type Group struct {
 	transform   matrix.Matrix
-	material    *materials.Material
 	parent      Shape
 	children    []Shape
 	boundingBox *BoundingBox
 }
 
 func (g *Group) String() string {
-	return fmt.Sprintf("Group(material: %s, transform: %s)", g.material, g.transform)
+	return fmt.Sprintf("Group(transform: %s)", g.transform)
 }
 
 func (g *Group) SetTransform(transform matrix.Matrix) {
@@ -26,11 +25,10 @@ func (g *Group) SetTransform(transform matrix.Matrix) {
 }
 
 func (g *Group) SetMaterial(mat *materials.Material) {
-	g.material = mat
 }
 
 func (g *Group) Material() *materials.Material {
-	return g.material
+	return materials.DefaultMaterial()
 }
 
 func (g *Group) Transform() matrix.Matrix {
@@ -57,7 +55,6 @@ func (g *Group) localIntersect(r *ray.Ray) Intersections {
 func NewGroup() *Group {
 	return &Group{
 		transform:   matrix.DefaultTransform(),
-		material:    materials.DefaultMaterial(),
 		children:    []Shape{},
 		boundingBox: DefaultBoundingBox(),
 	}

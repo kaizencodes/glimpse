@@ -15,34 +15,37 @@ import (
 // Model is a shape that is defined by vertices.
 // It is a group of triangles primitives.
 type Model struct {
-	group  Group
-	parent Shape
+	group     Group
+	parent    Shape
+	material  *materials.Material
+	transform matrix.Matrix
 }
 
-func NewModel(model string) *Model {
-	return &Model{
-		group: *Parse(model),
-	}
+func NewModel(input string) *Model {
+	m := &Model{}
+	m.parse(input)
+	m.transform = matrix.DefaultTransform()
+	return m
 }
 
 func (m *Model) String() string {
-	return fmt.Sprintf("Model(material: %s, transform: %s)", m.group.material, m.group.transform)
+	return fmt.Sprintf("Model(material: %s, transform: %s)", m.material, m.transform)
 }
 
 func (m *Model) SetTransform(transform matrix.Matrix) {
-	m.group.transform = transform
+	m.transform = transform
 }
 
 func (s *Model) SetMaterial(mat *materials.Material) {
-	s.group.material = mat
+	s.material = mat
 }
 
 func (m *Model) Material() *materials.Material {
-	return m.group.material
+	return m.material
 }
 
 func (m *Model) Transform() matrix.Matrix {
-	return m.group.transform
+	return m.transform
 }
 
 func (m *Model) CalculateBoundingBox() {
@@ -73,8 +76,12 @@ func (m *Model) SetParent(other Shape) {
 	m.parent = other
 }
 
-func Parse(input string) *Group {
-	group := NewGroup()
+func (m *Model) Children() []Shape {
+	return m.group.children
+}
+
+func (m *Model) parse(input string) {
+	m.group = *NewGroup()
 	vertices := parseVertices(input)
 	normals := parseNormals(input)
 
@@ -83,9 +90,9 @@ func Parse(input string) *Group {
 	// try to make it work and see if it speeds things up.
 	// group.AddChild(faces.(*Shape)...)
 	for i := 0; i < len(faces); i++ {
-		group.AddChild(faces[i])
+		faces[i].Model = m
+		m.group.AddChild(faces[i])
 	}
-	return group
 }
 
 func parseVertices(input string) []tuple.Tuple {
@@ -129,7 +136,6 @@ func parseFaces(input string, vertices, normals []tuple.Tuple) (faces []*Triangl
 
 		// fan triangulation
 		for i := 0; i < len(indexes)-2; i++ {
-			// var face *shapes.Triangle
 			if indexes[0][1] != 0 {
 				face := NewSmoothTriangle(vertices[indexes[0][0]], vertices[indexes[i+1][0]], vertices[indexes[i+2][0]], normals[indexes[0][1]], normals[indexes[i+1][1]], normals[indexes[i+2][1]])
 				faces = append(faces, face)

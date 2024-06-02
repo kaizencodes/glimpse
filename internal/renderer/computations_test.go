@@ -100,6 +100,7 @@ func TestPrepareComputations5(t *testing.T) {
 		tuple.NewVector(-1, 0, 0),
 		tuple.NewVector(1, 0, 0),
 	)
+	triangle.Model = shapes.NewGroup()
 	r = ray.New(tuple.NewPoint(-0.2, 0.3, -2), tuple.NewVector(0, 0, 1))
 	hit := shapes.NewIntersectionWithUV(1, 0.45, 0.25, triangle)
 	xs := shapes.Intersections{hit}
