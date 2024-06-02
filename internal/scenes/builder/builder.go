@@ -65,10 +65,19 @@ func buildObject(config cfg.Object) shapes.Shape {
 	switch config.Type {
 	case "sphere":
 		shape = shapes.NewSphere()
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "plane":
 		shape = shapes.NewPlane()
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "cube":
 		shape = shapes.NewCube()
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "cylinder":
 		cylinder := shapes.NewCylinder()
 
@@ -77,18 +86,26 @@ func buildObject(config cfg.Object) shapes.Shape {
 		cylinder.Closed = config.Closed
 
 		shape = cylinder
+
+		shape.SetMaterial(buildMaterial(config.Material))
+		shape.SetTransform(buildTransforms(config.Transform))
 	case "model":
 		data, err := os.ReadFile(projectpath.Root + config.File)
 		if err != nil {
 			panic(fmt.Sprintf("Object file could not be read: %s\n%s", config.File, err.Error()))
 		}
 		model := shapes.NewModel(string(data))
+
+		model.SetMaterial(buildMaterial(config.Material))
+		model.SetTransform(buildTransforms(config.Transform))
+
 		model.CalculateBoundingBox()
 
 		shape = model
 	case "group":
 		group := shapes.NewGroup()
 		group.AddChild(buildObjects(config.Children)...)
+		group.SetTransform(buildTransforms(config.Transform))
 		group.CalculateBoundingBoxCascade()
 
 		group.Divide(10)
@@ -96,9 +113,6 @@ func buildObject(config cfg.Object) shapes.Shape {
 	default:
 		panic("Unknown shape type")
 	}
-
-	shape.SetMaterial(buildMaterial(config.Material))
-	shape.SetTransform(buildTransforms(config.Transform))
 
 	return shape
 }
