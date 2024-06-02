@@ -22,10 +22,6 @@ func FromSlice(s []float64) Color {
 	return Color{s[0], s[1], s[2]}
 }
 
-func (c Color) Scalar(s float64) Color {
-	return Color{c.R * s, c.G * s, c.B * s}
-}
-
 func (c Color) Equal(other Color) bool {
 	return utils.FloatEquals(c.R, other.R) && utils.FloatEquals(c.G, other.G) &&
 		utils.FloatEquals(c.B, other.B)
@@ -37,6 +33,10 @@ func (c Color) String() string {
 	b := strconv.FormatFloat(c.B, 'f', -1, 64)
 
 	return fmt.Sprintf("(%s, %s, %s)", r, g, b)
+}
+
+func (c Color) Scalar(s float64) Color {
+	return Color{c.R * s, c.G * s, c.B * s}
 }
 
 func Add(a, b Color) Color {
